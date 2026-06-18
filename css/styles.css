@@ -1070,7 +1070,8 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
   .cs__grid { columns: 1; }
   .projects__grid { grid-template-columns: 1fr; }
   .about__team { grid-template-columns: 1fr; gap: 3rem; }
-  .home__cta { flex-direction: column; align-items: center; gap: 1rem; }
+  .home__cta { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 0.6rem; width: calc(100% - 3rem); }
+  .home__cta .btn { padding: 0.8rem 1.3rem; font-size: 0.6rem; letter-spacing: 0.14em; }
   .footer { flex-direction: column; align-items: flex-start; gap: 1rem; }
 }
 
@@ -1082,6 +1083,6 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
 }
 @media (max-height: 480px) {
   .home__logo { width: clamp(120px, 26vw, 220px); }
-  .home__cta { bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem); gap: 0.75rem; }
-  .home__cta .btn { padding: 0.65rem 1.5rem; font-size: 0.6rem; }
+  .home__cta { bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem); gap: 0.5rem; }
+  .home__cta .btn { padding: 0.6rem 1.1rem; font-size: 0.56rem; letter-spacing: 0.1em; }
 }

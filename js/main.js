@@ -9,6 +9,21 @@ const mobileMenu = document.getElementById('mobile-menu');
 
 let currentPage = 'home';
 
+// ---- Home video: force-start playback ----------------------
+// iOS sometimes ignores the autoplay attribute on the very first load
+// (especially while the element was still display:none) and shows a
+// native play button instead. We re-trigger play() every time the
+// Home page becomes the active page, with a couple of delayed retries
+// to catch the moment right after layout/display actually happens.
+const homeVideo = document.getElementById('home-video');
+function tryPlayHomeVideo() {
+  if (!homeVideo) return;
+  homeVideo.muted = true;
+  homeVideo.autoplay = true;
+  const p = homeVideo.play();
+  if (p && typeof p.catch === 'function') p.catch(() => { /* will retry */ });
+}
+
 // Each page id maps to its natural CSS display value
 const PAGE_DISPLAY = {
   'home':           'flex',
@@ -57,6 +72,13 @@ function showPage(id, pushState = true) {
     setNavDark();
     document.body.classList.add('is-home');
     document.documentElement.classList.add('is-home');
+    // Re-trigger video playback every time Home becomes active, with
+    // a few delayed retries (covers the timing right after display
+    // actually switches from none to flex).
+    tryPlayHomeVideo();
+    setTimeout(tryPlayHomeVideo, 60);
+    setTimeout(tryPlayHomeVideo, 300);
+    setTimeout(tryPlayHomeVideo, 900);
   } else {
     setNavScrolled();
     document.body.classList.remove('is-home');
@@ -104,37 +126,27 @@ toggle.addEventListener('click', () => {
   mobileMenu.classList.toggle('open');
 });
 
-// ---- Home video: force-start playback (iOS sometimes shows a play
-//      button instead of autoplaying on the very first load) ----
-(function () {
-  const video = document.getElementById('home-video');
-  if (!video) return;
+// ---- Home video: extra safety nets on top of the showPage() retries ----
+if (homeVideo) {
+  homeVideo.addEventListener('loadedmetadata', tryPlayHomeVideo);
+  homeVideo.addEventListener('canplay', tryPlayHomeVideo);
+  window.addEventListener('load', tryPlayHomeVideo);
 
-  function tryPlay() {
-    video.muted = true; // ensure the property (not just the attribute) is set — required by iOS
-    const p = video.play();
-    if (p && typeof p.catch === 'function') p.catch(() => { /* retried elsewhere */ });
-  }
-
-  // Try as soon as the video has enough data, and again once the page is fully loaded
-  video.addEventListener('loadedmetadata', tryPlay);
-  video.addEventListener('canplay', tryPlay);
-  window.addEventListener('load', tryPlay);
-  document.addEventListener('DOMContentLoaded', tryPlay);
-
-  // Retry whenever the tab/page becomes visible again
+  // Retry whenever the tab/app becomes visible again
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) tryPlay();
+    if (!document.hidden && currentPage === 'home') tryPlayHomeVideo();
   });
-  window.addEventListener('pageshow', tryPlay);
+  window.addEventListener('pageshow', () => {
+    if (currentPage === 'home') tryPlayHomeVideo();
+  });
 
-  // Fallback: first user touch/click anywhere also nudges playback
+  // Last-resort fallback: first tap anywhere also nudges playback
   ['touchstart', 'click'].forEach(evt => {
-    window.addEventListener(evt, () => { if (video.paused) tryPlay(); }, { once: true, passive: true });
+    window.addEventListener(evt, () => {
+      if (homeVideo.paused) tryPlayHomeVideo();
+    }, { once: true, passive: true });
   });
-
-  tryPlay();
-})();
+}
 
 // ---- Home: no real scrolling — nav stays dark/transparent always ----
 // (Home page no longer scrolls at all; see gesture handling below.)
