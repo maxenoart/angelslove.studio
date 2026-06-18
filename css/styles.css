@@ -67,6 +67,7 @@ html {
   font-size: 16px;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none; /* no rubber-band bounce → no white flash above the video */
 }
 
 body {
@@ -75,7 +76,9 @@ body {
   color: var(--black);
   background: var(--white);
   overflow-x: hidden;
+  overscroll-behavior-y: none;
 }
+
 
 img, svg, video { display: block; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
@@ -347,24 +350,16 @@ body.is-home .nav--dark .nav__logo {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
-/* While Home is active: lock page scroll entirely (no rubber-band, no white bars) */
-html.is-home,
-body.is-home {
-  overflow: hidden;
-  height: 100%;
-  height: 100dvh;
-}
-
-/* Resistance bounce — light scroll/swipe on Home that doesn't reach the threshold */
-#home.home--resist {
-  animation: homeResist 0.25s ease;
-}
-@keyframes homeResist {
-  0%   { transform: translateY(0); }
-  45%  { transform: translateY(16px); }
-  100% { transform: translateY(0); }
+/* Home + Creative Space form one soft-scrolling "one-pager" flow.
+   proximity (not mandatory) keeps the glide gentle — it only snaps
+   when the scroll naturally settles near a section edge. */
+html.flow-active {
+  scroll-snap-type: y proximity;
+  scroll-padding-top: var(--nav-h);
 }
 
 .home__video-wrap {
@@ -444,6 +439,9 @@ body.is-home {
   padding-bottom: 8rem;
   padding-left: clamp(1.5rem, 4vw, 5rem);
   padding-right: clamp(1.5rem, 4vw, 5rem);
+  min-height: 100vh;
+  min-height: 100dvh;
+  scroll-snap-align: start;
 }
 
 .cs__header { margin-bottom: clamp(3rem, 6vw, 6rem); }
@@ -1070,8 +1068,7 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
   .cs__grid { columns: 1; }
   .projects__grid { grid-template-columns: 1fr; }
   .about__team { grid-template-columns: 1fr; gap: 3rem; }
-  .home__cta { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 0.6rem; width: calc(100% - 3rem); }
-  .home__cta .btn { padding: 0.8rem 1.3rem; font-size: 0.6rem; letter-spacing: 0.14em; }
+  .home__cta { flex-direction: column; align-items: center; gap: 1rem; }
   .footer { flex-direction: column; align-items: flex-start; gap: 1rem; }
 }
 

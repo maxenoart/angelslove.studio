@@ -34,6 +34,13 @@ const PAGE_DISPLAY = {
   'book':           'block',
 };
 
+// Home + Creative Space behave as one continuous, softly-scrolling
+// "one-pager" — both stay mounted together and the user simply scrolls
+// from one into the other. All other routes keep the classic
+// page-switch behaviour (only one visible at a time).
+const FLOW_IDS = ['home', 'creative-space'];
+function isFlowId(id) { return FLOW_IDS.includes(id); }
+
 // ---- Nav helpers ------------------------------------------
 function setNavDark() {
   nav.classList.remove('nav--scrolled');
@@ -45,9 +52,98 @@ function setNavScrolled() {
   nav.classList.add('nav--scrolled');
 }
 
+// Updates nav state / status-bar tint / active link / body classes for
+// whichever section (home or creative-space) is currently in view
+// while inside the one-pager flow.
+function updateChromeForFlowSection(id) {
+  if (id === 'home') {
+    setNavDark();
+    document.body.classList.add('is-home');
+    document.documentElement.classList.add('is-home');
+  } else {
+    setNavScrolled();
+    document.body.classList.remove('is-home');
+    document.documentElement.classList.remove('is-home');
+  }
+
+  document.body.classList.remove('is-book');
+  document.querySelector('.nav__logo').style.filter = '';
+
+  const themeMeta = document.getElementById('theme-color-meta');
+  if (themeMeta) {
+    themeMeta.setAttribute('content', id === 'home' ? '#0e0e0e' : '#ffffff');
+  }
+
+  document.querySelectorAll('[data-page]').forEach(l => {
+    l.classList.toggle('active', l.dataset.page === id);
+  });
+}
+
+// ---- Custom smooth-scroll (slightly slower / softer than native "smooth") ----
+function easeInOutCubic(t) {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+function smoothScrollTo(targetY, duration = 900) {
+  const startY = window.scrollY;
+  const diff = targetY - startY;
+  if (Math.abs(diff) < 1) return;
+  const startTime = performance.now();
+  function step(now) {
+    const t = Math.min((now - startTime) / duration, 1);
+    window.scrollTo(0, startY + diff * easeInOutCubic(t));
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
 // ---- Page routing -----------------------------------------
 function showPage(id, pushState = true) {
-  // Hide all pages
+
+  if (isFlowId(id)) {
+    // Mount both flow sections together, hide everything else.
+    pages.forEach(p => {
+      if (isFlowId(p.id)) {
+        p.style.display = PAGE_DISPLAY[p.id] || 'block';
+        p.classList.add('visible');
+      } else {
+        p.style.display = 'none';
+        p.classList.remove('visible');
+      }
+    });
+
+    document.documentElement.classList.add('flow-active');
+
+    currentPage = id;
+    updateChromeForFlowSection(id);
+
+    const target = document.getElementById(id);
+    if (id === 'home') {
+      if (pushState) smoothScrollTo(0, 1700);
+      else window.scrollTo({ top: 0, behavior: 'instant' });
+    } else if (target) {
+      const destY = target.getBoundingClientRect().top + window.scrollY - nav.offsetHeight;
+      if (pushState) smoothScrollTo(destY, 1000);
+      else window.scrollTo({ top: destY, behavior: 'instant' });
+    }
+
+    // Home's video lives in the always-mounted #home section — keep the
+    // existing autoplay retry safety net whenever we (re-)enter the flow.
+    tryPlayHomeVideo();
+    setTimeout(tryPlayHomeVideo, 60);
+    setTimeout(tryPlayHomeVideo, 300);
+    setTimeout(tryPlayHomeVideo, 900);
+
+    if (pushState) {
+      history.pushState({ page: id }, '', '#' + id);
+    }
+
+    setTimeout(() => triggerReveals(), 100);
+    return;
+  }
+
+  // ---- Classic exclusive page switch (Projects / Project Detail / About / Kontakt) ----
+  document.documentElement.classList.remove('flow-active');
+
   pages.forEach(p => {
     p.style.display = 'none';
     p.classList.remove('visible');
@@ -58,7 +154,6 @@ function showPage(id, pushState = true) {
 
   target.style.display = PAGE_DISPLAY[id] || 'block';
 
-  // Fade in
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       target.classList.add('visible');
@@ -67,35 +162,20 @@ function showPage(id, pushState = true) {
 
   currentPage = id;
 
-  // Nav state
-  if (id === 'home') {
-    setNavDark();
-    document.body.classList.add('is-home');
-    document.documentElement.classList.add('is-home');
-    // Re-trigger video playback every time Home becomes active, with
-    // a few delayed retries (covers the timing right after display
-    // actually switches from none to flex).
-    tryPlayHomeVideo();
-    setTimeout(tryPlayHomeVideo, 60);
-    setTimeout(tryPlayHomeVideo, 300);
-    setTimeout(tryPlayHomeVideo, 900);
-  } else {
-    setNavScrolled();
-    document.body.classList.remove('is-home');
-    document.documentElement.classList.remove('is-home');
-  }
+  setNavScrolled();
+  document.body.classList.remove('is-home');
+  document.documentElement.classList.remove('is-home');
 
-  // Book Us: red background throughout — nav matches
+  // Kontakt Us: red background throughout — nav matches
   document.body.classList.toggle('is-book', id === 'book');
   document.querySelector('.nav__logo').style.filter = (id === 'book') ? 'invert(1)' : '';
 
-  // Status bar tint follows page background (black / white / red)
+  // Status bar tint follows page background (white / red)
   const themeMeta = document.getElementById('theme-color-meta');
   if (themeMeta) {
-    themeMeta.setAttribute('content', id === 'home' ? '#0e0e0e' : id === 'book' ? '#e2073b' : '#ffffff');
+    themeMeta.setAttribute('content', id === 'book' ? '#e2073b' : '#ffffff');
   }
 
-  // Active link
   document.querySelectorAll('[data-page]').forEach(l => {
     l.classList.toggle('active', l.dataset.page === id);
   });
@@ -108,6 +188,39 @@ function showPage(id, pushState = true) {
 
   setTimeout(() => triggerReveals(), 100);
 }
+
+// ---- One-pager scroll tracking (Home ↔ Creative Space) -----
+// While the flow is active, figure out which section is actually in
+// view as the user scrolls, and keep nav/theme/active-link/history in
+// sync — without forcing any hard jump.
+(function () {
+  let ticking = false;
+
+  function onFlowScroll() {
+    ticking = false;
+    if (!isFlowId(currentPage)) return;
+
+    const csEl = document.getElementById('creative-space');
+    if (!csEl) return;
+
+    const threshold = csEl.offsetTop - window.innerHeight * 0.4;
+    const newId = window.scrollY >= threshold ? 'creative-space' : 'home';
+
+    if (newId !== currentPage) {
+      currentPage = newId;
+      updateChromeForFlowSection(newId);
+      history.replaceState({ page: newId }, '', '#' + newId);
+      setTimeout(() => triggerReveals(), 50);
+    }
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(onFlowScroll);
+    }
+  }, { passive: true });
+})();
 
 // ---- Click handler (nav links + any [data-page]) ----------
 document.querySelectorAll('[data-page]').forEach(link => {
@@ -134,10 +247,10 @@ if (homeVideo) {
 
   // Retry whenever the tab/app becomes visible again
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && currentPage === 'home') tryPlayHomeVideo();
+    if (!document.hidden && isFlowId(currentPage)) tryPlayHomeVideo();
   });
   window.addEventListener('pageshow', () => {
-    if (currentPage === 'home') tryPlayHomeVideo();
+    if (isFlowId(currentPage)) tryPlayHomeVideo();
   });
 
   // Last-resort fallback: first tap anywhere also nudges playback
@@ -147,80 +260,6 @@ if (homeVideo) {
     }, { once: true, passive: true });
   });
 }
-
-// ---- Home: no real scrolling — nav stays dark/transparent always ----
-// (Home page no longer scrolls at all; see gesture handling below.)
-
-// ---- Home gesture: light scroll/swipe = resistance + bounce back,
-//      strong scroll/swipe = navigate to Creative Space ("Inspire Me") ----
-(function () {
-  const homeEl = document.getElementById('home');
-  if (!homeEl) return;
-
-  const WHEEL_THRESHOLD = 70;
-  const TOUCH_THRESHOLD = 60;
-  const TOUCH_MIN       = 8; // ignore accidental taps
-
-  let wheelAccum = 0;
-  let wheelResetTimer = null;
-
-  function bounceBack() {
-    homeEl.classList.remove('home--resist');
-    // restart animation even if triggered twice quickly
-    void homeEl.offsetWidth;
-    homeEl.classList.add('home--resist');
-    setTimeout(() => homeEl.classList.remove('home--resist'), 260);
-  }
-
-  function goInspire() {
-    showPage('creative-space');
-  }
-
-  window.addEventListener('wheel', e => {
-    if (currentPage !== 'home') return;
-    e.preventDefault();
-
-    if (e.deltaY < 0) { wheelAccum = 0; return; } // scrolling up: ignore
-
-    wheelAccum += e.deltaY;
-    clearTimeout(wheelResetTimer);
-    wheelResetTimer = setTimeout(() => { wheelAccum = 0; }, 350);
-
-    if (wheelAccum > WHEEL_THRESHOLD) {
-      wheelAccum = 0;
-      goInspire();
-    } else {
-      bounceBack();
-    }
-  }, { passive: false });
-
-  let touchStartY  = 0;
-  let touchTracking = false;
-
-  homeEl.addEventListener('touchstart', e => {
-    if (currentPage !== 'home') return;
-    touchStartY = e.touches[0].clientY;
-    touchTracking = true;
-  }, { passive: true });
-
-  homeEl.addEventListener('touchmove', e => {
-    if (currentPage !== 'home' || !touchTracking) return;
-    e.preventDefault(); // block native scroll / overscroll bounce
-  }, { passive: false });
-
-  homeEl.addEventListener('touchend', e => {
-    if (currentPage !== 'home' || !touchTracking) return;
-    touchTracking = false;
-    const endY = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientY : touchStartY;
-    const diff = touchStartY - endY; // positive = swipe up
-
-    if (diff > TOUCH_THRESHOLD) {
-      goInspire();
-    } else if (diff > TOUCH_MIN) {
-      bounceBack();
-    }
-  }, { passive: true });
-})();
 
 // ---- Scroll reveal ----------------------------------------
 const revealObserver = new IntersectionObserver((entries) => {
