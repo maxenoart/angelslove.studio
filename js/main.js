@@ -67,6 +67,12 @@ function showPage(id, pushState = true) {
   document.body.classList.toggle('is-book', id === 'book');
   document.querySelector('.nav__logo').style.filter = (id === 'book') ? 'invert(1)' : '';
 
+  // Status bar tint follows page background (black / white / red)
+  const themeMeta = document.getElementById('theme-color-meta');
+  if (themeMeta) {
+    themeMeta.setAttribute('content', id === 'home' ? '#0e0e0e' : id === 'book' ? '#e2073b' : '#ffffff');
+  }
+
   // Active link
   document.querySelectorAll('[data-page]').forEach(l => {
     l.classList.toggle('active', l.dataset.page === id);
@@ -97,6 +103,38 @@ document.querySelectorAll('[data-page]').forEach(link => {
 toggle.addEventListener('click', () => {
   mobileMenu.classList.toggle('open');
 });
+
+// ---- Home video: force-start playback (iOS sometimes shows a play
+//      button instead of autoplaying on the very first load) ----
+(function () {
+  const video = document.getElementById('home-video');
+  if (!video) return;
+
+  function tryPlay() {
+    video.muted = true; // ensure the property (not just the attribute) is set — required by iOS
+    const p = video.play();
+    if (p && typeof p.catch === 'function') p.catch(() => { /* retried elsewhere */ });
+  }
+
+  // Try as soon as the video has enough data, and again once the page is fully loaded
+  video.addEventListener('loadedmetadata', tryPlay);
+  video.addEventListener('canplay', tryPlay);
+  window.addEventListener('load', tryPlay);
+  document.addEventListener('DOMContentLoaded', tryPlay);
+
+  // Retry whenever the tab/page becomes visible again
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) tryPlay();
+  });
+  window.addEventListener('pageshow', tryPlay);
+
+  // Fallback: first user touch/click anywhere also nudges playback
+  ['touchstart', 'click'].forEach(evt => {
+    window.addEventListener(evt, () => { if (video.paused) tryPlay(); }, { once: true, passive: true });
+  });
+
+  tryPlay();
+})();
 
 // ---- Home: no real scrolling — nav stays dark/transparent always ----
 // (Home page no longer scrolls at all; see gesture handling below.)

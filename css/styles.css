@@ -113,11 +113,15 @@ p  { line-height: 1.7; font-weight: 300; }
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 1000;
-  height: var(--nav-h);
+  /* Extend the nav box up under the notch/status bar, but keep the
+     visible row (logo, links) at its normal height below it. */
+  height: calc(var(--nav-h) + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  padding: 0 clamp(1.5rem, 4vw, 4rem);
+  padding-left: clamp(1.5rem, 4vw, 4rem);
+  padding-right: clamp(1.5rem, 4vw, 4rem);
   background: transparent;
   transition: background var(--transition),
               backdrop-filter var(--transition),
@@ -424,7 +428,7 @@ body.is-home {
 
 .home__cta {
   position: absolute;
-  bottom: clamp(2.5rem, 5vh, 5rem);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(2.5rem, 5vh, 5rem));
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -1074,10 +1078,10 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
    regardless of screen height (short phones, landscape, tablets …) */
 @media (max-height: 700px) {
   .home__logo { width: clamp(160px, 32vw, 320px); }
-  .home__cta { bottom: clamp(1.25rem, 4vh, 2.5rem); }
+  .home__cta { bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(1.25rem, 4vh, 2.5rem)); }
 }
 @media (max-height: 480px) {
   .home__logo { width: clamp(120px, 26vw, 220px); }
-  .home__cta { bottom: 1rem; gap: 0.75rem; }
+  .home__cta { bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem); gap: 0.75rem; }
   .home__cta .btn { padding: 0.65rem 1.5rem; font-size: 0.6rem; }
 }
