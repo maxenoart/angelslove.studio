@@ -128,31 +128,4 @@ const CREATIVE_SPACE_ITEMS = [
     delay:   '0.20s',
   },
 
-  {
-    type:        'media',
-    src:         'Website/CREATIVE_SPACE/assets/10.jpg',
-    aspectRatio: '3/4',
-    caption:     'Video — Still',
-    accent:      false,
-    delay:       '0s',
-  },
-
-  {
-    type:        'media',
-    src:         'Website/CREATIVE_SPACE/assets/11.jpg',
-    aspectRatio: '16/9',
-    caption:     'Motion Design',
-    accent:      false,
-    delay:       '0.08s',
-  },
-
-  {
-    type:        'media',
-    src:         'Website/CREATIVE_SPACE/assets/12.jpg',
-    aspectRatio: '1/1',
-    caption:     'Color Study',
-    accent:      false,
-    delay:       '0.16s',
-  },
-
 ];

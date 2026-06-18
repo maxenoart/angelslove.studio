@@ -66,6 +66,7 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  scroll-padding-top: var(--nav-h);
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none; /* no rubber-band bounce → no white flash above the video */
 }
@@ -350,16 +351,6 @@ body.is-home .nav--dark .nav__logo {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-}
-
-/* Home + Creative Space form one soft-scrolling "one-pager" flow.
-   proximity (not mandatory) keeps the glide gentle — it only snaps
-   when the scroll naturally settles near a section edge. */
-html.flow-active {
-  scroll-snap-type: y proximity;
-  scroll-padding-top: var(--nav-h);
 }
 
 .home__video-wrap {
@@ -439,9 +430,6 @@ html.flow-active {
   padding-bottom: 8rem;
   padding-left: clamp(1.5rem, 4vw, 5rem);
   padding-right: clamp(1.5rem, 4vw, 5rem);
-  min-height: 100vh;
-  min-height: 100dvh;
-  scroll-snap-align: start;
 }
 
 .cs__header { margin-bottom: clamp(3rem, 6vw, 6rem); }

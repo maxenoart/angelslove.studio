@@ -79,23 +79,6 @@ function updateChromeForFlowSection(id) {
   });
 }
 
-// ---- Custom smooth-scroll (slightly slower / softer than native "smooth") ----
-function easeInOutCubic(t) {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-}
-function smoothScrollTo(targetY, duration = 900) {
-  const startY = window.scrollY;
-  const diff = targetY - startY;
-  if (Math.abs(diff) < 1) return;
-  const startTime = performance.now();
-  function step(now) {
-    const t = Math.min((now - startTime) / duration, 1);
-    window.scrollTo(0, startY + diff * easeInOutCubic(t));
-    if (t < 1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
-
 // ---- Page routing -----------------------------------------
 function showPage(id, pushState = true) {
 
@@ -111,19 +94,15 @@ function showPage(id, pushState = true) {
       }
     });
 
-    document.documentElement.classList.add('flow-active');
-
     currentPage = id;
     updateChromeForFlowSection(id);
 
     const target = document.getElementById(id);
+    const behavior = pushState ? 'smooth' : 'instant';
     if (id === 'home') {
-      if (pushState) smoothScrollTo(0, 1700);
-      else window.scrollTo({ top: 0, behavior: 'instant' });
+      window.scrollTo({ top: 0, behavior });
     } else if (target) {
-      const destY = target.getBoundingClientRect().top + window.scrollY - nav.offsetHeight;
-      if (pushState) smoothScrollTo(destY, 1000);
-      else window.scrollTo({ top: destY, behavior: 'instant' });
+      target.scrollIntoView({ behavior, block: 'start' });
     }
 
     // Home's video lives in the always-mounted #home section — keep the
@@ -142,8 +121,6 @@ function showPage(id, pushState = true) {
   }
 
   // ---- Classic exclusive page switch (Projects / Project Detail / About / Kontakt) ----
-  document.documentElement.classList.remove('flow-active');
-
   pages.forEach(p => {
     p.style.display = 'none';
     p.classList.remove('visible');
