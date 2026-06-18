@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>angelslove</title>
+  <meta name="description" content="angelslove — creative studio for film, photography & visual storytelling." />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- ============================================================
+     NAVIGATION
+     ============================================================ -->
+<nav class="nav nav--dark" id="main-nav" role="navigation" aria-label="Main navigation">
+
+  <!-- Butterfly imagemark — left, acts as home button -->
+  <a class="nav__logo-wrap" href="#home" data-page="home" aria-label="angelslove — zur Startseite">
+    <img src="Website/HOME/assets/angelslove_imagemark_black.svg" alt="angelslove" class="nav__logo" id="nav-logo" />
+  </a>
+
+  <!-- Links — centred -->
+  <ul class="nav__links" role="list">
+    <li><a class="nav__link" href="#creative-space" data-page="creative-space">CREATIVE SPACE</a></li>
+    <li><a class="nav__link" href="#projects"       data-page="projects">PROJECTS</a></li>
+    <li><a class="nav__link" href="#about"          data-page="about">ABOUT US</a></li>
+    <li><a class="nav__link" href="#book"           data-page="book">BOOK US</a></li>
+  </ul>
+
+  <!-- Spacer — balances grid so links stay centred -->
+  <div class="nav__spacer" aria-hidden="true"></div>
+
+  <!-- Mobile toggle -->
+  <button class="nav__toggle" id="nav-toggle" aria-label="Menu öffnen">
+    <span></span><span></span><span></span>
+  </button>
+
+</nav>
+
+<!-- Mobile menu -->
+<div class="nav__mobile" id="mobile-menu" role="dialog" aria-label="Mobile navigation">
+  <a class="nav__link" href="#creative-space" data-page="creative-space">CREATIVE SPACE</a>
+  <a class="nav__link" href="#projects"       data-page="projects">PROJECTS</a>
+  <a class="nav__link" href="#about"          data-page="about">ABOUT US</a>
+  <a class="nav__link" href="#book"           data-page="book">BOOK US</a>
+</div>
+
+
+<!-- ============================================================
+     HOME
+     ============================================================ -->
+<main id="home" class="page" role="main" style="display:none">
+
+  <!-- Fullscreen YouTube background video
+       → Ersetze xmSaFciuSg4 mit der ID aus deinem YouTube-Link
+         Beispiel: https://youtube.com/watch?v=xmSaFciuSg4        -->
+  <div class="home__video-wrap">
+    <video autoplay muted loop playsinline>
+      <source src="Website/HOME/assets/angelslove-home-video.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="home__overlay"></div>
+
+  <!-- Centred wordmark -->
+  <div class="home__center">
+    <img src="Website/HOME/assets/angelslove_logo_black.svg" alt="angelslove" class="home__logo" />
+  </div>
+
+  <!-- CTAs -->
+  <div class="home__cta">
+    <a href="#creative-space" data-page="creative-space" class="btn btn--white">INSPIRE ME</a>
+    <a href="#book"           data-page="book"           class="btn btn--red">BOOK US</a>
+  </div>
+
+</main>
+
+
+<!-- ============================================================
+     CREATIVE SPACE
+     ============================================================ -->
+<section id="creative-space" class="page" role="main" style="display:none">
+
+  <div class="cs__header reveal">
+    <span class="section__label">Creative Space</span>
+    <h1>Ideas. Experiments.<br>Stories.</h1>
+    <p class="cs__subtitle">
+      Ein lebendiges Archiv unserer Gedanken, Bilder und Momente —
+      fortlaufend erweitert.
+    </p>
+  </div>
+
+  <!-- Items werden automatisch aus Website/CREATIVE_SPACE/creative-space-data.js generiert -->
+  <div class="cs__grid" id="cs-grid"></div>
+
+  <!-- Next page -->
+  <div class="page-next" onclick="showPage('projects')" role="button" tabindex="0">
+    <div>
+      <p class="page-next__label">Weiter zu</p>
+      <p class="page-next__title">Projects</p>
+    </div>
+    <span class="page-next__arrow">→</span>
+  </div>
+
+  <footer class="footer">
+    <span class="footer__copy">&copy; 2026 angelslove — all rights reserved</span>
+    <img src="Website/HOME/assets/angelslove_imagemark_black.svg" alt="angelslove" class="footer__logo" />
+  </footer>
+
+</section>
+
+
+<!-- ============================================================
+     PROJECTS
+     ============================================================ -->
+<section id="projects" class="page" role="main" style="display:none">
+
+  <div class="projects__header reveal">
+    <span class="section__label">Projects</span>
+    <h1>Unsere Arbeiten</h1>
+  </div>
+
+  <!-- Cards werden automatisch aus js/projects-data.js generiert -->
+  <div class="projects__grid" id="projects-grid"></div>
+
+  <!-- Next page -->
+  <div class="page-next" onclick="showPage('about')" role="button" tabindex="0">
+    <div>
+      <p class="page-next__label">Weiter zu</p>
+      <p class="page-next__title">About Us</p>
+    </div>
+    <span class="page-next__arrow">→</span>
+  </div>
+
+  <footer class="footer">
+    <span class="footer__copy">&copy; 2026 angelslove — all rights reserved</span>
+    <img src="Website/HOME/assets/angelslove_imagemark_black.svg" alt="angelslove" class="footer__logo" />
+  </footer>
+
+</section>
+
+
+<!-- ============================================================
+     PROJECT DETAIL
+     ============================================================ -->
+<section id="project-detail" class="page" role="main" style="display:none">
+
+  <!-- Fullscreen video -->
+  <div class="detail__video-wrap" id="detail-video-wrap">
+    <iframe id="detail-video" src="" allowfullscreen allow="autoplay; fullscreen" title="Projekt Video"></iframe>
+  </div>
+
+  <div class="detail__content">
+
+    <!-- Title -->
+    <div class="detail__header">
+      <span class="detail__category" id="detail-category">—</span>
+      <h1 class="detail__title" id="detail-title">—</h1>
+    </div>
+
+    <!-- Description + Meta -->
+    <div class="detail__body">
+      <p class="detail__desc" id="detail-desc">—</p>
+
+      <div class="detail__meta-list">
+        <div class="detail__meta-item">
+          <p class="detail__meta-label">Kategorie</p>
+          <p class="detail__meta-value" id="detail-meta-category">—</p>
+        </div>
+        <div class="detail__meta-item">
+          <p class="detail__meta-label">Datum</p>
+          <p class="detail__meta-value" id="detail-meta-date">—</p>
+        </div>
+        <div class="detail__meta-item">
+          <p class="detail__meta-label">Gear</p>
+          <p class="detail__meta-value" id="detail-meta-gear">—</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Behind the Scenes -->
+    <div class="detail__bts">
+      <span class="detail__bts-label">Behind the Scenes</span>
+      <div class="detail__bts-grid" id="detail-bts"></div>
+    </div>
+
+    <!-- Credits -->
+    <div class="detail__credits">
+      <span class="detail__credits-label">Credits</span>
+      <div class="detail__credits-list" id="detail-credits"></div>
+    </div>
+
+  </div><!-- /detail__content -->
+
+  <!-- Back to projects -->
+  <div class="page-next" onclick="showPage('projects')" role="button" tabindex="0"
+       style="margin-left:clamp(1.5rem,4vw,5rem);margin-right:clamp(1.5rem,4vw,5rem)">
+    <span class="page-next__arrow" style="transform:scaleX(-1)">→</span>
+    <div style="text-align:right">
+      <p class="page-next__label">Zurück zu</p>
+      <p class="page-next__title">Projects</p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span class="footer__copy">&copy; 2026 angelslove — all rights reserved</span>
+    <img src="Website/HOME/assets/angelslove_imagemark_black.svg" alt="angelslove" class="footer__logo" />
+  </footer>
+
+</section>
+
+
+<!-- ============================================================
+     ABOUT US
+     ============================================================ -->
+<section id="about" class="page" role="main" style="display:none">
+
+  <div class="about__intro reveal">
+    <span class="section__label">About Us</span>
+    <h1>Wir sind<br>angelslove.</h1>
+    <p>
+      angelslove ist ein kreatives Studio für Film, Fotografie und visuelle Kommunikation.
+      Wir glauben an die Kraft starker Bilder und authentischer Geschichten —
+      und an die Zusammenarbeit mit Menschen, die etwas zu sagen haben.
+    </p>
+  </div>
+
+  <div class="about__team">
+
+    <div class="about__member">
+  <div class="about__portrait" style="background-image: url('Website/ABOUT_US/assets/maxeno.jpg'); background-size: cover; background-position: center;"></div>
+      <h2 class="about__name">maxeno</h2>
+      <p class="about__role">Director &amp; Designer </p>
+    </div>
+
+    <div class="about__member" style="transition-delay:0.12s">
+      <div class="about__portrait" style="background-image: url('Website/ABOUT_US/assets/lennyleisi.jpg'); background-size: cover; background-position: center;"></div>
+
+      <h2 class="about__name">lennyleisi</h2>
+      <p class="about__role">DOP &amp; Editor</p>
+    </div>
+
+  </div>
+
+  <div class="about__story reveal">
+    <h2>Die Geschichte<br>hinter angelslove</h2>
+
+    <p>
+      Wir sind maxeno und lennyleisi — zwei kreative Köpfe, die sich irgendwo zwischen
+      Kameralicht und leeren Notizbüchern gefunden haben. Unsere Leidenschaft gilt
+      allem, was sich in Szene setzen lässt: Menschen, Emotionen, Momente.
+    </p>
+
+    <p>
+      angelslove entstand aus dem Wunsch heraus, Kreativität nicht als Dienstleistung,
+      sondern als Haltung zu leben. Wir wollten ein Studio schaffen, das sowohl
+      technische Präzision als auch künstlerische Freiheit vereint.
+    </p>
+
+    <p>
+      Was uns antreibt: Fotografie, die berührt. Film, der erzählt. Ideen, die
+      Grenzen verschieben. Wir arbeiten bevorzugt an Projekten, bei denen es um
+      mehr geht als nur ein schönes Bild — bei denen Inhalt und Form eine echte
+      Einheit bilden.
+    </p>
+
+    <p>
+      Unsere Werte: Ehrlichkeit in der Zusammenarbeit, Sorgfalt im Handwerk,
+      Mut zum Ungewöhnlichen.
+    </p>
+
+    <div style="margin-top:3rem">
+      <a href="#book" data-page="book" class="btn btn--red">JETZT ANFRAGEN</a>
+    </div>
+  </div>
+
+  <!-- Next page -->
+  <div class="page-next" onclick="showPage('book')" role="button" tabindex="0">
+    <div>
+      <p class="page-next__label">Weiter zu</p>
+      <p class="page-next__title">Book Us</p>
+    </div>
+    <span class="page-next__arrow">→</span>
+  </div>
+
+  <footer class="footer">
+    <span class="footer__copy">&copy; 2026 angelslove — all rights reserved</span>
+    <img src="Website/HOME/assets/angelslove_imagemark_black.svg" alt="angelslove" class="footer__logo" />
+  </footer>
+
+</section>
+
+
+<!-- ============================================================
+     BOOK US
+     ============================================================ -->
+<section id="book" class="page" role="main" style="display:none">
+  <div class="book__inner">
+
+  <div class="book__header reveal">
+    <span class="section__label" style="color:rgba(255,255,255,0.6)">Book Us</span>
+    <h1>Lass uns<br>zusammenarbeiten.</h1>
+  </div>
+
+  <div class="book__body">
+
+    <!-- Contact info -->
+    <div class="book__info reveal">
+      <h3>Direkter<br>Kontakt</h3>
+
+      <a href="tel:" class="book__phone">+41 77 501 52 19</a>
+      <p class="book__tagline">Wir melden uns innerhalb von 12 Stunden.</p>
+
+      <div class="book__divider"></div>
+
+      <p class="book__email-label">E-Mail</p>
+      <p class="book__email-val">max.hoeres@gmx.ch</p>
+
+      <div class="book__divider"></div>
+
+      <p class="book__email-label">Instagram</p>
+      <p class="book__email-val">@angelslove.studio</p>
+    </div>
+
+    <!-- Form -->
+    <!-- Formspree: ersetze DEINE_FORMSPREE_ID mit deiner ID von formspree.io -->
+    <div class="reveal" style="transition-delay:0.1s">
+      <form class="book__form" id="contact-form" novalidate
+            action="https://formspree.io/f/mlgkegka" method="POST">
+
+        <div class="form-field" id="field-name">
+          <label for="f-name">Name <span class="required">*</span></label>
+          <input type="text" id="f-name" name="name" placeholder="Dein Name" />
+          <span class="form-field__error">Bitte gib deinen Namen ein.</span>
+        </div>
+
+        <div class="form-field" id="field-email">
+          <label for="f-email">E-Mail <span class="required">*</span></label>
+          <input type="email" id="f-email" name="email" placeholder="deine@email.ch" />
+          <span class="form-field__error">Bitte gib eine gültige E-Mail-Adresse ein.</span>
+        </div>
+
+        <div class="form-field" id="field-subject">
+          <label for="f-subject">Betreff <span class="required">*</span></label>
+          <input type="text" id="f-subject" name="subject" placeholder="Worum geht es?" />
+          <span class="form-field__error">Bitte gib einen Betreff ein.</span>
+        </div>
+
+        <div class="form-field" id="field-msg">
+          <label for="f-msg">Nachricht <span class="required">*</span></label>
+          <textarea id="f-msg" name="message" placeholder="Erzähl uns von deinem Projekt …"></textarea>
+          <span class="form-field__error">Bitte schreib uns eine kurze Nachricht.</span>
+        </div>
+
+        <div class="form__submit">
+          <button type="submit" class="btn btn--book">ABSENDEN</button>
+        </div>
+
+      </form>
+
+      <div class="form__success" id="form-success">
+        Danke für deine Anfrage — wir melden uns bald!
+      </div>
+    </div>
+
+  </div>
+
+  </div><!-- /book__inner -->
+
+  <footer class="footer">
+    <span class="footer__copy">&copy; 2026 angelslove — all rights reserved</span>
+    <img src="Website/HOME/assets/angelslove_imagemark_black.svg" alt="angelslove" class="footer__logo" />
+  </footer>
+
+</section>
+
+
+<script src="Website/CREATIVE_SPACE/creative-space-data.js"></script>
+<script src="Website/PROJECTS/projects-data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
