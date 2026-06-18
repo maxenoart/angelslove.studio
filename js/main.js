@@ -56,9 +56,11 @@ function showPage(id, pushState = true) {
   if (id === 'home') {
     setNavDark();
     document.body.classList.add('is-home');
+    document.documentElement.classList.add('is-home');
   } else {
     setNavScrolled();
     document.body.classList.remove('is-home');
+    document.documentElement.classList.remove('is-home');
   }
 
   // Book Us: red background throughout — nav matches
@@ -96,16 +98,79 @@ toggle.addEventListener('click', () => {
   mobileMenu.classList.toggle('open');
 });
 
-// ---- Scroll: home nav only --------------------------------
-window.addEventListener('scroll', () => {
-  if (currentPage === 'home') {
-    if (window.scrollY > 20) {
-      setNavScrolled();
-    } else {
-      setNavDark();
-    }
+// ---- Home: no real scrolling — nav stays dark/transparent always ----
+// (Home page no longer scrolls at all; see gesture handling below.)
+
+// ---- Home gesture: light scroll/swipe = resistance + bounce back,
+//      strong scroll/swipe = navigate to Creative Space ("Inspire Me") ----
+(function () {
+  const homeEl = document.getElementById('home');
+  if (!homeEl) return;
+
+  const WHEEL_THRESHOLD = 70;
+  const TOUCH_THRESHOLD = 60;
+  const TOUCH_MIN       = 8; // ignore accidental taps
+
+  let wheelAccum = 0;
+  let wheelResetTimer = null;
+
+  function bounceBack() {
+    homeEl.classList.remove('home--resist');
+    // restart animation even if triggered twice quickly
+    void homeEl.offsetWidth;
+    homeEl.classList.add('home--resist');
+    setTimeout(() => homeEl.classList.remove('home--resist'), 260);
   }
-}, { passive: true });
+
+  function goInspire() {
+    showPage('creative-space');
+  }
+
+  window.addEventListener('wheel', e => {
+    if (currentPage !== 'home') return;
+    e.preventDefault();
+
+    if (e.deltaY < 0) { wheelAccum = 0; return; } // scrolling up: ignore
+
+    wheelAccum += e.deltaY;
+    clearTimeout(wheelResetTimer);
+    wheelResetTimer = setTimeout(() => { wheelAccum = 0; }, 350);
+
+    if (wheelAccum > WHEEL_THRESHOLD) {
+      wheelAccum = 0;
+      goInspire();
+    } else {
+      bounceBack();
+    }
+  }, { passive: false });
+
+  let touchStartY  = 0;
+  let touchTracking = false;
+
+  homeEl.addEventListener('touchstart', e => {
+    if (currentPage !== 'home') return;
+    touchStartY = e.touches[0].clientY;
+    touchTracking = true;
+  }, { passive: true });
+
+  homeEl.addEventListener('touchmove', e => {
+    if (currentPage !== 'home' || !touchTracking) return;
+    e.preventDefault(); // block native scroll / overscroll bounce
+  }, { passive: false });
+
+  homeEl.addEventListener('touchend', e => {
+    if (currentPage !== 'home' || !touchTracking) return;
+    touchTracking = false;
+    const endY = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientY : touchStartY;
+    const diff = touchStartY - endY; // positive = swipe up
+
+    if (diff > TOUCH_THRESHOLD) {
+      goInspire();
+    } else if (diff > TOUCH_MIN) {
+      bounceBack();
+    }
+  }, { passive: true });
+})();
 
 // ---- Scroll reveal ----------------------------------------
 const revealObserver = new IntersectionObserver((entries) => {
