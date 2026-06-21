@@ -468,6 +468,10 @@ body.is-home .nav--dark .nav__logo {
 
 .cs__item--accent .cs__placeholder { background: var(--red); }
 
+.cs__item--clickable { cursor: pointer; }
+.cs__item--clickable img { transition: transform 0.5s ease; }
+.cs__item--clickable:hover img { transform: scale(1.045); }
+
 .cs__item--text {
   padding: clamp(2rem, 4vw, 3.5rem);
   background: var(--grey-100);

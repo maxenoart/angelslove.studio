@@ -261,30 +261,72 @@ function triggerReveals() {
   });
 }
 
-// ---- Build Creative Space grid from data ------------------
+// ---- Build Creative Space grid: random project covers + BTS shots ----
+// Pulls every project's cover image and behind-the-scenes shots, shuffles
+// them into a fresh random order on each page load, and makes each one
+// clickable through to its project. A couple of curated story/text
+// blocks (from creative-space-data.js, if present) get sprinkled in too.
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const CS_CARD_LIMIT = 14; // keep the grid to a fixed, manageable size
+
 function buildCreativeSpace() {
   const grid = document.getElementById('cs-grid');
-  if (!grid || typeof CREATIVE_SPACE_ITEMS === 'undefined') return;
+  if (!grid) return;
 
-  grid.innerHTML = CREATIVE_SPACE_ITEMS.map(item => {
+  const RATIOS = ['4/3', '3/4', '1/1', '16/9'];
+
+  // Media: every project's cover + behind-the-scenes shots, clickable.
+  const mediaItems = [];
+  if (typeof PROJECTS !== 'undefined') {
+    PROJECTS.forEach(p => {
+      if (p.cover) {
+        mediaItems.push({ type: 'project', src: p.cover, caption: p.title, projectId: p.id });
+      }
+      (p.bts || []).forEach(src => {
+        mediaItems.push({ type: 'project', src, caption: `Behind the Scenes — ${p.title}`, projectId: p.id });
+      });
+    });
+  }
+
+  // Editorial text blocks, if defined in creative-space-data.js — cap to 2
+  // so the grid stays mostly imagery.
+  const allTextItems = (typeof CREATIVE_SPACE_ITEMS !== 'undefined')
+    ? CREATIVE_SPACE_ITEMS.filter(i => i.type === 'text')
+    : [];
+  const textItems = shuffle(allTextItems).slice(0, Math.min(2, allTextItems.length));
+
+  // Shuffle the media, cap the total card count, then drop the text
+  // blocks in at random spots — different selection/layout every load.
+  const items = shuffle(mediaItems).slice(0, Math.max(0, CS_CARD_LIMIT - textItems.length));
+  textItems.forEach(t => {
+    items.splice(Math.floor(Math.random() * (items.length + 1)), 0, t);
+  });
+
+  grid.innerHTML = items.map((item, i) => {
+    const delay = `${(i % 6) * 0.06}s`;
+
     if (item.type === 'text') {
       const heading = item.heading.replace(/\n/g, '<br>');
       return `
-        <div class="cs__item cs__item--text" style="transition-delay:${item.delay}">
+        <div class="cs__item cs__item--text" style="transition-delay:${delay}">
           <h3>${heading}</h3>
           <p>${item.text}</p>
         </div>`;
     }
 
-    const accentClass = item.accent ? ' cs__item--accent' : '';
-    const hasImage = item.src;
-    const inner = hasImage
-      ? `<img src="${item.src}" alt="${item.caption}" style="aspect-ratio:${item.aspectRatio};width:100%;object-fit:cover;display:block;">`
-      : `<div class="cs__placeholder" style="aspect-ratio:${item.aspectRatio}"></div>`;
-
+    const aspectRatio = RATIOS[i % RATIOS.length];
     return `
-      <div class="cs__item${accentClass}" style="transition-delay:${item.delay}">
-        ${inner}
+      <div class="cs__item cs__item--clickable" style="transition-delay:${delay}"
+           onclick="openProject(${item.projectId})" role="button" tabindex="0">
+        <img src="${item.src}" alt="${item.caption}" style="aspect-ratio:${aspectRatio};width:100%;object-fit:cover;display:block;">
         <span class="cs__item-caption">${item.caption}</span>
       </div>`;
   }).join('');
