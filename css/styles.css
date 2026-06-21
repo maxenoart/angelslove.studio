@@ -83,6 +83,8 @@ body {
 
 img, svg, video { display: block; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
+
+::selection { background: var(--red); color: var(--white); }
 button { font-family: var(--font); cursor: pointer; border: none; background: none; }
 
 /* --- Typography -------------------------------------------- */
@@ -464,6 +466,11 @@ body.is-home .nav--dark .nav__logo {
   text-transform: uppercase;
   font-weight: 600;
   color: var(--grey-400);
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cs__item--accent .cs__placeholder { background: var(--red); }
@@ -471,13 +478,19 @@ body.is-home .nav--dark .nav__logo {
 .cs__item--clickable { cursor: pointer; }
 .cs__item--clickable img { transition: transform 0.5s ease; }
 .cs__item--clickable:hover img { transform: scale(1.045); }
+.cs__item--clickable:hover .cs__item-caption { color: var(--red); }
 
 .cs__item--text {
-  padding: clamp(2rem, 4vw, 3.5rem);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
   background: var(--grey-100);
+  display: flex;
+  align-items: center;
+  min-height: 120px;
 }
-.cs__item--text h3 { margin-bottom: 1rem; font-size: 1.6rem; }
-.cs__item--text p { font-size: 0.95rem; color: var(--grey-700); }
+.cs__item--text h3 { font-size: 1.6rem; margin: 0; }
+
+.cs__item--text-accent { background: var(--red); }
+.cs__item--text-accent h3 { color: var(--white); }
 
 /* ============================================================
    PROJECTS
@@ -952,16 +965,16 @@ body.is-home .nav--dark .nav__logo {
 .form-field input::placeholder,
 .form-field textarea::placeholder { color: rgba(255,255,255,0.35); }
 .form-field input:focus,
-.form-field textarea:focus { border-color: var(--white); }
+.form-field textarea:focus { border-color: var(--red); }
 .form-field textarea { height: 120px; }
 
 .form__submit { margin-top: 0.5rem; align-self: flex-start; }
 
 /* Required marker */
 .form-field label .required {
-  color: var(--white);
+  color: var(--red);
   margin-left: 2px;
-  opacity: 0.7;
+  opacity: 1;
 }
 
 /* Field error state */
@@ -1057,7 +1070,15 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
   :root { --nav-h: 60px; }
   .nav__links { display: none; }
   .nav__toggle { display: flex; }
-  .cs__grid { columns: 1; }
+  .cs__grid { columns: 2; column-gap: 0.8rem; }
+  .cs__item { margin-bottom: 0.8rem; }
+  .cs__item-caption { font-size: 0.6rem; padding: 0.6rem 0 0.4rem; }
+  .cs__item--text {
+    column-span: all;
+    padding: 1.5rem;
+    min-height: auto;
+  }
+  .cs__item--text h3 { font-size: 1.2rem; }
   .projects__grid { grid-template-columns: 1fr; }
   .about__team { grid-template-columns: 1fr; gap: 3rem; }
   .home__cta { flex-direction: column; align-items: center; gap: 1rem; }

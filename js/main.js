@@ -291,17 +291,20 @@ function buildCreativeSpace() {
         mediaItems.push({ type: 'project', src: p.cover, caption: p.title, projectId: p.id });
       }
       (p.bts || []).forEach(src => {
-        mediaItems.push({ type: 'project', src, caption: `Behind the Scenes — ${p.title}`, projectId: p.id });
+        mediaItems.push({ type: 'project', src, caption: `BTS — ${p.title}`, projectId: p.id });
       });
     });
   }
 
   // Editorial text blocks, if defined in creative-space-data.js — cap to 2
-  // so the grid stays mostly imagery.
+  // so the grid stays mostly imagery. The first one gets a red accent
+  // background so a few boxes break up the imagery with color.
   const allTextItems = (typeof CREATIVE_SPACE_ITEMS !== 'undefined')
     ? CREATIVE_SPACE_ITEMS.filter(i => i.type === 'text')
     : [];
-  const textItems = shuffle(allTextItems).slice(0, Math.min(2, allTextItems.length));
+  const textItems = shuffle(allTextItems)
+    .slice(0, Math.min(2, allTextItems.length))
+    .map((t, idx) => ({ ...t, accentBox: idx === 0 }));
 
   // Shuffle the media, cap the total card count, then drop the text
   // blocks in at random spots — different selection/layout every load.
@@ -315,10 +318,10 @@ function buildCreativeSpace() {
 
     if (item.type === 'text') {
       const heading = item.heading.replace(/\n/g, '<br>');
+      const accentClass = item.accentBox ? ' cs__item--text-accent' : '';
       return `
-        <div class="cs__item cs__item--text" style="transition-delay:${delay}">
+        <div class="cs__item cs__item--text${accentClass}" style="transition-delay:${delay}">
           <h3>${heading}</h3>
-          <p>${item.text}</p>
         </div>`;
     }
 
