@@ -124,6 +124,13 @@
     <h1>Unsere Arbeiten</h1>
   </div>
 
+  <div class="projects__filters reveal" id="projects-filters">
+    <button class="projects__filter active" data-filter="all" onclick="filterProjects('all')">Alle</button>
+    <button class="projects__filter" data-filter="video" onclick="filterProjects('video')">Video</button>
+    <button class="projects__filter" data-filter="photo" onclick="filterProjects('photo')">Fotografie</button>
+    <button class="projects__filter" data-filter="design" onclick="filterProjects('design')">Design</button>
+  </div>
+
   <!-- Cards werden automatisch aus js/projects-data.js generiert -->
   <div class="projects__grid" id="projects-grid"></div>
 
@@ -229,21 +236,19 @@
     </p>
   </div>
 
-  <div class="about__team">
-
-    <div class="about__member">
-  <div class="about__portrait" style="background-image: url('Website/ABOUT_US/assets/maxeno.jpg'); background-size: cover; background-position: center;"></div>
-      <h2 class="about__name">maxeno</h2>
-      <p class="about__role">Director &amp; Designer </p>
+  <div class="about__hero reveal">
+    <img src="Website/ABOUT_US/assets/maxeno_lennyleisi.jpg" alt="maxeno & lennyleisi" class="about__hero-img">
+    <div class="about__hero-names">
+      <div class="about__hero-person">
+        <span class="about__hero-name">maxeno</span>
+        <span class="about__role">Director &amp; Designer</span>
+      </div>
+      <span class="about__hero-divider"></span>
+      <div class="about__hero-person">
+        <span class="about__hero-name">lennyleisi</span>
+        <span class="about__role">DOP &amp; Editor</span>
+      </div>
     </div>
-
-    <div class="about__member" style="transition-delay:0.12s">
-      <div class="about__portrait" style="background-image: url('Website/ABOUT_US/assets/lennyleisi.jpg'); background-size: cover; background-position: center;"></div>
-
-      <h2 class="about__name">lennyleisi</h2>
-      <p class="about__role">DOP &amp; Editor</p>
-    </div>
-
   </div>
 
   <div class="about__story reveal">

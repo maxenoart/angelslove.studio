@@ -85,6 +85,13 @@ img, svg, video { display: block; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
 
 ::selection { background: var(--red); color: var(--white); }
+
+/* Experimental: red scrollbar thumb instead of the default grey one */
+html { scrollbar-color: var(--red) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--red); border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: #b40530; }
 button { font-family: var(--font); cursor: pointer; border: none; background: none; }
 
 /* --- Typography -------------------------------------------- */
@@ -97,6 +104,15 @@ h1, h2, h3, h4 {
 h1 { font-size: clamp(2.5rem, 7vw, 6rem); }
 h2 { font-size: clamp(1.8rem, 4vw, 3.5rem); }
 h3 { font-size: clamp(1.2rem, 2.5vw, 2rem); }
+
+/* Experimental accent: the first letter of every main page headline
+   picks up the corporate red — a small, recurring signature touch. */
+.cs__header h1::first-letter,
+.projects__header h1::first-letter,
+.about__intro h1::first-letter,
+.book__header h1::first-letter {
+  color: var(--red);
+}
 h4 { font-size: clamp(1rem, 1.8vw, 1.4rem); }
 p  { line-height: 1.7; font-weight: 300; }
 
@@ -504,6 +520,34 @@ body.is-home .nav--dark .nav__logo {
 
 .projects__header { margin-bottom: clamp(3rem, 6vw, 6rem); }
 
+/* ---- Filter bar --------------------------------------------- */
+.projects__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(0.5rem, 1.5vw, 1rem);
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.projects__filter {
+  font-family: var(--font);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--grey-700);
+  background: transparent;
+  border: 1px solid var(--grey-400);
+  padding: 0.6rem 1.3rem;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
+}
+.projects__filter:hover { border-color: var(--red); color: var(--red); }
+.projects__filter.active {
+  background: var(--red);
+  border-color: var(--red);
+  color: var(--white);
+}
+
 /* ---- Project grid ----------------------------------------- */
 .projects__grid {
   display: grid;
@@ -545,7 +589,18 @@ body.is-home .nav--dark .nav__logo {
 
 .project-card__info {
   padding: 1rem 0 0.25rem;
+  position: relative;
 }
+.project-card__info::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--red);
+  transition: width 0.4s ease;
+}
+.project-card:hover .project-card__info::before { width: 100%; }
 
 .project-card__category {
   display: block;
@@ -758,42 +813,55 @@ body.is-home .nav--dark .nav__logo {
 .about__intro h1 { margin-bottom: 2rem; }
 .about__intro p { font-size: 1.15rem; color: var(--grey-700); }
 
-.about__team {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(2rem, 5vw, 5rem);
+/* Single screen-filling hero image of both founders, full-bleed
+   (breaks out of the page's left/right padding via the 100vw trick). */
+.about__hero {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  height: clamp(420px, 85vh, 900px);
+  margin-top: clamp(-1rem, -2vw, -0.5rem);
   margin-bottom: clamp(5rem, 9vw, 9rem);
-}
-
-.about__member {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-.about__member.revealed { opacity: 1; transform: translateY(0); }
-
-.about__portrait {
-  width: 100%;
-  aspect-ratio: 3/4;
-  background: var(--black);
-  margin-bottom: 1.5rem;
   overflow: hidden;
+  background: var(--black);
 }
-.about__portrait img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  transition: transform 0.7s ease;
-}
-.about__member:hover .about__portrait img { transform: scale(1.03); }
 
-.about__name {
-  font-size: clamp(1.6rem, 3vw, 2.5rem);
+.about__hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.about__hero-names {
+  position: absolute;
+  left: clamp(1.5rem, 4vw, 5rem);
+  right: clamp(1.5rem, 4vw, 5rem);
+  bottom: clamp(1.5rem, 4vw, 3rem);
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(1.5rem, 4vw, 3rem);
+}
+
+.about__hero-divider {
+  width: 1px;
+  height: 2.2rem;
+  background: var(--red);
+  flex-shrink: 0;
+}
+
+.about__hero-name {
+  display: block;
+  font-size: clamp(1.6rem, 3.5vw, 3rem);
   font-weight: 700;
   letter-spacing: var(--tracking-headline);
   text-transform: lowercase;
+  color: var(--white);
 }
 
 .about__role {
+  display: block;
   font-size: 0.65rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -1062,7 +1130,6 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
 @media (max-width: 900px) {
   .cs__grid { columns: 2; }
   .detail__body { grid-template-columns: 1fr; gap: 2.5rem; }
-  .about__team { gap: 2rem; }
   .book__body { grid-template-columns: 1fr; gap: 3rem; }
 }
 
@@ -1080,7 +1147,9 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
   }
   .cs__item--text h3 { font-size: 1.2rem; }
   .projects__grid { grid-template-columns: 1fr; }
-  .about__team { grid-template-columns: 1fr; gap: 3rem; }
+  .about__hero { height: clamp(360px, 60vh, 600px); }
+  .about__hero-names { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .about__hero-divider { display: none; }
   .home__cta { flex-direction: column; align-items: center; gap: 1rem; }
   .footer { flex-direction: column; align-items: flex-start; gap: 1rem; }
 }

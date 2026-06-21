@@ -252,7 +252,7 @@ const revealObserver = new IntersectionObserver((entries) => {
 
 function triggerReveals() {
   const els = document.querySelectorAll(
-    '.page.visible .reveal, .page.visible .cs__item, .page.visible .project-card, .page.visible .about__member'
+    '.page.visible .reveal, .page.visible .cs__item, .page.visible .project-card'
   );
   els.forEach(el => {
     if (!el.classList.contains('revealed')) {
@@ -343,13 +343,15 @@ function formatDate(dateStr) {
 }
 
 // ---- Build project cards (sorted newest first) ------------
+let currentProjectFilter = 'all';
+
 function buildProjectCards() {
   const grid = document.getElementById('projects-grid');
   if (!grid || typeof PROJECTS === 'undefined') return;
 
-  const sorted = [...PROJECTS].sort((a, b) =>
-    (b.date || '').localeCompare(a.date || '')
-  );
+  const sorted = [...PROJECTS]
+    .filter(p => currentProjectFilter === 'all' || p.type === currentProjectFilter)
+    .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
   grid.innerHTML = sorted.map(p => {
     const coverStyle = p.cover
@@ -364,7 +366,18 @@ function buildProjectCards() {
         </div>
       </article>`;
   }).join('');
+
+  triggerReveals();
 }
+
+// ---- Project filter buttons --------------------------------
+window.filterProjects = function(type) {
+  currentProjectFilter = type;
+  document.querySelectorAll('.projects__filter').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.filter === type);
+  });
+  buildProjectCards();
+};
 
 // ---- Project detail ---------------------------------------
 window.openProject = function(id) {

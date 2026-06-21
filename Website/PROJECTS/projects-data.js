@@ -14,12 +14,16 @@
    Neues Projekt hinzufügen:
    1. Bilder in Website/PROJECTS/assets/ ablegen
    2. Eintrag unten kopieren und anpassen
+
+   type: 'video' | 'photo' | 'design'  ← steuert den Filter auf der
+   Projects-Seite (Alle / Video / Fotografie / Design)
    ============================================================ */
 
 const PROJECTS = [
 
   {
     id:       1,
+    type:     'video',
     category: 'Spec Commercial',
     title:    'Hope Dies Last',
     date:     '2025-11-14',
@@ -43,6 +47,7 @@ const PROJECTS = [
 
   {
     id:       2,
+    type:     'video',
     category: 'Mini Dokumentation',
     title:    'Hinterhof Olten',
     date:     '2026-01-01',
@@ -64,6 +69,7 @@ const PROJECTS = [
 
   {
     id:       3,
+    type:     'video',
     category: 'Musikvideo',
     title:    'Dnapsta - Valhalla',
     date:     '2026-03-27',
