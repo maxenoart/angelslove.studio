@@ -497,19 +497,20 @@ body.is-home .nav--dark .nav__logo {
    PROJECTS
    ============================================================ */
 /* ---- Hero — random project cover, full size, fades to white toward
-   the bottom. The hero itself keeps its full height and does NOT
-   overlap the filter bar — only the grid is pulled up on top of it
-   (z-index above the hero), so cards visibly pop out over the banner
-   while the filters stay fully visible underneath. ---------------- */
+   the bottom; pulled down over the body via negative margin so the
+   first project row + filters are already visible without scrolling,
+   exactly like the version that worked well. The filter bar gets an
+   even higher z-index than the hero so it always stays fully visible,
+   no matter how deep into the fade it lands. ---------------------- */
 .projects__hero {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
   height: 92vh;
   height: 92dvh;
-  margin-bottom: 0;
+  margin-bottom: -42vh;
   overflow: hidden;
   background: var(--black);
   pointer-events: none;
@@ -542,32 +543,28 @@ body.is-home .nav--dark .nav__logo {
   position: absolute;
   left: clamp(1.5rem, 4vw, 5rem);
   right: clamp(1.5rem, 4vw, 5rem);
-  bottom: 56vh;
+  bottom: 38vh;
   color: var(--white);
 }
 .projects__hero-info .section__label { color: rgba(255,255,255,0.7); }
 
-/* ---- Body — pulled up as a whole over the hero's fade (filters
-   and grid move together, so filters stay visually ABOVE the grid,
-   exactly like their order in the markup) — both sit above the hero
-   in z-index, so they stay fully visible over the banner. --------- */
+/* ---- Body — sits behind the hero's fade so the first project row
+   is already visible without scrolling -------------------------- */
 .projects__body {
   position: relative;
-  z-index: 2;
-  margin-top: -50vh;
+  z-index: 1;
   background: var(--white);
-  padding-top: 4rem;
+  padding-top: calc(var(--nav-h) + 4rem);
   padding-bottom: 8rem;
   padding-left: clamp(1.5rem, 4vw, 5rem);
   padding-right: clamp(1.5rem, 4vw, 5rem);
 }
 
-/* ---- Filter bar — always rendered above the grid (which can be
-   pulled up over the hero), so the filters stay fully visible no
-   matter how far the grid overlaps. ------------------------------ */
+/* ---- Filter bar — z-index higher than the hero, so it always stays
+   fully visible even though it sits within the hero's overlap zone. */
 .projects__filters {
   position: relative;
-  z-index: 4;
+  z-index: 5;
   display: flex;
   flex-wrap: wrap;
   gap: clamp(0.75rem, 1.8vw, 1.1rem);
@@ -594,11 +591,8 @@ body.is-home .nav--dark .nav__logo {
   color: var(--white);
 }
 
-/* ---- Project grid — moves up together with the body/filters above
-   (see .projects__body); stays above the hero in z-index. --------- */
+/* ---- Project grid ----------------------------------------- */
 .projects__grid {
-  position: relative;
-  z-index: 3;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
   gap: clamp(1.25rem, 2.5vw, 2rem);
@@ -1216,9 +1210,8 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
   }
   .cs__item--text h3 { font-size: 1.2rem; }
   .projects__grid { grid-template-columns: 1fr; }
-  .projects__hero { height: 80vh; height: 80dvh; margin-bottom: 0; }
-  .projects__hero-info { bottom: 44vh; }
-  .projects__body { margin-top: -38vh; }
+  .projects__hero { height: 80vh; height: 80dvh; margin-bottom: -32vh; }
+  .projects__hero-info { bottom: 30vh; }
   .about__people { grid-template-columns: 1fr; gap: 3rem; }
   .home__cta { flex-direction: column; align-items: center; gap: 1rem; }
   .footer { flex-direction: column; align-items: flex-start; gap: 1rem; }
