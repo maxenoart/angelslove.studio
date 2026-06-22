@@ -69,8 +69,7 @@ html {
   scroll-padding-top: var(--nav-h);
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none; /* no rubber-band bounce → no white flash above the video */
-  overflow-x: hidden;
-  max-width: 100vw;
+  max-width: 100%;
 }
 
 body {
