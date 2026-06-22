@@ -502,16 +502,18 @@ body.is-home .nav--dark .nav__logo {
 /* ============================================================
    PROJECTS
    ============================================================ */
-/* ---- Hero — latest project, full-bleed, fades to white ----- */
+/* ---- Hero — latest project, fades to white well before its own
+   bottom edge so the grid is already visible, half over the image,
+   without any scrolling ---------------------------------------- */
 .projects__hero {
   position: relative;
   z-index: 2;
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
-  height: 100vh;
-  height: 100dvh;
-  margin-bottom: -10rem;
+  height: 58vh;
+  height: 58dvh;
+  margin-bottom: -16rem;
   overflow: hidden;
   background: var(--black);
   cursor: pointer;
@@ -530,10 +532,10 @@ body.is-home .nav--dark .nav__logo {
   background: linear-gradient(
     to bottom,
     rgba(0,0,0,0.3) 0%,
-    rgba(0,0,0,0) 30%,
-    rgba(0,0,0,0) 50%,
-    rgba(255,255,255,0.65) 82%,
-    var(--white) 100%
+    rgba(0,0,0,0) 28%,
+    rgba(0,0,0,0) 42%,
+    rgba(255,255,255,0.7) 68%,
+    var(--white) 88%
   );
 }
 
@@ -541,7 +543,7 @@ body.is-home .nav--dark .nav__logo {
   position: absolute;
   left: clamp(1.5rem, 4vw, 5rem);
   right: clamp(1.5rem, 4vw, 5rem);
-  top: clamp(6rem, 16vw, 10rem);
+  top: clamp(5rem, 13vw, 8rem);
   color: var(--white);
 }
 .projects__hero-info .section__label { color: rgba(255,255,255,0.7); }
@@ -552,19 +554,17 @@ body.is-home .nav--dark .nav__logo {
   color: var(--white);
 }
 
-/* ---- Body — sits above the hero's fade so it reads as already
-   visible underneath the dissolving image --------------------- */
+/* ---- Body — sits above the hero's fade so the grid is already
+   visible, half over the dissolving image -------------------- */
 .projects__body {
   position: relative;
   z-index: 1;
   background: var(--white);
-  padding-top: calc(var(--nav-h) + 4rem);
+  padding-top: calc(var(--nav-h) + 1.5rem);
   padding-bottom: 8rem;
   padding-left: clamp(1.5rem, 4vw, 5rem);
   padding-right: clamp(1.5rem, 4vw, 5rem);
 }
-
-.projects__header { margin-bottom: clamp(3rem, 6vw, 6rem); }
 
 /* ---- Filter bar --------------------------------------------- */
 .projects__filters {
@@ -903,7 +903,7 @@ body.is-home .nav--dark .nav__logo {
 .about__hero-name {
   display: block;
   font-size: clamp(2.4rem, 7vw, 5.5rem);
-  font-weight: 900;
+  font-weight: 400;
   letter-spacing: var(--tracking-headline);
   text-transform: lowercase;
   color: var(--white);
@@ -1216,7 +1216,7 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
   }
   .cs__item--text h3 { font-size: 1.2rem; }
   .projects__grid { grid-template-columns: 1fr; }
-  .projects__hero { margin-bottom: -6rem; }
+  .projects__hero { height: 50vh; height: 50dvh; margin-bottom: -9rem; }
   .about__people { grid-template-columns: 1fr; gap: 3rem; }
   .home__cta { flex-direction: column; align-items: center; gap: 1rem; }
   .footer { flex-direction: column; align-items: flex-start; gap: 1rem; }
