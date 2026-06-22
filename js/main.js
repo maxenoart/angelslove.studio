@@ -438,6 +438,27 @@ window.filterProjects = function(type) {
   buildProjectCards();
 };
 
+// Holt die reine YouTube-Video-ID egal ob eine ganze URL
+// (youtu.be/..., youtube.com/watch?v=..., .../embed/...) oder
+// bereits nur die ID eingegeben wurde.
+function extractYouTubeId(input) {
+  if (!input) return '';
+  const str = input.trim();
+  const patterns = [
+    /youtu\.be\/([a-zA-Z0-9_-]{6,})/,
+    /youtube\.com\/embed\/([a-zA-Z0-9_-]{6,})/,
+    /[?&]v=([a-zA-Z0-9_-]{6,})/,
+    /youtube\.com\/shorts\/([a-zA-Z0-9_-]{6,})/,
+  ];
+  for (const re of patterns) {
+    const m = str.match(re);
+    if (m) return m[1];
+  }
+  // Schon eine reine ID (kein "/" oder "." enthalten)
+  if (/^[a-zA-Z0-9_-]{6,}$/.test(str)) return str;
+  return '';
+}
+
 // ---- Project detail ---------------------------------------
 window.openProject = function(id) {
   if (typeof PROJECTS === 'undefined') return;
@@ -446,8 +467,9 @@ window.openProject = function(id) {
 
   // YouTube video
   const iframe = document.getElementById('detail-video');
-  if (p.video && p.video !== 'DEINE_YOUTUBE_ID') {
-    iframe.src = `https://www.youtube.com/embed/${p.video}?autoplay=0&rel=0&modestbranding=1`;
+  const videoId = extractYouTubeId(p.video);
+  if (videoId && videoId !== 'DEINE_YOUTUBE_ID') {
+    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1`;
     document.getElementById('detail-video-wrap').style.display = '';
   } else {
     iframe.src = '';

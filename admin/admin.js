@@ -187,6 +187,26 @@ async function loadInquiries() {
   refreshInquiriesBadge();
 }
 
+// Holt die reine YouTube-Video-ID egal ob eine ganze URL
+// (youtu.be/..., youtube.com/watch?v=..., .../embed/...) oder
+// bereits nur die ID eingegeben wurde.
+function extractYouTubeId(input) {
+  if (!input) return '';
+  const str = input.trim();
+  const patterns = [
+    /youtu\.be\/([a-zA-Z0-9_-]{6,})/,
+    /youtube\.com\/embed\/([a-zA-Z0-9_-]{6,})/,
+    /[?&]v=([a-zA-Z0-9_-]{6,})/,
+    /youtube\.com\/shorts\/([a-zA-Z0-9_-]{6,})/,
+  ];
+  for (const re of patterns) {
+    const m = str.match(re);
+    if (m) return m[1];
+  }
+  if (/^[a-zA-Z0-9_-]{6,}$/.test(str)) return str;
+  return '';
+}
+
 function escapeHtml(str) {
   return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
@@ -294,7 +314,7 @@ projectForm.addEventListener('submit', async e => {
     date:      document.getElementById('p-date').value || null,
     gear:      document.getElementById('p-gear').value.trim(),
     long_desc: document.getElementById('p-desc').value.trim(),
-    video:     document.getElementById('p-video').value.trim(),
+    video:     extractYouTubeId(document.getElementById('p-video').value.trim()),
     cover:     document.getElementById('p-cover-url').value.trim(),
     bts:       JSON.parse(document.getElementById('p-bts-urls').value || '[]'),
     credits,
