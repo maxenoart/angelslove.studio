@@ -507,10 +507,10 @@ body.is-home .nav--dark .nav__logo {
   margin-right: calc(50% - 50vw);
   height: 92vh;
   height: 92dvh;
-  margin-bottom: -22vh;
+  margin-bottom: -34vh;
   overflow: hidden;
   background: var(--black);
-  cursor: pointer;
+  pointer-events: none;
 }
 
 .projects__hero-img {
@@ -540,16 +540,10 @@ body.is-home .nav--dark .nav__logo {
   position: absolute;
   left: clamp(1.5rem, 4vw, 5rem);
   right: clamp(1.5rem, 4vw, 5rem);
-  bottom: 30vh;
+  bottom: 38vh;
   color: var(--white);
 }
 .projects__hero-info .section__label { color: rgba(255,255,255,0.7); }
-
-.projects__hero-title {
-  margin-top: 0.6rem;
-  font-size: clamp(2.2rem, 6vw, 4.5rem);
-  color: var(--white);
-}
 
 /* ---- Body — sits behind the hero's fade so the first project row
    is already visible without scrolling -------------------------- */
@@ -1208,8 +1202,8 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
   }
   .cs__item--text h3 { font-size: 1.2rem; }
   .projects__grid { grid-template-columns: 1fr; }
-  .projects__hero { height: 80vh; height: 80dvh; margin-bottom: -17vh; }
-  .projects__hero-info { bottom: 24vh; }
+  .projects__hero { height: 80vh; height: 80dvh; margin-bottom: -28vh; }
+  .projects__hero-info { bottom: 30vh; }
   .about__people { grid-template-columns: 1fr; gap: 3rem; }
   .home__cta { flex-direction: column; align-items: center; gap: 1rem; }
   .footer { flex-direction: column; align-items: flex-start; gap: 1rem; }

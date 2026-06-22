@@ -412,9 +412,8 @@ function buildProjectCards() {
   triggerReveals();
 }
 
-// ---- Projects hero — always shows the latest project ------
-window.projectsHeroId = null;
-
+// ---- Projects hero — always shows the latest project's cover image,
+// purely decorative (non-interactive, no project title revealed) ------
 function buildProjectsHero() {
   const hero = document.getElementById('projects-hero');
   if (!hero || typeof PROJECTS === 'undefined' || !PROJECTS.length) return;
@@ -422,10 +421,8 @@ function buildProjectsHero() {
   const latest = [...PROJECTS].sort((a, b) => (b.date || '').localeCompare(a.date || ''))[0];
   if (!latest) return;
 
-  window.projectsHeroId = latest.id;
   document.getElementById('projects-hero-img').src = latest.cover || '';
-  document.getElementById('projects-hero-img').alt = latest.title || '';
-  document.getElementById('projects-hero-title').textContent = latest.title || '—';
+  document.getElementById('projects-hero-img').alt = '';
 }
 
 // ---- Project filter buttons --------------------------------
