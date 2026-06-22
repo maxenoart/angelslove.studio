@@ -501,13 +501,11 @@ body.is-home .nav--dark .nav__logo {
    over the photo, visible the moment the page loads. ------------ */
 .projects__hero {
   position: relative;
-  z-index: 1;
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
-  height: 64vh;
-  height: 64dvh;
-  margin-bottom: -34vh;
+  height: 92vh;
+  height: 92dvh;
   overflow: hidden;
   background: var(--black);
   cursor: pointer;
@@ -525,9 +523,9 @@ body.is-home .nav--dark .nav__logo {
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(0,0,0,0.35) 0%,
-    rgba(0,0,0,0) 45%,
-    rgba(0,0,0,0.3) 100%
+    rgba(0,0,0,0.25) 0%,
+    rgba(0,0,0,0) 35%,
+    rgba(0,0,0,0.6) 100%
   );
 }
 
@@ -535,7 +533,7 @@ body.is-home .nav--dark .nav__logo {
   position: absolute;
   left: clamp(1.5rem, 4vw, 5rem);
   right: clamp(1.5rem, 4vw, 5rem);
-  top: clamp(5rem, 13vw, 8rem);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(2.5rem, 6vw, 4rem));
   color: var(--white);
 }
 .projects__hero-info .section__label { color: rgba(255,255,255,0.7); }
@@ -546,12 +544,11 @@ body.is-home .nav--dark .nav__logo {
   color: var(--white);
 }
 
-/* ---- Body — painted on top of the hero image; transparent so the
-   photo shows through the gaps around the cards ----------------- */
+/* ---- Body — comes after the hero, no overlap ---------------- */
 .projects__body {
   position: relative;
-  z-index: 2;
-  padding-top: calc(var(--nav-h) + 3rem);
+  background: var(--white);
+  padding-top: calc(var(--nav-h) + 4rem);
   padding-bottom: 8rem;
   padding-left: clamp(1.5rem, 4vw, 5rem);
   padding-right: clamp(1.5rem, 4vw, 5rem);
@@ -571,9 +568,9 @@ body.is-home .nav--dark .nav__logo {
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--white);
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.6);
+  color: var(--grey-700);
+  background: var(--white);
+  border: 1px solid var(--grey-400);
   padding: 0.6rem 1.3rem;
   cursor: pointer;
   transition: border-color var(--transition), color var(--transition), background var(--transition);
@@ -601,6 +598,7 @@ body.is-home .nav--dark .nav__logo {
   transform: translateY(24px);
   transition: opacity 0.6s ease, transform 0.6s ease;
   overflow: hidden;
+  border-radius: 3px;
   will-change: transform;
 }
 .project-card.revealed {
@@ -1201,7 +1199,7 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
   }
   .cs__item--text h3 { font-size: 1.2rem; }
   .projects__grid { grid-template-columns: 1fr; }
-  .projects__hero { height: 54vh; height: 54dvh; margin-bottom: -26vh; }
+  .projects__hero { height: 80vh; height: 80dvh; }
   .about__people { grid-template-columns: 1fr; gap: 3rem; }
   .home__cta { flex-direction: column; align-items: center; gap: 1rem; }
   .footer { flex-direction: column; align-items: flex-start; gap: 1rem; }
