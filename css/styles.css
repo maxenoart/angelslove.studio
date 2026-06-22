@@ -1161,6 +1161,16 @@ body.is-home .nav--dark .nav__logo {
 .footer__copy { font-size: 0.7rem; color: var(--grey-400); letter-spacing: 0.05em; }
 .footer__logo { width: 28px; opacity: 0.4; transition: opacity var(--transition); }
 .footer__logo:hover { opacity: 0.9; }
+.footer__legal {
+  font-size: 0.7rem;
+  color: var(--grey-400);
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.footer__legal:hover { color: var(--red); }
+#book .footer__legal { color: rgba(255,255,255,0.45); }
+#book .footer__legal:hover { color: var(--white); }
 
 /* Nav on Book Us — red background */
 body.is-book .nav--scrolled {
@@ -1184,6 +1194,52 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
 #book .footer__copy { color: rgba(255,255,255,0.45); }
 #book .footer__logo { filter: invert(1); opacity: 0.4; }
 #book .footer__logo:hover { opacity: 0.9; }
+
+/* ============================================================
+   IMPRESSUM
+   ============================================================ */
+.impressum__inner {
+  position: relative;
+  max-width: 760px;
+  padding: calc(var(--nav-h) + 5rem) clamp(1.5rem, 4vw, 5rem) 6rem;
+  margin: 0 auto;
+}
+.impressum__header { margin-bottom: clamp(3rem, 5vw, 4rem); }
+.impressum__body h3 {
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--black);
+  margin-bottom: 0.9rem;
+}
+.impressum__body p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--grey-700);
+}
+.impressum__divider {
+  width: 1.5rem;
+  height: 1.5px;
+  background: var(--grey-200);
+  margin: 2rem 0;
+}
+
+/* Versteckter Zugang zum Admin-Bereich — bewusst kaum sichtbar */
+.impressum__admin-access {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 0.75rem;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--grey-200);
+  font-size: 0.7rem;
+  text-decoration: none;
+  opacity: 0.5;
+}
+.impressum__admin-access:hover { color: var(--grey-400); }
 
 /* ============================================================
    RESPONSIVE
