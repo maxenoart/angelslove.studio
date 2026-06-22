@@ -507,7 +507,7 @@ body.is-home .nav--dark .nav__logo {
   margin-right: calc(50% - 50vw);
   height: 92vh;
   height: 92dvh;
-  margin-bottom: -34vh;
+  margin-bottom: -42vh;
   overflow: hidden;
   background: var(--black);
   pointer-events: none;
@@ -599,10 +599,11 @@ body.is-home .nav--dark .nav__logo {
   cursor: pointer;
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.6s ease, transform 0.6s ease, box-shadow var(--transition);
   overflow: hidden;
   border-radius: 3px;
   will-change: transform;
+  box-shadow: 0 1.5rem 3rem rgba(0,0,0,0.22);
 }
 .project-card.revealed {
   opacity: 1;
@@ -610,7 +611,8 @@ body.is-home .nav--dark .nav__logo {
 }
 .project-card:hover {
   transform: scale(1.015);
-  transition: opacity 0.6s ease, transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 2rem 4rem rgba(0,0,0,0.3);
+  transition: opacity 0.6s ease, transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow var(--transition);
 }
 
 .project-card__thumb {
@@ -1202,8 +1204,8 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
   }
   .cs__item--text h3 { font-size: 1.2rem; }
   .projects__grid { grid-template-columns: 1fr; }
-  .projects__hero { height: 80vh; height: 80dvh; margin-bottom: -28vh; }
-  .projects__hero-info { bottom: 30vh; }
+  .projects__hero { height: 80vh; height: 80dvh; margin-bottom: -32vh; }
+  .projects__hero-info { bottom: 36vh; }
   .about__people { grid-template-columns: 1fr; gap: 3rem; }
   .home__cta { flex-direction: column; align-items: center; gap: 1rem; }
   .footer { flex-direction: column; align-items: flex-start; gap: 1rem; }
