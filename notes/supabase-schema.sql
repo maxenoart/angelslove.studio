@@ -65,6 +65,30 @@ create policy "Authenticated can read events"
   on analytics_events for select
   using (auth.role() = 'authenticated');
 
+-- ---- Kontaktanfragen (Contact-Formular) ----------------------
+create table if not exists inquiries (
+  id          bigint generated always as identity primary key,
+  created_at  timestamptz not null default now(),
+  name        text not null default '',
+  email       text not null default '',
+  subject     text not null default '',
+  message     text not null default '',
+  is_read     boolean not null default false
+);
+
+alter table inquiries enable row level security;
+
+drop policy if exists "Anyone can submit inquiries" on inquiries;
+create policy "Anyone can submit inquiries"
+  on inquiries for insert
+  with check (true);
+
+drop policy if exists "Authenticated can manage inquiries" on inquiries;
+create policy "Authenticated can manage inquiries"
+  on inquiries for all
+  using (auth.role() = 'authenticated')
+  with check (auth.role() = 'authenticated');
+
 -- ---- Storage: Zugriff auf Bucket "project-images" ------------
 -- (Bucket selbst muss vorher manuell im Dashboard erstellt werden,
 --  siehe Anleitung oben — dieses Skript setzt nur die Zugriffsregeln)

@@ -532,6 +532,18 @@ if (contactForm) {
 
     if (!valid) return;
 
+    // Anfrage zusätzlich im Admin-Bereich speichern (Supabase)
+    if (window.supabaseClient) {
+      try {
+        window.supabaseClient.from('inquiries').insert({
+          name:    fields.name.el.value.trim(),
+          email:   fields.email.el.value.trim(),
+          subject: fields.subject.el.value.trim(),
+          message: fields.msg.el.value.trim(),
+        }).then(() => {}, () => {});
+      } catch (e) { /* nicht kritisch fürs Formular */ }
+    }
+
     // Submit to Formspree (or show success if no ID set yet)
     const btn = contactForm.querySelector('button[type="submit"]');
     btn.textContent = '...';

@@ -177,6 +177,18 @@ input, textarea, select {
 }
 .sidebar__nav button:hover { background: rgba(255,255,255,0.06); color: var(--white); }
 .sidebar__nav button.active { background: var(--red); color: var(--white); }
+.nav-badge {
+  display: inline-block;
+  background: var(--white);
+  color: var(--red);
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 20px;
+  margin-left: 0.35rem;
+  vertical-align: middle;
+}
+.sidebar__nav button.active .nav-badge { background: var(--white); color: var(--red); }
 
 .sidebar__logout {
   margin-top: auto;
@@ -311,6 +323,45 @@ input, textarea, select {
 .field--checkbox { display: flex; align-items: center; gap: 0.5rem; }
 .field--checkbox input { width: auto; }
 .field--checkbox label { margin: 0; }
+
+/* ---- Inquiries -------------------------------------------------- */
+.inquiry-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.inquiry-row {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--grey-200);
+}
+.inquiry-row--unread { border-color: var(--red); box-shadow: 0 0 0 1px rgba(226,7,59,0.15); }
+.inquiry-row__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+.inquiry-row__who { font-weight: 600; font-size: 0.95rem; text-transform: none; letter-spacing: 0; }
+.inquiry-row__who a { color: var(--red); text-decoration: none; }
+.inquiry-row__meta { font-size: 0.72rem; color: var(--grey-400); margin-top: 0.15rem; }
+.inquiry-row__subject { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem; }
+.inquiry-row__message { font-size: 0.85rem; color: var(--grey-700); line-height: 1.5; white-space: pre-wrap; margin-bottom: 0.75rem; }
+.inquiry-row__badge {
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+  font-weight: 700;
+  flex-shrink: 0;
+  background: rgba(226,7,59,0.12);
+  color: var(--red);
+}
+.inquiry-row__actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 
 /* ---- Stats ----------------------------------------------------- */
 .kpi-grid {

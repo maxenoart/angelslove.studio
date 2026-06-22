@@ -11,17 +11,20 @@ const loginError  = document.getElementById('login-error');
 const logoutBtn   = document.getElementById('logout-btn');
 
 let statsLoaded = false;
+let inquiriesLoaded = false;
 
 // ---- Auth ----------------------------------------------------
 function showDashboard() {
   loginScreen.style.display = 'none';
   dashboard.classList.add('is-active');
   loadProjects();
+  refreshInquiriesBadge();
 }
 function showLogin() {
   loginScreen.style.display = 'flex';
   dashboard.classList.remove('is-active');
   statsLoaded = false;
+  inquiriesLoaded = false;
 }
 
 async function checkSession() {
@@ -62,6 +65,10 @@ document.querySelectorAll('.sidebar__nav button').forEach(btn => {
     if (btn.dataset.view === 'stats' && !statsLoaded) {
       statsLoaded = true;
       loadStats();
+    }
+    if (btn.dataset.view === 'inquiries' && !inquiriesLoaded) {
+      inquiriesLoaded = true;
+      loadInquiries();
     }
   });
 });
@@ -113,6 +120,71 @@ async function loadProjects() {
       loadProjects();
     });
   });
+}
+
+// ---- Anfragen (Kontaktformular) --------------------------------
+const inquiryList = document.getElementById('inquiry-list');
+const inquiriesBadge = document.getElementById('inquiries-badge');
+
+async function refreshInquiriesBadge() {
+  if (!sb) return;
+  const { count } = await sb.from('inquiries').select('id', { count: 'exact', head: true }).eq('is_read', false);
+  if (count) {
+    inquiriesBadge.textContent = count;
+    inquiriesBadge.style.display = 'inline-block';
+  } else {
+    inquiriesBadge.style.display = 'none';
+  }
+}
+
+async function loadInquiries() {
+  inquiryList.innerHTML = '<p class="loading-note">Lade Anfragen …</p>';
+  const { data, error } = await sb.from('inquiries').select('*').order('created_at', { ascending: false });
+  if (error) {
+    inquiryList.innerHTML = `<p class="loading-note">Fehler beim Laden: ${error.message}</p>`;
+    return;
+  }
+  if (!data.length) {
+    inquiryList.innerHTML = '<div class="empty-state">Noch keine Anfragen über das Kontaktformular.</div>';
+    refreshInquiriesBadge();
+    return;
+  }
+
+  inquiryList.innerHTML = data.map(i => `
+    <div class="inquiry-row ${i.is_read ? '' : 'inquiry-row--unread'}" data-id="${i.id}">
+      <div class="inquiry-row__top">
+        <div>
+          <div class="inquiry-row__who">${escapeHtml(i.name || 'Unbekannt')} · <a href="mailto:${escapeHtml(i.email || '')}">${escapeHtml(i.email || '')}</a></div>
+          <div class="inquiry-row__meta">${i.created_at ? new Date(i.created_at).toLocaleString('de-CH') : ''}</div>
+        </div>
+        ${i.is_read ? '' : '<span class="inquiry-row__badge">Neu</span>'}
+      </div>
+      <div class="inquiry-row__subject">${escapeHtml(i.subject || '(kein Betreff)')}</div>
+      <div class="inquiry-row__message">${escapeHtml(i.message || '')}</div>
+      <div class="inquiry-row__actions">
+        <button class="btn btn--ghost btn--small" data-action="toggle-read">${i.is_read ? 'Als ungelesen markieren' : 'Als gelesen markieren'}</button>
+        <button class="btn btn--danger btn--small" data-action="delete">Löschen</button>
+      </div>
+    </div>
+  `).join('');
+
+  inquiryList.querySelectorAll('.inquiry-row').forEach(row => {
+    const id = Number(row.dataset.id);
+    const inquiry = data.find(i => i.id === id);
+    row.querySelector('[data-action="toggle-read"]').addEventListener('click', async () => {
+      await sb.from('inquiries').update({ is_read: !inquiry.is_read }).eq('id', id);
+      loadInquiries();
+      refreshInquiriesBadge();
+    });
+    row.querySelector('[data-action="delete"]').addEventListener('click', async () => {
+      if (!confirm('Diese Anfrage wirklich löschen?')) return;
+      await sb.from('inquiries').delete().eq('id', id);
+      loadInquiries();
+      refreshInquiriesBadge();
+    });
+  });
+
+  refreshInquiriesBadge();
 }
 
 function escapeHtml(str) {

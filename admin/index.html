@@ -40,6 +40,7 @@
     <div class="sidebar__logo">angelslove</div>
     <nav class="sidebar__nav">
       <button data-view="projects" class="active">Projekte</button>
+      <button data-view="inquiries">Anfragen <span class="nav-badge" id="inquiries-badge" style="display:none">0</span></button>
       <button data-view="stats">Statistik</button>
     </nav>
     <button class="sidebar__logout" id="logout-btn">Abmelden</button>
@@ -55,6 +56,16 @@
       </div>
       <div class="project-list" id="project-list">
         <p class="loading-note">Lade Projekte …</p>
+      </div>
+    </section>
+
+    <!-- ---- ANFRAGEN ---- -->
+    <section class="view" id="view-inquiries">
+      <div class="main__header">
+        <h1>Anfragen</h1>
+      </div>
+      <div class="inquiry-list" id="inquiry-list">
+        <p class="loading-note">Lade Anfragen …</p>
       </div>
     </section>
 
