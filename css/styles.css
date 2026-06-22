@@ -563,32 +563,40 @@ body.is-home .nav--dark .nav__logo {
   padding-right: clamp(1.5rem, 4vw, 5rem);
 }
 
-/* ---- Filter bar — outline style (no fill), since it sits directly
-   over the photo now. -------------------------------------------- */
+/* ---- Filter bar — frosted-glass pill with its own backdrop, so it
+   stays clearly visible no matter how bright/dark the photo behind
+   it is (no more white-on-white or white-on-light blending in). ---- */
 .projects__filters {
-  display: flex;
+  display: inline-flex;
   flex-wrap: wrap;
-  gap: clamp(0.75rem, 1.8vw, 1.1rem);
+  gap: 0.3rem;
+  padding: 0.3rem;
+  background: rgba(20, 20, 22, 0.45);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .projects__filter {
   font-family: var(--font);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--white);
+  color: rgba(255, 255, 255, 0.8);
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  padding: 0.6rem 1.3rem;
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1.2rem;
   cursor: pointer;
-  transition: border-color var(--transition), color var(--transition), background var(--transition);
+  transition: background var(--transition), color var(--transition);
 }
-.projects__filter:hover { border-color: var(--red); color: var(--red); }
+.projects__filter:hover { color: var(--white); background: rgba(255, 255, 255, 0.12); }
 .projects__filter.active {
   background: var(--red);
-  border-color: var(--red);
   color: var(--white);
 }
 
