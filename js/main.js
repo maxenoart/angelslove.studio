@@ -412,16 +412,19 @@ function buildProjectCards() {
   triggerReveals();
 }
 
-// ---- Projects hero — always shows the latest project's cover image,
-// purely decorative (non-interactive, no project title revealed) ------
+// ---- Projects hero — shows a random project cover each time the
+// page loads, purely decorative (non-interactive, no title revealed) ----
 function buildProjectsHero() {
   const hero = document.getElementById('projects-hero');
   if (!hero || typeof PROJECTS === 'undefined' || !PROJECTS.length) return;
 
-  const latest = [...PROJECTS].sort((a, b) => (b.date || '').localeCompare(a.date || ''))[0];
-  if (!latest) return;
+  const withCover = PROJECTS.filter(p => p.cover);
+  const pick = withCover.length
+    ? withCover[Math.floor(Math.random() * withCover.length)]
+    : PROJECTS[0];
+  if (!pick) return;
 
-  document.getElementById('projects-hero-img').src = latest.cover || '';
+  document.getElementById('projects-hero-img').src = pick.cover || '';
   document.getElementById('projects-hero-img').alt = '';
 }
 
