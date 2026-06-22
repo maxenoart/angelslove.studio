@@ -139,7 +139,14 @@ function showPage(id, pushState = true) {
 
   currentPage = id;
 
-  setNavScrolled();
+  // About Us opens on a full-screen photo (like Home's video) — start
+  // with the transparent/dark nav and let the scroll listener below
+  // switch it to the white "scrolled" nav once past the hero image.
+  if (id === 'about') {
+    setNavDark();
+  } else {
+    setNavScrolled();
+  }
   document.body.classList.remove('is-home');
   document.documentElement.classList.remove('is-home');
 
@@ -195,6 +202,34 @@ function showPage(id, pushState = true) {
     if (!ticking) {
       ticking = true;
       requestAnimationFrame(onFlowScroll);
+    }
+  }, { passive: true });
+})();
+
+// ---- About Us: nav switches from transparent (over the hero photo)
+// to white once the user scrolls past it — same idea as the Home video. ----
+(function () {
+  let ticking = false;
+  let wasOverHero = true;
+
+  function onAboutScroll() {
+    ticking = false;
+    if (currentPage !== 'about') return;
+
+    const heroEl = document.querySelector('#about .about__hero');
+    if (!heroEl) return;
+
+    const overHero = window.scrollY < heroEl.offsetHeight - 80;
+    if (overHero !== wasOverHero) {
+      wasOverHero = overHero;
+      if (overHero) setNavDark(); else setNavScrolled();
+    }
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(onAboutScroll);
     }
   }, { passive: true });
 })();

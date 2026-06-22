@@ -104,15 +104,6 @@ h1, h2, h3, h4 {
 h1 { font-size: clamp(2.5rem, 7vw, 6rem); }
 h2 { font-size: clamp(1.8rem, 4vw, 3.5rem); }
 h3 { font-size: clamp(1.2rem, 2.5vw, 2rem); }
-
-/* Experimental accent: the first letter of every main page headline
-   picks up the corporate red — a small, recurring signature touch. */
-.cs__header h1::first-letter,
-.projects__header h1::first-letter,
-.about__intro h1::first-letter,
-.book__header h1::first-letter {
-  color: var(--red);
-}
 h4 { font-size: clamp(1rem, 1.8vw, 1.4rem); }
 p  { line-height: 1.7; font-weight: 300; }
 
@@ -799,9 +790,10 @@ body.is-home .nav--dark .nav__logo {
 /* ============================================================
    ABOUT US
    ============================================================ */
-#about {
-  padding-top: calc(var(--nav-h) + 4rem);
-  padding-bottom: 8rem;
+#about { padding-bottom: 8rem; }
+
+.about__content {
+  padding-top: clamp(4rem, 8vw, 7rem);
   padding-left: clamp(1.5rem, 4vw, 5rem);
   padding-right: clamp(1.5rem, 4vw, 5rem);
 }
@@ -813,16 +805,17 @@ body.is-home .nav--dark .nav__logo {
 .about__intro h1 { margin-bottom: 2rem; }
 .about__intro p { font-size: 1.15rem; color: var(--grey-700); }
 
-/* Single screen-filling hero image of both founders, full-bleed
-   (breaks out of the page's left/right padding via the 100vw trick). */
+/* Single screen-filling hero image of both founders — sits flush at
+   the very top of the page, full-bleed, with the nav floating over it
+   (same technique as the Home video). The actual text content follows
+   underneath in .about__content. */
 .about__hero {
   position: relative;
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
-  height: clamp(420px, 85vh, 900px);
-  margin-top: clamp(-1rem, -2vw, -0.5rem);
-  margin-bottom: clamp(5rem, 9vw, 9rem);
+  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   background: var(--black);
 }
@@ -834,11 +827,17 @@ body.is-home .nav--dark .nav__logo {
   display: block;
 }
 
+.about__hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,0.55) 100%);
+}
+
 .about__hero-names {
   position: absolute;
   left: clamp(1.5rem, 4vw, 5rem);
   right: clamp(1.5rem, 4vw, 5rem);
-  bottom: clamp(1.5rem, 4vw, 3rem);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(2.5rem, 6vw, 4rem));
   display: flex;
   align-items: flex-end;
   gap: clamp(1.5rem, 4vw, 3rem);
@@ -1147,7 +1146,6 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
   }
   .cs__item--text h3 { font-size: 1.2rem; }
   .projects__grid { grid-template-columns: 1fr; }
-  .about__hero { height: clamp(360px, 60vh, 600px); }
   .about__hero-names { flex-direction: column; align-items: flex-start; gap: 1rem; }
   .about__hero-divider { display: none; }
   .home__cta { flex-direction: column; align-items: center; gap: 1rem; }
