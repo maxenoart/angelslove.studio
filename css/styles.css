@@ -542,30 +542,32 @@ body.is-home .nav--dark .nav__logo {
   position: absolute;
   left: clamp(1.5rem, 4vw, 5rem);
   right: clamp(1.5rem, 4vw, 5rem);
-  bottom: 38vh;
+  bottom: 30vh;
   color: var(--white);
 }
 .projects__hero-info .section__label { color: rgba(255,255,255,0.7); }
 
 /* ---- Body — rendered ON TOP of the hero (higher z-index), pulled
    up over it via the hero's negative margin. Filters and cards are
-   therefore always fully visible and crisp by construction. -------- */
+   therefore always fully visible and crisp by construction. Tight
+   padding-top so label / filters / cards sit close together. ------- */
 .projects__body {
   position: relative;
   z-index: 2;
   background: transparent;
-  padding-top: calc(var(--nav-h) + 4rem);
+  padding-top: 1.5rem;
   padding-bottom: 8rem;
   padding-left: clamp(1.5rem, 4vw, 5rem);
   padding-right: clamp(1.5rem, 4vw, 5rem);
 }
 
-/* ---- Filter bar --------------------------------------------- */
+/* ---- Filter bar — outline style (no fill), since it sits directly
+   over the photo now. -------------------------------------------- */
 .projects__filters {
   display: flex;
   flex-wrap: wrap;
   gap: clamp(0.75rem, 1.8vw, 1.1rem);
-  margin-bottom: clamp(3rem, 6vw, 5rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .projects__filter {
@@ -574,9 +576,9 @@ body.is-home .nav--dark .nav__logo {
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--grey-700);
-  background: var(--white);
-  border: 1px solid var(--grey-400);
+  color: var(--white);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.6);
   padding: 0.6rem 1.3rem;
   cursor: pointer;
   transition: border-color var(--transition), color var(--transition), background var(--transition);
