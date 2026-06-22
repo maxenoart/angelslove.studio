@@ -841,6 +841,11 @@ body.is-home .nav--dark .nav__logo {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
+  /* boosts the contrast of the photo sitting directly behind the names,
+     so the difference-blend text reads as crisp black/white instead of
+     muddy grey against mid-tone areas of the image */
+  backdrop-filter: contrast(1.9) brightness(1.05);
+  -webkit-backdrop-filter: contrast(1.9) brightness(1.05);
 }
 
 .about__hero-person--right { text-align: right; }
@@ -850,7 +855,7 @@ body.is-home .nav--dark .nav__logo {
 .about__hero-name {
   display: block;
   font-size: clamp(2.4rem, 7vw, 5.5rem);
-  font-weight: 700;
+  font-weight: 900;
   letter-spacing: var(--tracking-headline);
   text-transform: lowercase;
   color: var(--white);
@@ -870,6 +875,7 @@ body.is-home .nav--dark .nav__logo {
 .about__hero-names .about__role {
   color: var(--white);
   mix-blend-mode: difference;
+  font-weight: 800;
 }
 
 /* ---- Individual profiles: who we are, what we're good at --- */
@@ -877,15 +883,6 @@ body.is-home .nav--dark .nav__logo {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: clamp(2.5rem, 5vw, 5rem);
-}
-
-.about__person-index {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  color: var(--red);
-  margin-bottom: 1rem;
 }
 
 .about__person-name {
