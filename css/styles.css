@@ -431,27 +431,27 @@ body.is-home .nav--dark .nav__logo {
    CREATIVE SPACE
    ============================================================ */
 #creative-space {
-  padding-top: calc(var(--nav-h) + 4rem);
-  padding-bottom: 8rem;
+  padding-top: calc(var(--nav-h) + 3.25rem);
+  padding-bottom: 6.5rem;
   padding-left: clamp(1.5rem, 4vw, 5rem);
   padding-right: clamp(1.5rem, 4vw, 5rem);
 }
 
-.cs__header { margin-bottom: clamp(3rem, 6vw, 6rem); }
+.cs__header { margin-bottom: clamp(2.5rem, 5vw, 5rem); }
 .cs__header h1 { max-width: 800px; }
 .cs__subtitle {
-  margin-top: 1.5rem;
+  margin-top: 1.2rem;
   max-width: 500px;
   color: var(--grey-700);
   font-size: 1.05rem;
 }
 
 /* Masonry grid */
-.cs__grid { columns: 3; column-gap: 1.5rem; }
+.cs__grid { columns: 3; column-gap: 1.25rem; }
 
 .cs__item {
   break-inside: avoid;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   overflow: hidden;
   position: relative;
   opacity: 0;
@@ -1248,15 +1248,14 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
   :root { --nav-h: 60px; }
   .nav__links { display: none; }
   .nav__toggle { display: flex; }
-  .cs__grid { columns: 2; column-gap: 0.8rem; }
-  .cs__item { margin-bottom: 0.8rem; }
-  .cs__item-caption { font-size: 0.6rem; padding: 0.6rem 0 0.4rem; }
+  .cs__grid { columns: 2; column-gap: 0.7rem; }
+  .cs__item { margin-bottom: 0.7rem; }
+  .cs__item-caption { font-size: 0.6rem; padding: 0.5rem 0 0.4rem; }
   .cs__item--text {
-    column-span: all;
-    padding: 1.5rem;
+    padding: 1.1rem;
     min-height: auto;
   }
-  .cs__item--text h3 { font-size: 1.2rem; }
+  .cs__item--text h3 { font-size: 1rem; }
   .projects__grid { grid-template-columns: 1fr; }
   .projects__hero { height: 80vh; height: 80dvh; margin-bottom: -32vh; }
   .projects__hero-info { bottom: 30vh; }
