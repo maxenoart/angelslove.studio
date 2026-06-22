@@ -119,6 +119,20 @@
      ============================================================ -->
 <section id="projects" class="page" role="main" style="display:none">
 
+  <!-- Latest project — large hero, fades to white at the bottom so the
+       grid underneath is already peeking through (same hero treatment
+       as Home / About Us) -->
+  <div class="projects__hero" id="projects-hero" onclick="openProject(projectsHeroId)" role="button" tabindex="0">
+    <img src="" alt="" class="projects__hero-img" id="projects-hero-img">
+    <div class="projects__hero-overlay"></div>
+    <div class="projects__hero-info">
+      <span class="section__label" style="color:rgba(255,255,255,0.7)">Neuestes Projekt</span>
+      <h1 class="projects__hero-title" id="projects-hero-title">—</h1>
+    </div>
+  </div>
+
+  <div class="projects__body">
+
   <div class="projects__header reveal">
     <span class="section__label">Projects</span>
     <h1>Unsere Arbeiten</h1>
@@ -147,6 +161,8 @@
     <span class="footer__copy">&copy; 2026 angelslove — all rights reserved</span>
     <img src="Website/HOME/assets/angelslove_imagemark_black.svg" alt="angelslove" class="footer__logo" />
   </footer>
+
+  </div><!-- /.projects__body -->
 
 </section>
 

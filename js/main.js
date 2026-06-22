@@ -139,10 +139,10 @@ function showPage(id, pushState = true) {
 
   currentPage = id;
 
-  // About Us opens on a full-screen photo (like Home's video) — start
-  // with the transparent/dark nav and let the scroll listener below
-  // switch it to the white "scrolled" nav once past the hero image.
-  if (id === 'about') {
+  // About Us & Projects open on a full-screen photo (like Home's video)
+  // — start with the transparent/dark nav and let the scroll listener
+  // below switch it to the white "scrolled" nav once past the hero.
+  if (id === 'about' || id === 'projects') {
     setNavDark();
   } else {
     setNavScrolled();
@@ -206,17 +206,24 @@ function showPage(id, pushState = true) {
   }, { passive: true });
 })();
 
-// ---- About Us: nav switches from transparent (over the hero photo)
-// to white once the user scrolls past it — same idea as the Home video. ----
+// ---- About Us & Projects: nav switches from transparent (over the
+// hero photo) to white once the user scrolls past it — same idea as
+// the Home video. ----
 (function () {
   let ticking = false;
   let wasOverHero = true;
 
+  const HERO_SELECTORS = {
+    about:    '#about .about__hero',
+    projects: '#projects .projects__hero',
+  };
+
   function onAboutScroll() {
     ticking = false;
-    if (currentPage !== 'about') return;
+    const selector = HERO_SELECTORS[currentPage];
+    if (!selector) return;
 
-    const heroEl = document.querySelector('#about .about__hero');
+    const heroEl = document.querySelector(selector);
     if (!heroEl) return;
 
     const overHero = window.scrollY < heroEl.offsetHeight - 80;
@@ -405,6 +412,22 @@ function buildProjectCards() {
   triggerReveals();
 }
 
+// ---- Projects hero — always shows the latest project ------
+window.projectsHeroId = null;
+
+function buildProjectsHero() {
+  const hero = document.getElementById('projects-hero');
+  if (!hero || typeof PROJECTS === 'undefined' || !PROJECTS.length) return;
+
+  const latest = [...PROJECTS].sort((a, b) => (b.date || '').localeCompare(a.date || ''))[0];
+  if (!latest) return;
+
+  window.projectsHeroId = latest.id;
+  document.getElementById('projects-hero-img').src = latest.cover || '';
+  document.getElementById('projects-hero-img').alt = latest.title || '';
+  document.getElementById('projects-hero-title').textContent = latest.title || '—';
+}
+
 // ---- Project filter buttons --------------------------------
 window.filterProjects = function(type) {
   currentProjectFilter = type;
@@ -558,6 +581,7 @@ window.addEventListener('popstate', e => {
   pages.forEach(p => { p.style.display = 'none'; });
   buildCreativeSpace();
   buildProjectCards();
+  buildProjectsHero();
   const hash = location.hash.replace('#', '');
   showPage(hash || 'home', false);
 })();
