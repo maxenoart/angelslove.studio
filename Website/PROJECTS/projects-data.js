@@ -19,7 +19,7 @@
    Projects-Seite (Alle / Video / Fotografie / Design)
    ============================================================ */
 
-const PROJECTS = [
+var PROJECTS = [
 
   {
     id:       1,
