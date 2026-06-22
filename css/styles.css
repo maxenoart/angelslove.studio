@@ -496,16 +496,18 @@ body.is-home .nav--dark .nav__logo {
 /* ============================================================
    PROJECTS
    ============================================================ */
-/* ---- Hero — latest project, large image filling the background.
-   The grid sits ON TOP of it (no white fade) — cards float directly
-   over the photo, visible the moment the page loads. ------------ */
+/* ---- Hero — latest project, full size, fades to white toward the
+   bottom so the first project row is already visible without
+   scrolling. -------------------------------------------------- */
 .projects__hero {
   position: relative;
+  z-index: 2;
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
   height: 92vh;
   height: 92dvh;
+  margin-bottom: -22vh;
   overflow: hidden;
   background: var(--black);
   cursor: pointer;
@@ -518,14 +520,19 @@ body.is-home .nav--dark .nav__logo {
   display: block;
 }
 
+/* Fades from photo to white toward the bottom, so the grid behind
+   it (pulled up via the negative margin above) is already visible —
+   the banner itself keeps its full height. */
 .projects__hero-overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     to bottom,
     rgba(0,0,0,0.25) 0%,
-    rgba(0,0,0,0) 35%,
-    rgba(0,0,0,0.6) 100%
+    rgba(0,0,0,0) 30%,
+    rgba(0,0,0,0) 50%,
+    rgba(255,255,255,0.55) 72%,
+    var(--white) 92%
   );
 }
 
@@ -533,7 +540,7 @@ body.is-home .nav--dark .nav__logo {
   position: absolute;
   left: clamp(1.5rem, 4vw, 5rem);
   right: clamp(1.5rem, 4vw, 5rem);
-  bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(2.5rem, 6vw, 4rem));
+  bottom: 30vh;
   color: var(--white);
 }
 .projects__hero-info .section__label { color: rgba(255,255,255,0.7); }
@@ -544,9 +551,11 @@ body.is-home .nav--dark .nav__logo {
   color: var(--white);
 }
 
-/* ---- Body — comes after the hero, no overlap ---------------- */
+/* ---- Body — sits behind the hero's fade so the first project row
+   is already visible without scrolling -------------------------- */
 .projects__body {
   position: relative;
+  z-index: 1;
   background: var(--white);
   padding-top: calc(var(--nav-h) + 4rem);
   padding-bottom: 8rem;
@@ -1199,7 +1208,8 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
   }
   .cs__item--text h3 { font-size: 1.2rem; }
   .projects__grid { grid-template-columns: 1fr; }
-  .projects__hero { height: 80vh; height: 80dvh; }
+  .projects__hero { height: 80vh; height: 80dvh; margin-bottom: -17vh; }
+  .projects__hero-info { bottom: 24vh; }
   .about__people { grid-template-columns: 1fr; gap: 3rem; }
   .home__cta { flex-direction: column; align-items: center; gap: 1rem; }
   .footer { flex-direction: column; align-items: flex-start; gap: 1rem; }
