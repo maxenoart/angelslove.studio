@@ -542,17 +542,19 @@ body.is-home .nav--dark .nav__logo {
   position: absolute;
   left: clamp(1.5rem, 4vw, 5rem);
   right: clamp(1.5rem, 4vw, 5rem);
-  bottom: 38vh;
+  bottom: 56vh;
   color: var(--white);
 }
 .projects__hero-info .section__label { color: rgba(255,255,255,0.7); }
 
-/* ---- Body — normal flow right after the hero. Filters always sit
-   fully visible here; only the grid below is pulled up over the
-   hero's fade (see .projects__grid). ----------------------------- */
+/* ---- Body — pulled up as a whole over the hero's fade (filters
+   and grid move together, so filters stay visually ABOVE the grid,
+   exactly like their order in the markup) — both sit above the hero
+   in z-index, so they stay fully visible over the banner. --------- */
 .projects__body {
   position: relative;
   z-index: 2;
+  margin-top: -50vh;
   background: var(--white);
   padding-top: 4rem;
   padding-bottom: 8rem;
@@ -592,14 +594,11 @@ body.is-home .nav--dark .nav__logo {
   color: var(--white);
 }
 
-/* ---- Project grid — pulled up over the hero's fade so the first
-   row visibly overlaps/pops out over the banner; sits above the hero
-   in z-index so cards stay fully visible (filters above are NOT
-   affected, they stay in normal flow, fully visible). ------------- */
+/* ---- Project grid — moves up together with the body/filters above
+   (see .projects__body); stays above the hero in z-index. --------- */
 .projects__grid {
   position: relative;
   z-index: 3;
-  margin-top: -42vh;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
   gap: clamp(1.25rem, 2.5vw, 2rem);
@@ -1216,9 +1215,10 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
     min-height: auto;
   }
   .cs__item--text h3 { font-size: 1.2rem; }
-  .projects__grid { grid-template-columns: 1fr; margin-top: -32vh; }
+  .projects__grid { grid-template-columns: 1fr; }
   .projects__hero { height: 80vh; height: 80dvh; margin-bottom: 0; }
-  .projects__hero-info { bottom: 30vh; }
+  .projects__hero-info { bottom: 44vh; }
+  .projects__body { margin-top: -38vh; }
   .about__people { grid-template-columns: 1fr; gap: 3rem; }
   .home__cta { flex-direction: column; align-items: center; gap: 1rem; }
   .footer { flex-direction: column; align-items: flex-start; gap: 1rem; }
