@@ -496,15 +496,15 @@ body.is-home .nav--dark .nav__logo {
 /* ============================================================
    PROJECTS
    ============================================================ */
-/* ---- Hero — random project cover, full size, fades to white toward
-   the bottom; pulled down over the body via negative margin so the
-   first project row + filters are already visible without scrolling,
-   exactly like the version that worked well. The filter bar gets an
-   even higher z-index than the hero so it always stays fully visible,
-   no matter how deep into the fade it lands. ---------------------- */
+/* ---- Hero — random project cover, sits purely in the background
+   (lower z-index than everything below it) and fades to white on its
+   own, self-contained. The body (filters + grid) is pulled up over
+   it via negative margin and rendered ON TOP, so cards and filters
+   are always fully crisp — the hero's fade is just the backdrop
+   showing through in the gaps. ------------------------------------ */
 .projects__hero {
   position: relative;
-  z-index: 2;
+  z-index: 1;
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
@@ -512,7 +512,7 @@ body.is-home .nav--dark .nav__logo {
   height: 92dvh;
   margin-bottom: -42vh;
   overflow: hidden;
-  background: var(--black);
+  background: var(--white);
   pointer-events: none;
 }
 
@@ -523,9 +523,8 @@ body.is-home .nav--dark .nav__logo {
   display: block;
 }
 
-/* Fades from photo to white toward the bottom, so the grid behind
-   it (pulled up via the negative margin above) is already visible —
-   the banner itself keeps its full height. */
+/* Fades the photo itself to white toward the bottom — self-contained
+   on the hero, independent of whatever sits on top of it. */
 .projects__hero-overlay {
   position: absolute;
   inset: 0;
@@ -548,23 +547,21 @@ body.is-home .nav--dark .nav__logo {
 }
 .projects__hero-info .section__label { color: rgba(255,255,255,0.7); }
 
-/* ---- Body — sits behind the hero's fade so the first project row
-   is already visible without scrolling -------------------------- */
+/* ---- Body — rendered ON TOP of the hero (higher z-index), pulled
+   up over it via the hero's negative margin. Filters and cards are
+   therefore always fully visible and crisp by construction. -------- */
 .projects__body {
   position: relative;
-  z-index: 1;
-  background: var(--white);
+  z-index: 2;
+  background: transparent;
   padding-top: calc(var(--nav-h) + 4rem);
   padding-bottom: 8rem;
   padding-left: clamp(1.5rem, 4vw, 5rem);
   padding-right: clamp(1.5rem, 4vw, 5rem);
 }
 
-/* ---- Filter bar — z-index higher than the hero, so it always stays
-   fully visible even though it sits within the hero's overlap zone. */
+/* ---- Filter bar --------------------------------------------- */
 .projects__filters {
-  position: relative;
-  z-index: 5;
   display: flex;
   flex-wrap: wrap;
   gap: clamp(0.75rem, 1.8vw, 1.1rem);
