@@ -227,15 +227,17 @@
 <section id="about" class="page" role="main" style="display:none">
 
   <div class="about__hero">
-    <img src="Website/ABOUT_US/assets/maxeno_lennyleisi.jpg" alt="maxeno & lennyleisi" class="about__hero-img">
+    <picture>
+      <source media="(max-width: 600px)" srcset="Website/ABOUT_US/assets/maxeno_lennyleisi_mobile.jpg">
+      <img src="Website/ABOUT_US/assets/maxeno_lennyleisi_desktop.jpg" alt="maxeno & lennyleisi" class="about__hero-img">
+    </picture>
     <div class="about__hero-overlay"></div>
     <div class="about__hero-names">
-      <div class="about__hero-person">
+      <div class="about__hero-person about__hero-person--left">
         <span class="about__hero-name">maxeno</span>
         <span class="about__role">Director &amp; Designer</span>
       </div>
-      <span class="about__hero-divider"></span>
-      <div class="about__hero-person">
+      <div class="about__hero-person about__hero-person--right">
         <span class="about__hero-name">lennyleisi</span>
         <span class="about__role">DOP &amp; Editor</span>
       </div>
@@ -254,36 +256,32 @@
     </p>
   </div>
 
-  <div class="about__story reveal">
-    <h2>Die Geschichte<br>hinter angelslove</h2>
-
-    <p>
-      Wir sind maxeno und lennyleisi — zwei kreative Köpfe, die sich irgendwo zwischen
-      Kameralicht und leeren Notizbüchern gefunden haben. Unsere Leidenschaft gilt
-      allem, was sich in Szene setzen lässt: Menschen, Emotionen, Momente.
-    </p>
-
-    <p>
-      angelslove entstand aus dem Wunsch heraus, Kreativität nicht als Dienstleistung,
-      sondern als Haltung zu leben. Wir wollten ein Studio schaffen, das sowohl
-      technische Präzision als auch künstlerische Freiheit vereint.
-    </p>
-
-    <p>
-      Was uns antreibt: Fotografie, die berührt. Film, der erzählt. Ideen, die
-      Grenzen verschieben. Wir arbeiten bevorzugt an Projekten, bei denen es um
-      mehr geht als nur ein schönes Bild — bei denen Inhalt und Form eine echte
-      Einheit bilden.
-    </p>
-
-    <p>
-      Unsere Werte: Ehrlichkeit in der Zusammenarbeit, Sorgfalt im Handwerk,
-      Mut zum Ungewöhnlichen.
-    </p>
-
-    <div style="margin-top:3rem">
-      <a href="#book" data-page="book" class="btn btn--red">JETZT ANFRAGEN</a>
+  <div class="about__people">
+    <div class="about__person reveal">
+      <span class="about__person-index">01</span>
+      <h2 class="about__person-name">maxeno</h2>
+      <span class="about__role">Director &amp; Designer</span>
+      <p class="about__person-bio">
+        Kamera, Schnitt, Farbe. maxeno verantwortet die visuelle Seite von angelslove —
+        von der ersten Einstellung bis zum letzten Feinschliff im Color Grading.
+        Technisches Gespür und ein Blick fürs Detail sorgen dafür, dass jedes Bild trägt.
+      </p>
     </div>
+
+    <div class="about__person reveal" style="transition-delay:0.12s">
+      <span class="about__person-index">02</span>
+      <h2 class="about__person-name">lennyleisi</h2>
+      <span class="about__role">DOP &amp; Editor</span>
+      <p class="about__person-bio">
+        Konzept, Dramaturgie, Look. lennyleisi denkt Projekte von der ersten Idee bis
+        zur Wirkung beim Publikum zu Ende — als Creative Lead sorgt das für einen
+        roten Faden, der sich durch jedes Projekt zieht.
+      </p>
+    </div>
+  </div>
+
+  <div class="about__cta reveal" style="margin-top:clamp(3rem, 6vw, 5rem)">
+    <a href="#book" data-page="book" class="btn btn--red">JETZT ANFRAGEN</a>
   </div>
 
   </div><!-- /.about__content -->

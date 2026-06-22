@@ -835,28 +835,26 @@ body.is-home .nav--dark .nav__logo {
 
 .about__hero-names {
   position: absolute;
-  left: clamp(1.5rem, 4vw, 5rem);
-  right: clamp(1.5rem, 4vw, 5rem);
+  left: clamp(1.5rem, 4vw, 3rem);
+  right: clamp(1.5rem, 4vw, 3rem);
   bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(2.5rem, 6vw, 4rem));
   display: flex;
   align-items: flex-end;
-  gap: clamp(1.5rem, 4vw, 3rem);
+  justify-content: space-between;
 }
 
-.about__hero-divider {
-  width: 1px;
-  height: 2.2rem;
-  background: var(--red);
-  flex-shrink: 0;
-}
+.about__hero-person--right { text-align: right; }
 
+/* Names sit directly on the photo and pick up a "difference" blend —
+   the text colour inverts against whatever's behind it. */
 .about__hero-name {
   display: block;
-  font-size: clamp(1.6rem, 3.5vw, 3rem);
+  font-size: clamp(2.4rem, 7vw, 5.5rem);
   font-weight: 700;
   letter-spacing: var(--tracking-headline);
   text-transform: lowercase;
   color: var(--white);
+  mix-blend-mode: difference;
 }
 
 .about__role {
@@ -869,9 +867,38 @@ body.is-home .nav--dark .nav__logo {
   margin-top: 0.4rem;
 }
 
-.about__story { max-width: 720px; }
-.about__story h2 { margin-bottom: 2.5rem; }
-.about__story p { font-size: 1.05rem; color: var(--grey-700); margin-bottom: 1.5rem; }
+.about__hero-names .about__role {
+  color: var(--white);
+  mix-blend-mode: difference;
+}
+
+/* ---- Individual profiles: who we are, what we're good at --- */
+.about__people {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2.5rem, 5vw, 5rem);
+}
+
+.about__person-index {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--red);
+  margin-bottom: 1rem;
+}
+
+.about__person-name {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  text-transform: lowercase;
+  margin-bottom: 0;
+}
+.about__person-name + .about__role { margin-top: 0.3rem; margin-bottom: 1.2rem; }
+
+.about__person-bio {
+  font-size: 1rem;
+  color: var(--grey-700);
+}
 
 /* ============================================================
    PAGE FLOW — next page navigation
@@ -1129,6 +1156,7 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
 @media (max-width: 900px) {
   .cs__grid { columns: 2; }
   .detail__body { grid-template-columns: 1fr; gap: 2.5rem; }
+  .about__people { gap: 2.5rem; }
   .book__body { grid-template-columns: 1fr; gap: 3rem; }
 }
 
@@ -1146,8 +1174,7 @@ body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
   }
   .cs__item--text h3 { font-size: 1.2rem; }
   .projects__grid { grid-template-columns: 1fr; }
-  .about__hero-names { flex-direction: column; align-items: flex-start; gap: 1rem; }
-  .about__hero-divider { display: none; }
+  .about__people { grid-template-columns: 1fr; gap: 3rem; }
   .home__cta { flex-direction: column; align-items: center; gap: 1rem; }
   .footer { flex-direction: column; align-items: flex-start; gap: 1rem; }
 }
