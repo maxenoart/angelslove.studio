@@ -968,28 +968,6 @@ body.is-home .nav--dark .nav__logo {
   margin-bottom: clamp(2.5rem, 5vw, 4rem);
 }
 
-/* Links am Bildschirmrand: dezenter, leicht schwankender Pfeil als
-   Hinweis, dass es nach unten weitergeht. */
-.detail__banner-scroll {
-  position: absolute;
-  left: clamp(1rem, 3vw, 2.25rem);
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1;
-  pointer-events: none;
-}
-.detail__banner-arrow {
-  display: block;
-  font-size: 1.5rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.55);
-  animation: detailScrollHint 2.2s ease-in-out infinite;
-}
-@keyframes detailScrollHint {
-  0%, 100% { transform: translateY(0); opacity: 0.5; }
-  50%      { transform: translateY(10px); opacity: 1; }
-}
-
 .detail__gallery {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1549,21 +1527,13 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   .detail__gallery--masonry .detail__gallery-info { margin-bottom: 0.6rem; }
 
   /* Im Banner steht auf dem Handy nur noch der (kurze) Titel, daher
-     reicht eine normale Hero-Höhe statt der früheren 80vh. */
+     reicht eine normale Hero-Höhe statt der früheren 80vh. Titel bleibt
+     unten-verankert, direkt über der Galerie (wie auf dem Desktop). */
   .detail__banner { min-height: 60vh; min-height: 60dvh; }
-  .detail__banner-scroll { left: 1rem; }
-  .detail__banner-arrow { font-size: 1.2rem; }
   .detail__gallery-meta { flex-direction: column; gap: 1.5rem; }
   .detail__gallery-meta .detail__meta-list { flex-direction: column; gap: 1.25rem; }
   #project-detail.project-detail--gallery .detail__gallery { margin-top: -1.25rem; padding-top: 1.5rem; }
 
-  /* Handy: Titel im Banner-Overlay vertikal mittig im Bild statt
-     unten-verankert. */
-  .detail__banner-text {
-    top: 50%;
-    bottom: auto;
-    transform: translateY(-50%);
-  }
   .detail__gallery-desc { font-size: 0.95rem; margin-bottom: 1.75rem; }
 }
 
