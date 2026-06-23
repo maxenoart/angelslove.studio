@@ -709,6 +709,34 @@ body.is-home .nav--dark .nav__logo {
   padding-bottom: 0;
 }
 
+/* ---- Dark theme test — Projekt-Detailseiten auf near-black statt
+   weiss, analog zur bereits dunklen Projects-Übersicht. Um es wieder
+   rückgängig zu machen: einfach diesen Block + den passenden Eintrag
+   in js/main.js (showPage, "is-projects" Toggle) entfernen. -------- */
+#project-detail {
+  background: var(--black);
+  color: var(--white);
+}
+#project-detail .detail__desc { color: rgba(255, 255, 255, 0.7); }
+#project-detail .detail__meta-value,
+#project-detail .detail__credit-name { color: var(--white); }
+#project-detail .detail__back { color: rgba(255, 255, 255, 0.5); }
+#project-detail .detail__back:hover { color: var(--red); }
+#project-detail .detail__gallery-item { background: rgba(255, 255, 255, 0.06); }
+
+#project-detail .page-next__label { color: rgba(255, 255, 255, 0.5); }
+#project-detail .page-next__title,
+#project-detail .page-next__arrow { color: var(--white); }
+#project-detail .page-next { border-top-color: rgba(255, 255, 255, 0.15); }
+#project-detail .page-next:hover { background: rgba(255, 255, 255, 0.06); }
+
+#project-detail .footer { border-top-color: rgba(255, 255, 255, 0.15); }
+#project-detail .footer__copy { color: rgba(255, 255, 255, 0.45); }
+#project-detail .footer__legal { color: rgba(255, 255, 255, 0.45); }
+#project-detail .footer__legal:hover { color: var(--white); }
+#project-detail .footer__logo { filter: invert(1); opacity: 0.4; }
+#project-detail .footer__logo:hover { opacity: 0.9; }
+
 .detail__video-wrap {
   width: 100%;
   aspect-ratio: 16/9;

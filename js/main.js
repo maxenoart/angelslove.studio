@@ -144,7 +144,7 @@ function showPage(id, pushState = true) {
   // About Us & Projects open on a full-screen photo (like Home's video)
   // — start with the transparent/dark nav and let the scroll listener
   // below switch it to the white "scrolled" nav once past the hero.
-  if (id === 'about' || id === 'projects') {
+  if (id === 'about' || id === 'projects' || id === 'project-detail') {
     setNavDark();
   } else {
     setNavScrolled();
@@ -154,14 +154,14 @@ function showPage(id, pushState = true) {
 
   // Kontakt Us: red background throughout — nav matches
   document.body.classList.toggle('is-book', id === 'book');
-  // Projects: dark background test — nav matches
-  document.body.classList.toggle('is-projects', id === 'projects');
-  document.querySelector('.nav__logo').style.filter = (id === 'book' || id === 'projects') ? 'invert(1)' : '';
+  // Projects + Projekt-Detail: dark background test — nav matches
+  document.body.classList.toggle('is-projects', id === 'projects' || id === 'project-detail');
+  document.querySelector('.nav__logo').style.filter = (id === 'book' || id === 'projects' || id === 'project-detail') ? 'invert(1)' : '';
 
   // Status bar tint follows page background (white / red / dark)
   const themeMeta = document.getElementById('theme-color-meta');
   if (themeMeta) {
-    themeMeta.setAttribute('content', id === 'book' ? '#e2073b' : (id === 'projects' ? '#0e0e0e' : '#ffffff'));
+    themeMeta.setAttribute('content', id === 'book' ? '#e2073b' : ((id === 'projects' || id === 'project-detail') ? '#0e0e0e' : '#ffffff'));
   }
 
   document.querySelectorAll('[data-page]').forEach(l => {
