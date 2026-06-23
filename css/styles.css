@@ -1543,6 +1543,15 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   .detail__gallery-meta { flex-direction: column; gap: 1.5rem; }
   .detail__gallery-meta .detail__meta-list { flex-direction: column; gap: 1.25rem; }
   #project-detail.project-detail--gallery .detail__gallery { margin-top: -1.25rem; padding-top: 1.5rem; }
+
+  /* Handy: Titel + Beschreibung würden unten-verankert bei längerem
+     Text oben aus dem Banner herauslaufen — stattdessen vertikal
+     mittig im Banner zentrieren, Titel oben, Beschreibung darunter. */
+  .detail__banner-text {
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
+  }
 }
 
 /* Vertical responsiveness for Home — buttons always visible without scrolling,
