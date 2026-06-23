@@ -524,12 +524,17 @@ window.openProject = function(id) {
         ${creditsHtml ? `<div class="detail__credits-list detail__credits-list--inline">${creditsHtml}</div>` : ''}
       </div>`;
 
-    const items = (p.gallery && p.gallery.length ? p.gallery : []).map(src =>
+    const galleryImages = (p.gallery && p.gallery.length) ? p.gallery : [];
+    window.__galleryImages = galleryImages;
+
+    const items = galleryImages.map((src, i) =>
       `<div class="detail__gallery-item">
-         <img src="${src}" alt="" loading="lazy">
+         <img src="${src}" alt="" loading="lazy" onclick="openLightbox(window.__galleryImages, ${i})">
        </div>`
     );
-    items.splice(Math.min(2, items.length), 0, infoCard);
+    // Info-Karte immer als erstes Element einfügen — so sitzt sie
+    // zuverlässig links/oben und nicht irgendwo im Bildfluss.
+    items.unshift(infoCard);
 
     galleryWrap.innerHTML    = items.join('');
     galleryWrap.style.display = '';
@@ -565,9 +570,11 @@ window.openProject = function(id) {
 
     const btsGrid = document.getElementById('detail-bts');
     if (p.bts && p.bts.length) {
-      btsGrid.innerHTML = p.bts.slice(0, 4).map(src =>
+      const btsImages = p.bts.slice(0, 4);
+      window.__btsImages = btsImages;
+      btsGrid.innerHTML = btsImages.map((src, i) =>
         `<div class="detail__bts-item">
-           <img src="${src}" alt="Behind the Scenes" loading="lazy">
+           <img src="${src}" alt="Behind the Scenes" loading="lazy" onclick="openLightbox(window.__btsImages, ${i})">
          </div>`
       ).join('');
     } else {
@@ -595,6 +602,65 @@ window.openProject = function(id) {
 window.backToProjects = function() {
   showPage('projects');
 };
+
+// ---- Lightbox: Vollbild-Ansicht für Galerie- & BTS-Bilder --
+// Wird sowohl von der Fotografie/Design-Galerie als auch von den
+// Behind-the-Scenes-Bildern bei Video-Projekten verwendet.
+let lightboxImages = [];
+let lightboxIndex  = 0;
+
+window.openLightbox = function(images, index) {
+  if (!images || !images.length) return;
+  lightboxImages = images;
+  lightboxIndex   = index;
+  renderLightbox();
+  const lb = document.getElementById('lightbox');
+  if (lb) lb.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+};
+
+window.closeLightbox = function() {
+  const lb = document.getElementById('lightbox');
+  if (lb) lb.style.display = 'none';
+  document.body.style.overflow = '';
+};
+
+window.lightboxNav = function(dir) {
+  if (!lightboxImages.length) return;
+  lightboxIndex = (lightboxIndex + dir + lightboxImages.length) % lightboxImages.length;
+  renderLightbox();
+};
+
+function renderLightbox() {
+  const img = document.getElementById('lightbox-img');
+  if (img) img.src = lightboxImages[lightboxIndex] || '';
+}
+
+(function initLightbox() {
+  const lb = document.getElementById('lightbox');
+  if (!lb) return;
+
+  lb.addEventListener('click', e => {
+    if (e.target.id === 'lightbox') closeLightbox();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (lb.style.display !== 'flex') return;
+    if (e.key === 'Escape')     closeLightbox();
+    if (e.key === 'ArrowLeft')  lightboxNav(-1);
+    if (e.key === 'ArrowRight') lightboxNav(1);
+  });
+
+  // Swipe-Navigation auf Touch-Geräten
+  let touchStartX = null;
+  lb.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+  lb.addEventListener('touchend', e => {
+    if (touchStartX === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) lightboxNav(dx > 0 ? -1 : 1);
+    touchStartX = null;
+  });
+})();
 
 // ---- Contact form -----------------------------------------
 const contactForm = document.getElementById('contact-form');

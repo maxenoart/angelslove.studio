@@ -471,6 +471,16 @@
 
 </section>
 
+<!-- ============================================================
+     LIGHTBOX — Vollbild-Ansicht für Galerie- & BTS-Bilder
+     ============================================================ -->
+<div class="lightbox" id="lightbox" style="display:none">
+  <button class="lightbox__close" id="lightbox-close" onclick="closeLightbox()" aria-label="Schliessen">×</button>
+  <button class="lightbox__nav lightbox__nav--prev" onclick="lightboxNav(-1)" aria-label="Zurück">‹</button>
+  <img class="lightbox__img" id="lightbox-img" src="" alt="" />
+  <button class="lightbox__nav lightbox__nav--next" onclick="lightboxNav(1)" aria-label="Weiter">›</button>
+</div>
+
 
 <script src="Website/CREATIVE_SPACE/creative-space-data.js"></script>
 <script src="Website/PROJECTS/projects-data.js"></script>
