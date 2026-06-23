@@ -540,15 +540,6 @@ body.is-home .nav--dark .nav__logo {
   );
 }
 
-.projects__hero-info {
-  position: absolute;
-  left: clamp(1.5rem, 4vw, 5rem);
-  right: clamp(1.5rem, 4vw, 5rem);
-  bottom: 30vh;
-  color: var(--white);
-}
-.projects__hero-info .section__label { color: rgba(255,255,255,0.7); }
-
 /* ---- Body — rendered ON TOP of the hero (higher z-index), pulled
    up over it via the hero's negative margin. Filters and cards are
    therefore always fully visible and crisp by construction. Tight
@@ -908,9 +899,16 @@ body.is-home .nav--dark .nav__logo {
 .detail__back:hover { color: var(--red); }
 
 /* ---- Banner + Galerie (Fotografie / Design) ------------------ */
+/* Banner ist jetzt ein Hero-Block: Titel + Beschreibung liegen als
+   Overlay unten links direkt auf dem Bild, das nach unten zum
+   Seitenhintergrund ausfadet. Die Galerie schiebt sich anschliessend
+   leicht über den ausfadenden Rand. Nur für Fotografie/Design im
+   Einsatz — Video-Projekte blenden diesen Block komplett aus. */
 .detail__banner {
   width: 100%;
-  aspect-ratio: 16/9;
+  position: relative;
+  min-height: 60vh;
+  min-height: 60dvh;
   background: var(--black);
   overflow: hidden;
 }
@@ -921,11 +919,92 @@ body.is-home .nav--dark .nav__logo {
   display: block;
 }
 
+.detail__banner-fade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(14,14,14,0) 38%,
+    rgba(14,14,14,0.55) 72%,
+    var(--black) 100%
+  );
+}
+
+.detail__banner-text {
+  position: absolute;
+  left: clamp(1.5rem, 4vw, 5rem);
+  right: clamp(1.5rem, 4vw, 5rem);
+  bottom: clamp(2.5rem, 6vw, 4rem);
+  max-width: 680px;
+  z-index: 1;
+}
+.detail__banner-text .detail__category { color: var(--red); }
+.detail__banner-text .detail__title { color: var(--white); margin-bottom: 1.25rem; }
+
+.detail__banner-desc {
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Links am Bildschirmrand: dezenter, leicht schwankender Pfeil als
+   Hinweis, dass es nach unten weitergeht. */
+.detail__banner-scroll {
+  position: absolute;
+  left: clamp(1rem, 3vw, 2.25rem);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  pointer-events: none;
+}
+.detail__banner-arrow {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.55);
+  animation: detailScrollHint 2.2s ease-in-out infinite;
+}
+@keyframes detailScrollHint {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50%      { transform: translateY(10px); opacity: 1; }
+}
+
 .detail__gallery {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: clamp(0.75rem, 1.5vw, 1.5rem);
   margin-bottom: clamp(5rem, 8vw, 7rem);
+}
+
+/* Fotografie/Design: Galerie überlappt den ausfadenden Banner-Rand
+   leicht, kein zusätzliches Top-Padding aus .detail__content nötig —
+   der Banner übernimmt Titel/Beschreibung bereits selbst. */
+#project-detail.project-detail--gallery .detail__content {
+  padding-top: 0;
+}
+#project-detail.project-detail--gallery .detail__gallery {
+  position: relative;
+  z-index: 2;
+  margin-top: clamp(-6rem, -9vw, -3rem);
+}
+
+/* Restliche Infos (Datum, Gear/Programm, Credits) ganz unten unter den
+   Bildern — die Beschreibung sitzt bereits oben im Banner-Overlay. */
+.detail__gallery-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: flex-start;
+  padding-top: clamp(2rem, 4vw, 3rem);
+  margin-bottom: clamp(5rem, 8vw, 7rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+.detail__gallery-meta .detail__meta-list {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: clamp(2rem, 5vw, 4rem);
 }
 
 .detail__gallery-item {
@@ -1427,7 +1506,6 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   .cs__item--text h3 { font-size: 1rem; }
   .projects__grid { grid-template-columns: 1fr; }
   .projects__hero { height: 80vh; height: 80dvh; margin-bottom: -32vh; }
-  .projects__hero-info { bottom: 30vh; }
   .about__people { grid-template-columns: 1fr; gap: 3rem; }
   .home__cta { flex-direction: column; align-items: center; gap: 1rem; }
   .footer { flex-direction: column; align-items: flex-start; gap: 1rem; }
@@ -1446,6 +1524,13 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   .detail__gallery--masonry { columns: 2; column-gap: 0.6rem; }
   .detail__gallery--masonry .detail__gallery-item,
   .detail__gallery--masonry .detail__gallery-info { margin-bottom: 0.6rem; }
+
+  .detail__banner { min-height: 52vh; min-height: 52dvh; }
+  .detail__banner-scroll { left: 1rem; }
+  .detail__banner-arrow { font-size: 1.2rem; }
+  .detail__gallery-meta { flex-direction: column; gap: 1.5rem; }
+  .detail__gallery-meta .detail__meta-list { flex-direction: column; gap: 1.25rem; }
+  #project-detail.project-detail--gallery .detail__gallery { margin-top: -3rem; }
 }
 
 /* Vertical responsiveness for Home — buttons always visible without scrolling,
@@ -1481,6 +1566,7 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   position: absolute;
   top: clamp(1rem, 3vw, 2rem);
   right: clamp(1rem, 3vw, 2rem);
+  z-index: 3;
   background: none;
   border: none;
   color: var(--white);
@@ -1493,6 +1579,7 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   position: absolute;
   top: 0;
   bottom: 0;
+  z-index: 2;
   width: clamp(3rem, 8vw, 6rem);
   background: none;
   border: none;

@@ -141,6 +141,10 @@ function showPage(id, pushState = true) {
 
   currentPage = id;
 
+  // Projects: neues zufälliges Banner bei jedem Aufruf des Tabs, nicht
+  // nur beim ersten Laden der Seite — sorgt für Abwechslung.
+  if (id === 'projects') buildProjectsHero();
+
   // About Us & Projects open on a full-screen photo (like Home's video)
   // — start with the transparent/dark nav and let the scroll listener
   // below switch it to the white "scrolled" nav once past the hero.
@@ -477,26 +481,35 @@ window.openProject = function(id) {
 
   const videoWrap   = document.getElementById('detail-video-wrap');
   const bannerWrap  = document.getElementById('detail-banner-wrap');
+  const headerWrap  = document.getElementById('detail-header-wrap');
   const bodyWrap    = document.getElementById('detail-body');
   const btsWrap     = document.getElementById('detail-bts-wrap');
   const galleryWrap = document.getElementById('detail-gallery');
+  const galleryMetaWrap = document.getElementById('detail-gallery-meta-wrap');
   const creditsWrap = document.getElementById('detail-credits-wrap');
 
-  // Header — gleich für alle Projekt-Typen
+  // Header — gleich für alle Projekt-Typen (bei Fotografie/Design steckt
+  // der Titel zusätzlich im Banner-Overlay, der Header selbst bleibt
+  // dort aber ausgeblendet)
   document.getElementById('detail-category').textContent = p.category || '—';
   document.getElementById('detail-title').textContent    = p.title    || '—';
 
   const isGalleryType = p.type === 'photo' || p.type === 'design';
+  document.getElementById('project-detail').classList.toggle('project-detail--gallery', isGalleryType);
 
   if (isGalleryType) {
-    // ---- Fotografie / Design: Banner oben + Galerie mit eingebetteter Info-Karte ----
+    // ---- Fotografie / Design: Banner-Hero (Titel+Desc-Overlay) + Galerie ----
     videoWrap.style.display   = 'none';
+    headerWrap.style.display  = 'none';
     bodyWrap.style.display    = 'none';
     btsWrap.style.display     = 'none';
     creditsWrap.style.display = 'none';
 
     bannerWrap.style.display = '';
     document.getElementById('detail-banner').src = p.cover || '';
+    document.getElementById('detail-banner-category').textContent = p.category || '—';
+    document.getElementById('detail-banner-title').textContent    = p.title    || '—';
+    document.getElementById('detail-banner-desc').textContent     = p.longDesc || p.shortDesc || '';
 
     const gearLabel = p.type === 'design' ? 'Programm' : 'Gear';
     const creditsHtml = (p.credits && p.credits.length)
@@ -508,46 +521,41 @@ window.openProject = function(id) {
         ).join('')
       : '';
 
-    const infoCard = `
-      <div class="detail__gallery-info">
-        <p class="detail__desc">${p.longDesc || p.shortDesc || ''}</p>
-        <div class="detail__meta-list">
-          <div class="detail__meta-item">
-            <p class="detail__meta-label">Datum</p>
-            <p class="detail__meta-value">${formatDate(p.date)}</p>
-          </div>
-          <div class="detail__meta-item">
-            <p class="detail__meta-label">${gearLabel}</p>
-            <p class="detail__meta-value">${p.gear || '—'}</p>
-          </div>
-        </div>
-        ${creditsHtml ? `<div class="detail__credits-list detail__credits-list--inline">${creditsHtml}</div>` : ''}
-      </div>`;
-
     const galleryImages = (p.gallery && p.gallery.length) ? p.gallery : [];
     window.__galleryImages = galleryImages;
 
-    const items = galleryImages.map((src, i) =>
+    galleryWrap.innerHTML = galleryImages.map((src, i) =>
       `<div class="detail__gallery-item">
          <img src="${src}" alt="" loading="lazy" onclick="openLightbox(window.__galleryImages, ${i})">
        </div>`
-    );
-    // Info-Karte immer als erstes Element einfügen — so sitzt sie
-    // zuverlässig links/oben und nicht irgendwo im Bildfluss.
-    items.unshift(infoCard);
-
-    galleryWrap.innerHTML    = items.join('');
+    ).join('');
     galleryWrap.style.display = '';
     // Fotografie: Bilder unbeschnitten in ihrem eigenen Seitenverhältnis
     // zeigen (Masonry-Spalten, gleich breit, beliebige Höhe). Design
     // behält das gleichmässige Crop-Raster.
     galleryWrap.classList.toggle('detail__gallery--masonry', p.type === 'photo');
 
+    // Restliche Infos (Datum, Gear/Programm, Credits) ganz unten unter
+    // allen Bildern — die Beschreibung steckt bereits oben im Banner.
+    document.getElementById('detail-gallery-meta-list').innerHTML = `
+      <div class="detail__meta-item">
+        <p class="detail__meta-label">Datum</p>
+        <p class="detail__meta-value">${formatDate(p.date)}</p>
+      </div>
+      <div class="detail__meta-item">
+        <p class="detail__meta-label">${gearLabel}</p>
+        <p class="detail__meta-value">${p.gear || '—'}</p>
+      </div>`;
+    document.getElementById('detail-gallery-credits').innerHTML = creditsHtml;
+    galleryMetaWrap.style.display = '';
+
   } else {
     // ---- Video (Standard) ----
-    bannerWrap.style.display  = 'none';
-    galleryWrap.style.display = 'none';
+    bannerWrap.style.display      = 'none';
+    galleryWrap.style.display     = 'none';
+    galleryMetaWrap.style.display = 'none';
 
+    headerWrap.style.display  = '';
     bodyWrap.style.display    = '';
     btsWrap.style.display     = '';
     creditsWrap.style.display = '';

@@ -125,9 +125,6 @@
   <div class="projects__hero" id="projects-hero">
     <img src="" alt="" class="projects__hero-img" id="projects-hero-img">
     <div class="projects__hero-overlay"></div>
-    <div class="projects__hero-info">
-      <span class="section__label" style="color:rgba(255,255,255,0.7)">Neuestes Projekt</span>
-    </div>
   </div>
 
   <div class="projects__body">
@@ -172,15 +169,27 @@
     <iframe id="detail-video" src="" allowfullscreen allow="autoplay; fullscreen" title="Projekt Video"></iframe>
   </div>
 
-  <!-- Banner-Bild (Fotografie / Design) -->
+  <!-- Banner-Bild (Fotografie / Design) — Titel + Beschreibung liegen
+       unten links als Overlay auf dem Bild, das nach unten ausfadet;
+       links ein dezenter, leicht schwankender Pfeil als Scroll-Hinweis. -->
   <div class="detail__banner" id="detail-banner-wrap">
     <img id="detail-banner" src="" alt="" />
+    <div class="detail__banner-fade"></div>
+    <div class="detail__banner-text">
+      <span class="detail__category" id="detail-banner-category">—</span>
+      <h1 class="detail__title" id="detail-banner-title">—</h1>
+      <p class="detail__banner-desc" id="detail-banner-desc"></p>
+    </div>
+    <div class="detail__banner-scroll" aria-hidden="true">
+      <span class="detail__banner-arrow">↓</span>
+    </div>
   </div>
 
   <div class="detail__content">
 
-    <!-- Title -->
-    <div class="detail__header">
+    <!-- Title (Video-Projekte — bei Fotografie/Design steckt der Titel
+         stattdessen im Banner-Overlay oben) -->
+    <div class="detail__header" id="detail-header-wrap">
       <span class="detail__category" id="detail-category">—</span>
       <h1 class="detail__title" id="detail-title">—</h1>
     </div>
@@ -211,10 +220,18 @@
       <div class="detail__bts-grid" id="detail-bts"></div>
     </div>
 
-    <!-- Galerie mit eingebetteter Info-Karte (Fotografie / Design) -->
+    <!-- Galerie (Fotografie / Design) -->
     <div class="detail__gallery" id="detail-gallery"></div>
 
-    <!-- Credits (Video-Projekte; bei Foto/Design Teil der Galerie-Info-Karte) -->
+    <!-- Restliche Infos ganz unten unter den Bildern (Fotografie / Design):
+         Datum, Gear/Programm, Credits — die Beschreibung steckt bereits
+         oben im Banner-Overlay. -->
+    <div class="detail__gallery-meta" id="detail-gallery-meta-wrap" style="display:none">
+      <div class="detail__meta-list" id="detail-gallery-meta-list"></div>
+      <div class="detail__credits-list detail__credits-list--inline" id="detail-gallery-credits"></div>
+    </div>
+
+    <!-- Credits (Video-Projekte) -->
     <div class="detail__credits" id="detail-credits-wrap">
       <span class="detail__credits-label">Credits</span>
       <div class="detail__credits-list" id="detail-credits"></div>
