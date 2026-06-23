@@ -391,6 +391,10 @@ function formatDate(dateStr) {
 // ---- Build project cards (sorted newest first) ------------
 let currentProjectFilter = 'all';
 
+// Klartext-Label je Projekt-Typ — macht auf der Karte sofort sichtbar,
+// ob es sich um ein Video-, Fotografie- oder Design-Projekt handelt.
+const PROJECT_TYPE_LABELS = { video: 'Video', photo: 'Fotografie', design: 'Design' };
+
 function buildProjectCards() {
   const grid = document.getElementById('projects-grid');
   if (!grid || typeof PROJECTS === 'undefined') return;
@@ -403,9 +407,12 @@ function buildProjectCards() {
     const coverStyle = p.cover
       ? `style="background-image:url('${p.cover}');background-size:cover;background-position:center"`
       : '';
+    const typeLabel = PROJECT_TYPE_LABELS[p.type] || '';
     return `
       <article class="project-card" onclick="openProject(${p.id})" role="button" tabindex="0">
-        <div class="project-card__thumb" ${coverStyle}></div>
+        <div class="project-card__thumb" ${coverStyle}>
+          ${typeLabel ? `<span class="project-card__type project-card__type--${p.type}">${typeLabel}</span>` : ''}
+        </div>
         <div class="project-card__info">
           <span class="project-card__category">${p.category}</span>
           <h3 class="project-card__title">${p.title}</h3>
@@ -526,6 +533,10 @@ window.openProject = function(id) {
 
     galleryWrap.innerHTML    = items.join('');
     galleryWrap.style.display = '';
+    // Fotografie: Bilder unbeschnitten in ihrem eigenen Seitenverhältnis
+    // zeigen (Masonry-Spalten, gleich breit, beliebige Höhe). Design
+    // behält das gleichmässige Crop-Raster.
+    galleryWrap.classList.toggle('detail__gallery--masonry', p.type === 'photo');
 
   } else {
     // ---- Video (Standard) ----

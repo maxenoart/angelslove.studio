@@ -659,6 +659,23 @@ body.is-home .nav--dark .nav__logo {
 }
 .project-card:hover .project-card__thumb img { transform: scale(1.04); }
 
+/* Typ-Label (Video / Fotografie / Design) — macht auf einen Blick
+   klar, um welche Art Projekt es sich handelt, ohne die Farbpalette
+   der Karte zu erweitern. */
+.project-card__type {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1;
+  padding: 0.4rem 0.75rem;
+  background: var(--white);
+  color: var(--black);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
 .project-card__info {
   position: absolute;
   left: 0; right: 0; bottom: 0;
@@ -893,6 +910,31 @@ body.is-home .nav--dark .nav__logo {
   transition: transform 0.6s ease;
 }
 .detail__gallery-item:hover img { transform: scale(1.03); }
+
+/* Fotografie: Bilder werden nie beschnitten — jede Spalte ist gleich
+   breit, die Höhe richtet sich frei nach dem jeweiligen Bildformat
+   (Hoch- und Querformat gemischt). Design behält das Crop-Raster oben. */
+.detail__gallery--masonry {
+  display: block;
+  columns: 3;
+  column-gap: clamp(0.75rem, 1.5vw, 1.5rem);
+}
+.detail__gallery--masonry .detail__gallery-item,
+.detail__gallery--masonry .detail__gallery-info {
+  break-inside: avoid;
+  width: 100%;
+  margin-bottom: clamp(0.75rem, 1.5vw, 1.5rem);
+}
+.detail__gallery--masonry .detail__gallery-item {
+  aspect-ratio: auto;
+  background: none;
+}
+.detail__gallery--masonry .detail__gallery-item img {
+  height: auto;
+  object-fit: unset;
+}
+.detail__gallery--masonry .detail__gallery-item:hover img { transform: none; }
+.detail__gallery--masonry .detail__gallery-info { grid-column: auto; }
 
 /* Die "unsichtbare Karte": kein Rahmen, kein Schatten — sitzt einfach
    als Text-Feld zwischen den Galerie-Bildern, weil die Seite ohnehin
@@ -1336,6 +1378,7 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   .book__body { grid-template-columns: 1fr; gap: 3rem; }
   .detail__gallery { grid-template-columns: repeat(2, 1fr); }
   .detail__gallery-info { grid-column: span 2; }
+  .detail__gallery--masonry { columns: 2; }
 }
 
 @media (max-width: 600px) {
@@ -1367,6 +1410,7 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   .detail__gallery { grid-template-columns: 1fr; }
   .detail__gallery-info { grid-column: span 1; }
   .detail__gallery-info .detail__meta-list { flex-direction: column; gap: 1.5rem; }
+  .detail__gallery--masonry { columns: 1; }
 }
 
 /* Vertical responsiveness for Home — buttons always visible without scrolling,

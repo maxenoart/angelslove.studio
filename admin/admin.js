@@ -76,6 +76,11 @@ document.querySelectorAll('.sidebar__nav button').forEach(btn => {
 // ---- Projekte: Liste -------------------------------------------
 const projectList = document.getElementById('project-list');
 
+// Feste Reihenfolge + Klartext-Label je Typ, damit die Liste immer
+// gleich gruppiert ist und auf einen Blick klar ist, was was ist.
+const PROJECT_TYPE_LABELS = { video: 'Video', photo: 'Fotografie', design: 'Design' };
+const PROJECT_TYPE_ORDER  = ['video', 'photo', 'design'];
+
 async function loadProjects() {
   projectList.innerHTML = '<p class="loading-note">Lade Projekte …</p>';
   const { data, error } = await sb.from('projects').select('*').order('created_at', { ascending: false });
@@ -88,21 +93,35 @@ async function loadProjects() {
     return;
   }
 
-  projectList.innerHTML = data.map(p => `
-    <div class="project-row" data-id="${p.id}">
-      <div class="project-row__thumb" style="${p.cover ? `background-image:url('${p.cover}')` : ''}"></div>
-      <div class="project-row__info">
-        <div class="project-row__title">${escapeHtml(p.title || 'Ohne Titel')}</div>
-        <div class="project-row__meta">${escapeHtml(p.category || '')} · ${p.date || '—'}</div>
+  // Nach Typ gruppiert (Video / Fotografie / Design) für bessere Übersicht —
+  // innerhalb jeder Gruppe bleibt die Sortierung nach Erstellungsdatum.
+  const groups = PROJECT_TYPE_ORDER
+    .map(type => ({ type, items: data.filter(p => (p.type || 'video') === type) }))
+    .filter(g => g.items.length);
+
+  projectList.innerHTML = groups.map(g => `
+    <div class="project-list-group">
+      <div class="project-list-group__label">
+        ${PROJECT_TYPE_LABELS[g.type]} <span class="project-list-group__count">${g.items.length}</span>
       </div>
-      <span class="project-row__badge ${p.published ? 'project-row__badge--published' : 'project-row__badge--draft'}">
-        ${p.published ? 'Veröffentlicht' : 'Entwurf'}
-      </span>
-      <div class="project-row__actions">
-        <button class="btn btn--ghost btn--small" data-action="toggle">${p.published ? 'Zurückziehen' : 'Veröffentlichen'}</button>
-        <button class="btn btn--ghost btn--small" data-action="edit">Bearbeiten</button>
-        <button class="btn btn--danger btn--small" data-action="delete">Löschen</button>
-      </div>
+      ${g.items.map(p => `
+        <div class="project-row" data-id="${p.id}">
+          <div class="project-row__thumb" style="${p.cover ? `background-image:url('${p.cover}')` : ''}"></div>
+          <div class="project-row__info">
+            <div class="project-row__title">${escapeHtml(p.title || 'Ohne Titel')}</div>
+            <div class="project-row__meta">${escapeHtml(p.category || '')} · ${p.date || '—'}</div>
+          </div>
+          <span class="project-row__type project-row__type--${g.type}">${PROJECT_TYPE_LABELS[g.type]}</span>
+          <span class="project-row__badge ${p.published ? 'project-row__badge--published' : 'project-row__badge--draft'}">
+            ${p.published ? 'Veröffentlicht' : 'Entwurf'}
+          </span>
+          <div class="project-row__actions">
+            <button class="btn btn--ghost btn--small" data-action="toggle">${p.published ? 'Zurückziehen' : 'Veröffentlichen'}</button>
+            <button class="btn btn--ghost btn--small" data-action="edit">Bearbeiten</button>
+            <button class="btn btn--danger btn--small" data-action="delete">Löschen</button>
+          </div>
+        </div>
+      `).join('')}
     </div>
   `).join('');
 
