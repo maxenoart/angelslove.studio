@@ -514,7 +514,7 @@ body.is-home .nav--dark .nav__logo {
   height: 92dvh;
   margin-bottom: -42vh;
   overflow: hidden;
-  background: var(--white);
+  background: var(--black);
   pointer-events: none;
 }
 
@@ -535,8 +535,8 @@ body.is-home .nav--dark .nav__logo {
     rgba(0,0,0,0.25) 0%,
     rgba(0,0,0,0) 30%,
     rgba(0,0,0,0) 50%,
-    rgba(255,255,255,0.55) 72%,
-    var(--white) 92%
+    rgba(14,14,14,0.6) 72%,
+    var(--black) 92%
   );
 }
 
@@ -562,6 +562,27 @@ body.is-home .nav--dark .nav__logo {
   padding-left: clamp(1.5rem, 4vw, 5rem);
   padding-right: clamp(1.5rem, 4vw, 5rem);
 }
+
+/* ---- Dark theme test — Projects page on near-black instead of
+   white. Footer / page-next reuse shared classes, so they get the
+   same light-on-dark treatment already used on the Kontakt page. -- */
+#projects {
+  background: var(--black);
+  color: var(--white);
+}
+
+#projects .page-next__label { color: rgba(255, 255, 255, 0.5); }
+#projects .page-next__title,
+#projects .page-next__arrow { color: var(--white); }
+#projects .page-next { border-top-color: rgba(255, 255, 255, 0.15); }
+#projects .page-next:hover { background: rgba(255, 255, 255, 0.06); }
+
+#projects .footer { border-top-color: rgba(255, 255, 255, 0.15); }
+#projects .footer__copy { color: rgba(255, 255, 255, 0.45); }
+#projects .footer__legal { color: rgba(255, 255, 255, 0.45); }
+#projects .footer__legal:hover { color: var(--white); }
+#projects .footer__logo { filter: invert(1); opacity: 0.4; }
+#projects .footer__logo:hover { opacity: 0.9; }
 
 /* ---- Filter bar — frosted-glass pill with its own backdrop, so it
    stays clearly visible no matter how bright/dark the photo behind
@@ -1192,6 +1213,17 @@ body.is-book .nav--scrolled .nav__link.active,
 body.is-book .nav--scrolled .nav__link:hover { color: rgba(255,255,255,0.6); }
 body.is-book .nav--scrolled .nav__link::after { background: var(--white); }
 body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
+
+/* Nav on Projects — dark background, since the page itself is dark now */
+body.is-projects .nav--scrolled {
+  background: rgba(14, 14, 14, 0.92);
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+body.is-projects .nav--scrolled .nav__link { color: var(--white); }
+body.is-projects .nav--scrolled .nav__link.active,
+body.is-projects .nav--scrolled .nav__link:hover { color: rgba(255, 255, 255, 0.6); }
+body.is-projects .nav--scrolled .nav__link::after { background: var(--white); }
+body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
 
 /* Footer on Book Us (red bg) */
 #book .footer {

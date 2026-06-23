@@ -271,9 +271,49 @@ function renderBtsPreview() {
   box.innerHTML = urls.map(u => `<img src="${u}">`).join('');
 }
 
+// Verkleinert + komprimiert ein Bild im Browser, bevor es hochgeladen
+// wird — damit die Website schlank bleibt, egal wie groß das Original
+// von der Kamera/dem Handy war. Begrenzt die längste Kante auf 2000px
+// und speichert als JPEG mit guter, aber nicht maximaler Qualität.
+// Fällt bei Fehlern (z.B. GIF/SVG) einfach auf die Originaldatei zurück.
+async function compressImage(file, maxDim = 2000, quality = 0.82) {
+  if (!file.type || !file.type.startsWith('image/') || file.type === 'image/svg+xml') {
+    return file;
+  }
+  try {
+    const bitmap = await createImageBitmap(file);
+    let { width, height } = bitmap;
+    if (width > maxDim || height > maxDim) {
+      const scale = maxDim / Math.max(width, height);
+      width = Math.round(width * scale);
+      height = Math.round(height * scale);
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    canvas.getContext('2d').drawImage(bitmap, 0, 0, width, height);
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality));
+    if (!blob) return file;
+    // Nur verwenden, wenn dadurch wirklich Speicher gespart wird.
+    if (blob.size >= file.size) return file;
+    const newName = file.name.replace(/\.[^.]+$/, '') + '.jpg';
+    return new File([blob], newName, { type: 'image/jpeg' });
+  } catch (e) {
+    console.warn('Bildkomprimierung fehlgeschlagen, lade Original hoch:', e);
+    return file;
+  }
+}
+
+function formatKB(bytes) { return `${Math.round(bytes / 1024)} KB`; }
+
 async function uploadImage(file) {
-  const path = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_')}`;
-  const { error } = await sb.storage.from('project-images').upload(path, file);
+  const original = file;
+  const optimized = await compressImage(file);
+  if (optimized !== original) {
+    console.log(`Bild optimiert: ${formatKB(original.size)} → ${formatKB(optimized.size)}`);
+  }
+  const path = `${Date.now()}-${optimized.name.replace(/[^a-zA-Z0-9.\-_]/g, '_')}`;
+  const { error } = await sb.storage.from('project-images').upload(path, optimized);
   if (error) { alert('Upload fehlgeschlagen: ' + error.message); return null; }
   const { data } = sb.storage.from('project-images').getPublicUrl(path);
   return data.publicUrl;
@@ -282,13 +322,18 @@ async function uploadImage(file) {
 document.getElementById('p-cover-file').addEventListener('change', async e => {
   const file = e.target.files[0];
   if (!file) return;
+  const box = document.getElementById('p-cover-preview');
+  box.innerHTML = '<p class="loading-note">Optimiere & lade hoch …</p>';
   const url = await uploadImage(file);
   if (url) { document.getElementById('p-cover-url').value = url; renderCoverPreview(); }
+  else box.innerHTML = '';
 });
 
 document.getElementById('p-bts-files').addEventListener('change', async e => {
   const files = Array.from(e.target.files).slice(0, 4);
   const urls = JSON.parse(document.getElementById('p-bts-urls').value || '[]');
+  const box = document.getElementById('p-bts-preview');
+  box.innerHTML = '<p class="loading-note">Optimiere & lade hoch …</p>';
   for (const file of files) {
     const url = await uploadImage(file);
     if (url) urls.push(url);

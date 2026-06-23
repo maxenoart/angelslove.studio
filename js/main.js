@@ -68,6 +68,7 @@ function updateChromeForFlowSection(id) {
   }
 
   document.body.classList.remove('is-book');
+  document.body.classList.remove('is-projects');
   document.querySelector('.nav__logo').style.filter = '';
 
   const themeMeta = document.getElementById('theme-color-meta');
@@ -153,12 +154,14 @@ function showPage(id, pushState = true) {
 
   // Kontakt Us: red background throughout — nav matches
   document.body.classList.toggle('is-book', id === 'book');
-  document.querySelector('.nav__logo').style.filter = (id === 'book') ? 'invert(1)' : '';
+  // Projects: dark background test — nav matches
+  document.body.classList.toggle('is-projects', id === 'projects');
+  document.querySelector('.nav__logo').style.filter = (id === 'book' || id === 'projects') ? 'invert(1)' : '';
 
-  // Status bar tint follows page background (white / red)
+  // Status bar tint follows page background (white / red / dark)
   const themeMeta = document.getElementById('theme-color-meta');
   if (themeMeta) {
-    themeMeta.setAttribute('content', id === 'book' ? '#e2073b' : '#ffffff');
+    themeMeta.setAttribute('content', id === 'book' ? '#e2073b' : (id === 'projects' ? '#0e0e0e' : '#ffffff'));
   }
 
   document.querySelectorAll('[data-page]').forEach(l => {
