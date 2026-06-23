@@ -145,30 +145,37 @@
           <input type="date" id="p-date" />
         </div>
         <div class="field">
-          <label>Gear</label>
+          <label id="p-gear-label">Gear</label>
           <input type="text" id="p-gear" placeholder="z.B. Sony FX3 …" />
         </div>
         <div class="field field--full">
           <label>Beschreibung</label>
           <textarea id="p-desc" class="textarea--lg"></textarea>
         </div>
-        <div class="field field--full">
+        <div class="field field--full field--video-only">
           <label>YouTube-Video-ID (optional)</label>
           <input type="text" id="p-video" placeholder="z.B. BiXmgiFpW5o" />
         </div>
 
         <div class="field field--full">
-          <label>Cover-Bild</label>
+          <label>Cover-Bild <span id="p-cover-hint" style="text-transform:none;letter-spacing:0;color:var(--grey-400);font-weight:400">(bei Fotografie/Design: Banner ganz oben)</span></label>
           <input type="file" id="p-cover-file" accept="image/*" />
           <div class="upload-preview" id="p-cover-preview"></div>
           <input type="hidden" id="p-cover-url" />
         </div>
 
-        <div class="field field--full">
+        <div class="field field--full field--video-only">
           <label>Behind-the-Scenes-Bilder (bis zu 4)</label>
           <input type="file" id="p-bts-files" accept="image/*" multiple />
           <div class="upload-preview" id="p-bts-preview"></div>
           <input type="hidden" id="p-bts-urls" />
+        </div>
+
+        <div class="field field--full field--gallery-only">
+          <label>Galerie-Bilder (beliebig viele, per Drag &amp; Drop sortierbar)</label>
+          <input type="file" id="p-gallery-files" accept="image/*" multiple />
+          <div class="upload-preview" id="p-gallery-preview"></div>
+          <input type="hidden" id="p-gallery-urls" />
         </div>
 
         <div class="field field--full">

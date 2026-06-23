@@ -167,9 +167,14 @@
      ============================================================ -->
 <section id="project-detail" class="page" role="main" style="display:none">
 
-  <!-- Fullscreen video -->
+  <!-- Fullscreen video (nur Video-Projekte) -->
   <div class="detail__video-wrap" id="detail-video-wrap">
     <iframe id="detail-video" src="" allowfullscreen allow="autoplay; fullscreen" title="Projekt Video"></iframe>
+  </div>
+
+  <!-- Banner-Bild (Fotografie / Design) -->
+  <div class="detail__banner" id="detail-banner-wrap">
+    <img id="detail-banner" src="" alt="" />
   </div>
 
   <div class="detail__content">
@@ -180,8 +185,8 @@
       <h1 class="detail__title" id="detail-title">—</h1>
     </div>
 
-    <!-- Description + Meta -->
-    <div class="detail__body">
+    <!-- Description + Meta (Video-Projekte) -->
+    <div class="detail__body" id="detail-body">
       <p class="detail__desc" id="detail-desc">—</p>
 
       <div class="detail__meta-list">
@@ -200,14 +205,17 @@
       </div>
     </div>
 
-    <!-- Behind the Scenes -->
-    <div class="detail__bts">
+    <!-- Behind the Scenes (Video-Projekte) -->
+    <div class="detail__bts" id="detail-bts-wrap">
       <span class="detail__bts-label">Behind the Scenes</span>
       <div class="detail__bts-grid" id="detail-bts"></div>
     </div>
 
-    <!-- Credits -->
-    <div class="detail__credits">
+    <!-- Galerie mit eingebetteter Info-Karte (Fotografie / Design) -->
+    <div class="detail__gallery" id="detail-gallery"></div>
+
+    <!-- Credits (Video-Projekte; bei Foto/Design Teil der Galerie-Info-Karte) -->
+    <div class="detail__credits" id="detail-credits-wrap">
       <span class="detail__credits-label">Credits</span>
       <div class="detail__credits-list" id="detail-credits"></div>
     </div>

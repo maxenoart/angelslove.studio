@@ -31,6 +31,7 @@
       video:    row.video,
       cover:    row.cover,
       bts:      row.bts || [],
+      gallery:  row.gallery || [],
       credits:  row.credits || [],
     }));
 

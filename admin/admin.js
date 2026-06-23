@@ -231,12 +231,16 @@ function openModal(project) {
   document.getElementById('p-video').value     = project ? project.video || '' : '';
   document.getElementById('p-cover-url').value = project ? project.cover || '' : '';
   document.getElementById('p-bts-urls').value  = project && project.bts ? JSON.stringify(project.bts) : '[]';
+  document.getElementById('p-gallery-urls').value = project && project.gallery ? JSON.stringify(project.gallery) : '[]';
   document.getElementById('p-published').checked = project ? !!project.published : false;
   document.getElementById('p-cover-file').value = '';
   document.getElementById('p-bts-files').value  = '';
+  document.getElementById('p-gallery-files').value = '';
 
   renderCoverPreview();
   renderBtsPreview();
+  renderGalleryPreview();
+  updateFieldsForType(document.getElementById('p-type').value);
 
   creditsRows.innerHTML = '';
   const credits = project && project.credits && project.credits.length ? project.credits : [{ role: '', name: '' }];
@@ -245,6 +249,20 @@ function openModal(project) {
   modalBackdrop.classList.add('is-active');
 }
 function closeModal() { modalBackdrop.classList.remove('is-active'); }
+
+// Blendet je nach Projekt-Typ die passenden Felder ein/aus: Video-ID +
+// Behind-the-Scenes nur für Video-Projekte, die freie Galerie nur für
+// Fotografie/Design — und das Gear-Feld heisst bei Design "Programm".
+function updateFieldsForType(type) {
+  document.querySelectorAll('.field--video-only').forEach(el => {
+    el.style.display = type === 'video' ? '' : 'none';
+  });
+  document.querySelectorAll('.field--gallery-only').forEach(el => {
+    el.style.display = (type === 'photo' || type === 'design') ? '' : 'none';
+  });
+  document.getElementById('p-gear-label').textContent = type === 'design' ? 'Programm' : 'Gear';
+}
+document.getElementById('p-type').addEventListener('change', e => updateFieldsForType(e.target.value));
 
 function addCreditRow(role = '', name = '') {
   const row = document.createElement('div');
@@ -265,37 +283,36 @@ function renderCoverPreview() {
   const box = document.getElementById('p-cover-preview');
   box.innerHTML = url ? `<img src="${url}">` : '';
 }
-function getBtsUrls() {
-  return JSON.parse(document.getElementById('p-bts-urls').value || '[]');
-}
-function setBtsUrls(urls) {
-  document.getElementById('p-bts-urls').value = JSON.stringify(urls);
-}
-
-// BTS-Vorschau mit Drag & Drop: jede Kachel ist verschiebbar (Reihenfolge
-// ändern) und hat ein kleines × zum Entfernen einzelner Bilder.
-function renderBtsPreview() {
-  const urls = getBtsUrls();
-  const box = document.getElementById('p-bts-preview');
-  box.innerHTML = urls.map((u, i) => `
-    <div class="bts-thumb" draggable="true" data-index="${i}">
-      <img src="${u}" draggable="false">
-      <button type="button" class="bts-thumb__remove" data-index="${i}" title="Entfernen">×</button>
-    </div>
-  `).join('');
-}
-
-(function setupBtsDragDrop() {
-  const box = document.getElementById('p-bts-preview');
+// Generisches, mehrfach verwendbares Bildfeld mit Drag & Drop:
+// hält eine JSON-Liste von URLs in einem hidden input, zeigt sie als
+// verschiebbare Kacheln mit Entfernen-Button (×). Wird für die
+// Behind-the-Scenes-Bilder UND für die neue, beliebig lange
+// Galerie (Fotografie/Design) verwendet.
+function createDraggableImageField(urlsInputId, previewBoxId) {
+  const urlsInput = document.getElementById(urlsInputId);
+  const box = document.getElementById(previewBoxId);
   let dragIndex = null;
+
+  function getUrls() { return JSON.parse(urlsInput.value || '[]'); }
+  function setUrls(urls) { urlsInput.value = JSON.stringify(urls); }
+
+  function render() {
+    const urls = getUrls();
+    box.innerHTML = urls.map((u, i) => `
+      <div class="bts-thumb" draggable="true" data-index="${i}">
+        <img src="${u}" draggable="false">
+        <button type="button" class="bts-thumb__remove" data-index="${i}" title="Entfernen">×</button>
+      </div>
+    `).join('');
+  }
 
   box.addEventListener('click', e => {
     const btn = e.target.closest('.bts-thumb__remove');
     if (!btn) return;
-    const urls = getBtsUrls();
+    const urls = getUrls();
     urls.splice(Number(btn.dataset.index), 1);
-    setBtsUrls(urls);
-    renderBtsPreview();
+    setUrls(urls);
+    render();
   });
 
   box.addEventListener('dragstart', e => {
@@ -322,13 +339,20 @@ function renderBtsPreview() {
     e.preventDefault();
     const dropIndex = Number(thumb.dataset.index);
     if (dropIndex === dragIndex) return;
-    const urls = getBtsUrls();
+    const urls = getUrls();
     const [moved] = urls.splice(dragIndex, 1);
     urls.splice(dropIndex, 0, moved);
-    setBtsUrls(urls);
-    renderBtsPreview();
+    setUrls(urls);
+    render();
   });
-})();
+
+  return { getUrls, setUrls, render };
+}
+
+const btsField     = createDraggableImageField('p-bts-urls', 'p-bts-preview');
+const galleryField = createDraggableImageField('p-gallery-urls', 'p-gallery-preview');
+function renderBtsPreview()     { btsField.render(); }
+function renderGalleryPreview() { galleryField.render(); }
 
 // Verkleinert + komprimiert ein Bild im Browser, bevor es hochgeladen
 // wird — damit die Website schlank bleibt, egal wie groß das Original
@@ -390,15 +414,29 @@ document.getElementById('p-cover-file').addEventListener('change', async e => {
 
 document.getElementById('p-bts-files').addEventListener('change', async e => {
   const files = Array.from(e.target.files).slice(0, 4);
-  const urls = JSON.parse(document.getElementById('p-bts-urls').value || '[]');
+  const urls = btsField.getUrls();
   const box = document.getElementById('p-bts-preview');
   box.innerHTML = '<p class="loading-note">Optimiere & lade hoch …</p>';
   for (const file of files) {
     const url = await uploadImage(file);
     if (url) urls.push(url);
   }
-  document.getElementById('p-bts-urls').value = JSON.stringify(urls.slice(0, 4));
+  btsField.setUrls(urls.slice(0, 4));
   renderBtsPreview();
+});
+
+// Galerie (Fotografie/Design): beliebig viele Bilder, kein festes Limit.
+document.getElementById('p-gallery-files').addEventListener('change', async e => {
+  const files = Array.from(e.target.files);
+  const urls = galleryField.getUrls();
+  const box = document.getElementById('p-gallery-preview');
+  box.innerHTML = '<p class="loading-note">Optimiere & lade hoch …</p>';
+  for (const file of files) {
+    const url = await uploadImage(file);
+    if (url) urls.push(url);
+  }
+  galleryField.setUrls(urls);
+  renderGalleryPreview();
 });
 
 // ---- Speichern -----------------------------------------------------
@@ -420,7 +458,8 @@ projectForm.addEventListener('submit', async e => {
     long_desc: document.getElementById('p-desc').value.trim(),
     video:     extractYouTubeId(document.getElementById('p-video').value.trim()),
     cover:     document.getElementById('p-cover-url').value.trim(),
-    bts:       JSON.parse(document.getElementById('p-bts-urls').value || '[]'),
+    bts:       btsField.getUrls(),
+    gallery:   galleryField.getUrls(),
     credits,
     published: document.getElementById('p-published').checked,
   };

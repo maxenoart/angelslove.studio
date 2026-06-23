@@ -860,6 +860,64 @@ body.is-home .nav--dark .nav__logo {
 }
 .detail__back:hover { color: var(--red); }
 
+/* ---- Banner + Galerie (Fotografie / Design) ------------------ */
+.detail__banner {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: var(--black);
+  overflow: hidden;
+}
+.detail__banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.detail__gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.75rem, 1.5vw, 1.5rem);
+  margin-bottom: clamp(5rem, 8vw, 7rem);
+}
+
+.detail__gallery-item {
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  background: var(--grey-100);
+}
+.detail__gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+.detail__gallery-item:hover img { transform: scale(1.03); }
+
+/* Die "unsichtbare Karte": kein Rahmen, kein Schatten — sitzt einfach
+   als Text-Feld zwischen den Galerie-Bildern, weil die Seite ohnehin
+   weiss ist. Enthält Kurztext, Datum, Gear/Programm und Credits. */
+.detail__gallery-info {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.75rem;
+  padding: 1.5rem 0;
+}
+.detail__gallery-info .detail__desc { margin: 0; }
+.detail__gallery-info .detail__meta-list {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+.detail__credits-list--inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 3rem;
+}
+
 /* ============================================================
    ABOUT US
    ============================================================ */
@@ -1276,6 +1334,8 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   .detail__body { grid-template-columns: 1fr; gap: 2.5rem; }
   .about__people { gap: 2.5rem; }
   .book__body { grid-template-columns: 1fr; gap: 3rem; }
+  .detail__gallery { grid-template-columns: repeat(2, 1fr); }
+  .detail__gallery-info { grid-column: span 2; }
 }
 
 @media (max-width: 600px) {
@@ -1304,6 +1364,9 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
     grid-auto-columns: unset;
     gap: 1.25rem;
   }
+  .detail__gallery { grid-template-columns: 1fr; }
+  .detail__gallery-info { grid-column: span 1; }
+  .detail__gallery-info .detail__meta-list { flex-direction: column; gap: 1.5rem; }
 }
 
 /* Vertical responsiveness for Home — buttons always visible without scrolling,

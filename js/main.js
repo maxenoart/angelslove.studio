@@ -468,52 +468,114 @@ window.openProject = function(id) {
   const p = PROJECTS.find(p => p.id === id);
   if (!p) return;
 
-  // YouTube video
-  const iframe = document.getElementById('detail-video');
-  const videoId = extractYouTubeId(p.video);
-  if (videoId && videoId !== 'DEINE_YOUTUBE_ID') {
-    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1`;
-    document.getElementById('detail-video-wrap').style.display = '';
-  } else {
-    iframe.src = '';
-    document.getElementById('detail-video-wrap').style.background = 'var(--black)';
-  }
+  const videoWrap   = document.getElementById('detail-video-wrap');
+  const bannerWrap  = document.getElementById('detail-banner-wrap');
+  const bodyWrap    = document.getElementById('detail-body');
+  const btsWrap     = document.getElementById('detail-bts-wrap');
+  const galleryWrap = document.getElementById('detail-gallery');
+  const creditsWrap = document.getElementById('detail-credits-wrap');
 
-  // Header
-  document.getElementById('detail-category').textContent      = p.category  || '—';
-  document.getElementById('detail-title').textContent         = p.title     || '—';
-  document.getElementById('detail-desc').textContent          = p.longDesc  || p.shortDesc || '—';
+  // Header — gleich für alle Projekt-Typen
+  document.getElementById('detail-category').textContent = p.category || '—';
+  document.getElementById('detail-title').textContent    = p.title    || '—';
 
-  // Meta
-  document.getElementById('detail-meta-category').textContent = p.category  || '—';
-  document.getElementById('detail-meta-date').textContent     = formatDate(p.date);
-  document.getElementById('detail-meta-gear').textContent     = p.gear      || '—';
+  const isGalleryType = p.type === 'photo' || p.type === 'design';
 
-  // BTS — 4 images
-  const btsGrid = document.getElementById('detail-bts');
-  if (p.bts && p.bts.length) {
-    btsGrid.innerHTML = p.bts.slice(0, 4).map(src =>
-      `<div class="detail__bts-item">
-         <img src="${src}" alt="Behind the Scenes" loading="lazy">
+  if (isGalleryType) {
+    // ---- Fotografie / Design: Banner oben + Galerie mit eingebetteter Info-Karte ----
+    videoWrap.style.display   = 'none';
+    bodyWrap.style.display    = 'none';
+    btsWrap.style.display     = 'none';
+    creditsWrap.style.display = 'none';
+
+    bannerWrap.style.display = '';
+    document.getElementById('detail-banner').src = p.cover || '';
+
+    const gearLabel = p.type === 'design' ? 'Programm' : 'Gear';
+    const creditsHtml = (p.credits && p.credits.length)
+      ? p.credits.map(c =>
+          `<div>
+             <p class="detail__credit-role">${c.role}</p>
+             <p class="detail__credit-name">${c.name}</p>
+           </div>`
+        ).join('')
+      : '';
+
+    const infoCard = `
+      <div class="detail__gallery-info">
+        <p class="detail__desc">${p.longDesc || p.shortDesc || ''}</p>
+        <div class="detail__meta-list">
+          <div class="detail__meta-item">
+            <p class="detail__meta-label">Datum</p>
+            <p class="detail__meta-value">${formatDate(p.date)}</p>
+          </div>
+          <div class="detail__meta-item">
+            <p class="detail__meta-label">${gearLabel}</p>
+            <p class="detail__meta-value">${p.gear || '—'}</p>
+          </div>
+        </div>
+        ${creditsHtml ? `<div class="detail__credits-list detail__credits-list--inline">${creditsHtml}</div>` : ''}
+      </div>`;
+
+    const items = (p.gallery && p.gallery.length ? p.gallery : []).map(src =>
+      `<div class="detail__gallery-item">
+         <img src="${src}" alt="" loading="lazy">
        </div>`
-    ).join('');
-  } else {
-    btsGrid.innerHTML = Array(4).fill(
-      `<div class="detail__bts-item"></div>`
-    ).join('');
-  }
+    );
+    items.splice(Math.min(2, items.length), 0, infoCard);
 
-  // Credits
-  const creditsList = document.getElementById('detail-credits');
-  if (p.credits && p.credits.length) {
-    creditsList.innerHTML = p.credits.map(c =>
-      `<div>
-         <p class="detail__credit-role">${c.role}</p>
-         <p class="detail__credit-name">${c.name}</p>
-       </div>`
-    ).join('');
+    galleryWrap.innerHTML    = items.join('');
+    galleryWrap.style.display = '';
+
   } else {
-    creditsList.innerHTML = '';
+    // ---- Video (Standard) ----
+    bannerWrap.style.display  = 'none';
+    galleryWrap.style.display = 'none';
+
+    bodyWrap.style.display    = '';
+    btsWrap.style.display     = '';
+    creditsWrap.style.display = '';
+
+    const iframe = document.getElementById('detail-video');
+    const videoId = extractYouTubeId(p.video);
+    videoWrap.style.display = '';
+    if (videoId && videoId !== 'DEINE_YOUTUBE_ID') {
+      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1`;
+      videoWrap.style.background = '';
+    } else {
+      iframe.src = '';
+      videoWrap.style.background = 'var(--black)';
+    }
+
+    document.getElementById('detail-desc').textContent          = p.longDesc || p.shortDesc || '—';
+    document.getElementById('detail-meta-category').textContent = p.category || '—';
+    document.getElementById('detail-meta-date').textContent     = formatDate(p.date);
+    document.getElementById('detail-meta-gear').textContent     = p.gear     || '—';
+
+    const btsGrid = document.getElementById('detail-bts');
+    if (p.bts && p.bts.length) {
+      btsGrid.innerHTML = p.bts.slice(0, 4).map(src =>
+        `<div class="detail__bts-item">
+           <img src="${src}" alt="Behind the Scenes" loading="lazy">
+         </div>`
+      ).join('');
+    } else {
+      btsGrid.innerHTML = Array(4).fill(
+        `<div class="detail__bts-item"></div>`
+      ).join('');
+    }
+
+    const creditsList = document.getElementById('detail-credits');
+    if (p.credits && p.credits.length) {
+      creditsList.innerHTML = p.credits.map(c =>
+        `<div>
+           <p class="detail__credit-role">${c.role}</p>
+           <p class="detail__credit-name">${c.name}</p>
+         </div>`
+      ).join('');
+    } else {
+      creditsList.innerHTML = '';
+    }
   }
 
   showPage('project-detail');
