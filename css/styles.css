@@ -700,6 +700,14 @@ body.is-home .nav--dark .nav__logo {
   padding-bottom: 0;
 }
 
+/* Fotografie/Design: Banner geht randlos bis nach oben (wie bei
+   About/Projects-Hero) — der transparente Header schwebt direkt über
+   dem Bild, statt über einer schwarzen Lücke. Titel + Galerie rutschen
+   dadurch automatisch mit nach oben. */
+#project-detail.project-detail--gallery {
+  padding-top: 0;
+}
+
 /* ---- Dark theme test — Projekt-Detailseiten auf near-black statt
    weiss, analog zur bereits dunklen Projects-Übersicht. Um es wieder
    rückgängig zu machen: einfach diesen Block + den passenden Eintrag
@@ -987,7 +995,11 @@ body.is-home .nav--dark .nav__logo {
 #project-detail.project-detail--gallery .detail__gallery {
   position: relative;
   z-index: 2;
-  margin-top: clamp(-6rem, -9vw, -3rem);
+  /* Nur ein dezenter Überlapp auf das ausfadende Banner-Bild selbst —
+     genug Abstand zur Beschreibung, damit Text und Fotos nicht zu eng
+     aneinander rutschen. */
+  margin-top: clamp(-2.5rem, -3vw, -1.25rem);
+  padding-top: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 /* Restliche Infos (Datum, Gear/Programm, Credits) ganz unten unter den
@@ -1530,7 +1542,7 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   .detail__banner-arrow { font-size: 1.2rem; }
   .detail__gallery-meta { flex-direction: column; gap: 1.5rem; }
   .detail__gallery-meta .detail__meta-list { flex-direction: column; gap: 1.25rem; }
-  #project-detail.project-detail--gallery .detail__gallery { margin-top: -3rem; }
+  #project-detail.project-detail--gallery .detail__gallery { margin-top: -1.25rem; padding-top: 1.5rem; }
 }
 
 /* Vertical responsiveness for Home — buttons always visible without scrolling,
