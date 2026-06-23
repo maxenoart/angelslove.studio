@@ -963,6 +963,13 @@ body.is-home .nav--dark .nav__logo {
   color: rgba(255, 255, 255, 0.75);
 }
 
+/* Duplikat der Beschreibung unter den Bildern — nur auf dem Handy
+   sichtbar (siehe Media Query unten), auf dem Desktop ausgeblendet, da
+   dort die Version im Banner-Overlay steht. */
+.detail__gallery-desc {
+  display: none;
+}
+
 /* Links am Bildschirmrand: dezenter, leicht schwankender Pfeil als
    Hinweis, dass es nach unten weitergeht. */
 .detail__banner-scroll {
@@ -1543,28 +1550,32 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   .detail__gallery--masonry .detail__gallery-item,
   .detail__gallery--masonry .detail__gallery-info { margin-bottom: 0.6rem; }
 
-  /* Höher als zuvor, damit Titel + (teils längere) Beschreibung als
-     zentrierter Block bequem Platz haben, ohne über die Box hinaus zu
-     laufen. */
-  .detail__banner { min-height: 80vh; min-height: 80dvh; }
+  /* Im Banner steht auf dem Handy nur noch der (kurze) Titel, daher
+     reicht eine normale Hero-Höhe statt der früheren 80vh. */
+  .detail__banner { min-height: 60vh; min-height: 60dvh; }
   .detail__banner-scroll { left: 1rem; }
   .detail__banner-arrow { font-size: 1.2rem; }
   .detail__gallery-meta { flex-direction: column; gap: 1.5rem; }
   .detail__gallery-meta .detail__meta-list { flex-direction: column; gap: 1.25rem; }
   #project-detail.project-detail--gallery .detail__gallery { margin-top: -1.25rem; padding-top: 1.5rem; }
 
-  /* Handy: Titel + Beschreibung würden unten-verankert bei längerem
-     Text oben aus dem Banner herauslaufen — stattdessen als Block
-     vertikal mittig zentrieren, Titel oben, Beschreibung darunter.
-     max-height + Innen-Scroll als Sicherheitsnetz, falls der Text
-     trotzdem mal nicht in die Box passt (statt über den Rand zu
-     laufen). */
+  /* Handy: im Banner-Overlay steht nur noch der Titel, vertikal mittig
+     im Bild — die Beschreibung wandert stattdessen unter die Bilder
+     (übersichtlicher auf kleinen Screens, siehe .detail__gallery-desc). */
   .detail__banner-text {
     top: 50%;
     bottom: auto;
     transform: translateY(-50%);
-    max-height: calc(100% - 4rem);
-    overflow-y: auto;
+  }
+  .detail__banner-desc { display: none; }
+
+  .detail__gallery-desc {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 300;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 2rem;
   }
 }
 

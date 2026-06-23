@@ -510,6 +510,9 @@ window.openProject = function(id) {
     document.getElementById('detail-banner-category').textContent = p.category || '—';
     document.getElementById('detail-banner-title').textContent    = p.title    || '—';
     document.getElementById('detail-banner-desc').textContent     = p.longDesc || p.shortDesc || '';
+    // Gleicher Text auch unter den Bildern — auf dem Handy wird per CSS
+    // diese Version gezeigt statt der im Banner-Overlay (siehe styles.css).
+    document.getElementById('detail-gallery-desc').textContent    = p.longDesc || p.shortDesc || '';
 
     const gearLabel = p.type === 'design' ? 'Programm' : 'Gear';
     const creditsHtml = (p.credits && p.credits.length)
