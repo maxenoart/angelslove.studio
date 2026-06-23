@@ -169,16 +169,17 @@
     <iframe id="detail-video" src="" allowfullscreen allow="autoplay; fullscreen" title="Projekt Video"></iframe>
   </div>
 
-  <!-- Banner-Bild (Fotografie / Design) — Titel + Beschreibung liegen
-       unten links als Overlay auf dem Bild, das nach unten ausfadet;
-       links ein dezenter, leicht schwankender Pfeil als Scroll-Hinweis. -->
+  <!-- Banner-Bild (Fotografie / Design) — nur der Titel liegt als Overlay
+       auf dem Bild, das nach unten ausfadet; links ein dezenter, leicht
+       schwankender Pfeil als Scroll-Hinweis. Direkt darunter folgen alle
+       Bilder, die Beschreibung steht erst ganz unten kurz über Datum/Gear
+       (siehe .detail__gallery-desc weiter unten). -->
   <div class="detail__banner" id="detail-banner-wrap">
     <img id="detail-banner" src="" alt="" />
     <div class="detail__banner-fade"></div>
     <div class="detail__banner-text">
       <span class="detail__category" id="detail-banner-category">—</span>
       <h1 class="detail__title" id="detail-banner-title">—</h1>
-      <p class="detail__banner-desc" id="detail-banner-desc"></p>
     </div>
     <div class="detail__banner-scroll" aria-hidden="true">
       <span class="detail__banner-arrow">↓</span>
@@ -220,19 +221,13 @@
       <div class="detail__bts-grid" id="detail-bts"></div>
     </div>
 
-    <!-- Beschreibung auf dem Handy (Fotografie / Design): liegt hier unter
-         den Bildern statt im Banner-Overlay, damit dort nur der Titel
-         steht — sonst wirkt das Banner auf kleinen Screens unübersichtlich.
-         Auf dem Desktop bleibt sie im Banner-Overlay, dieser Block ist dort
-         per CSS ausgeblendet. -->
-    <p class="detail__gallery-desc" id="detail-gallery-desc"></p>
-
     <!-- Galerie (Fotografie / Design) -->
     <div class="detail__gallery" id="detail-gallery"></div>
 
-    <!-- Restliche Infos ganz unten unter den Bildern (Fotografie / Design):
-         Datum, Gear/Programm, Credits — die Beschreibung steckt bereits
-         oben im Banner-Overlay. -->
+    <!-- Beschreibung ganz unten unter den Bildern, kurz über Datum/Gear -->
+    <p class="detail__gallery-desc" id="detail-gallery-desc"></p>
+
+    <!-- Restliche Infos ganz unten: Datum, Gear/Programm, Credits -->
     <div class="detail__gallery-meta" id="detail-gallery-meta-wrap" style="display:none">
       <div class="detail__meta-list" id="detail-gallery-meta-list"></div>
       <div class="detail__credits-list detail__credits-list--inline" id="detail-gallery-credits"></div>
