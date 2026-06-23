@@ -250,7 +250,7 @@ function addCreditRow(role = '', name = '') {
   const row = document.createElement('div');
   row.className = 'credits-row';
   row.innerHTML = `
-    <input type="text" placeholder="Rolle (z.B. Director)" class="credit-role" value="${escapeHtml(role)}">
+    <input type="text" placeholder="Rolle (z.B. Director)" class="credit-role" list="role-presets" value="${escapeHtml(role)}">
     <input type="text" placeholder="Name" class="credit-name" value="${escapeHtml(name)}">
     <button type="button" class="btn btn--ghost btn--small remove-credit">×</button>
   `;
@@ -265,11 +265,70 @@ function renderCoverPreview() {
   const box = document.getElementById('p-cover-preview');
   box.innerHTML = url ? `<img src="${url}">` : '';
 }
-function renderBtsPreview() {
-  const urls = JSON.parse(document.getElementById('p-bts-urls').value || '[]');
-  const box = document.getElementById('p-bts-preview');
-  box.innerHTML = urls.map(u => `<img src="${u}">`).join('');
+function getBtsUrls() {
+  return JSON.parse(document.getElementById('p-bts-urls').value || '[]');
 }
+function setBtsUrls(urls) {
+  document.getElementById('p-bts-urls').value = JSON.stringify(urls);
+}
+
+// BTS-Vorschau mit Drag & Drop: jede Kachel ist verschiebbar (Reihenfolge
+// ändern) und hat ein kleines × zum Entfernen einzelner Bilder.
+function renderBtsPreview() {
+  const urls = getBtsUrls();
+  const box = document.getElementById('p-bts-preview');
+  box.innerHTML = urls.map((u, i) => `
+    <div class="bts-thumb" draggable="true" data-index="${i}">
+      <img src="${u}" draggable="false">
+      <button type="button" class="bts-thumb__remove" data-index="${i}" title="Entfernen">×</button>
+    </div>
+  `).join('');
+}
+
+(function setupBtsDragDrop() {
+  const box = document.getElementById('p-bts-preview');
+  let dragIndex = null;
+
+  box.addEventListener('click', e => {
+    const btn = e.target.closest('.bts-thumb__remove');
+    if (!btn) return;
+    const urls = getBtsUrls();
+    urls.splice(Number(btn.dataset.index), 1);
+    setBtsUrls(urls);
+    renderBtsPreview();
+  });
+
+  box.addEventListener('dragstart', e => {
+    const thumb = e.target.closest('.bts-thumb');
+    if (!thumb) return;
+    dragIndex = Number(thumb.dataset.index);
+    thumb.classList.add('is-dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+
+  box.addEventListener('dragend', e => {
+    const thumb = e.target.closest('.bts-thumb');
+    if (thumb) thumb.classList.remove('is-dragging');
+    dragIndex = null;
+  });
+
+  box.addEventListener('dragover', e => {
+    if (e.target.closest('.bts-thumb')) e.preventDefault();
+  });
+
+  box.addEventListener('drop', e => {
+    const thumb = e.target.closest('.bts-thumb');
+    if (!thumb || dragIndex === null) return;
+    e.preventDefault();
+    const dropIndex = Number(thumb.dataset.index);
+    if (dropIndex === dragIndex) return;
+    const urls = getBtsUrls();
+    const [moved] = urls.splice(dragIndex, 1);
+    urls.splice(dropIndex, 0, moved);
+    setBtsUrls(urls);
+    renderBtsPreview();
+  });
+})();
 
 // Verkleinert + komprimiert ein Bild im Browser, bevor es hochgeladen
 // wird — damit die Website schlank bleibt, egal wie groß das Original

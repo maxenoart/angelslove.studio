@@ -14,6 +14,7 @@
      ============================================================ -->
 <div class="login-screen" id="login-screen">
   <div class="login-card">
+    <a href="../index.html" class="login-card__close" aria-label="Schliessen">×</a>
     <div class="login-card__logo">angelslove</div>
     <h1>Admin-Login</h1>
     <form id="login-form">
@@ -149,7 +150,7 @@
         </div>
         <div class="field field--full">
           <label>Beschreibung</label>
-          <textarea id="p-desc"></textarea>
+          <textarea id="p-desc" class="textarea--lg"></textarea>
         </div>
         <div class="field field--full">
           <label>YouTube-Video-ID (optional)</label>
@@ -174,6 +175,25 @@
           <label>Credits</label>
           <div class="credits-rows" id="credits-rows"></div>
           <button type="button" class="btn btn--ghost btn--small" id="add-credit-btn" style="margin-top:0.5rem">+ Credit hinzufügen</button>
+          <datalist id="role-presets">
+            <option value="Regie"></option>
+            <option value="Director of Photography"></option>
+            <option value="Kamera"></option>
+            <option value="Creative Lead"></option>
+            <option value="Produktion"></option>
+            <option value="Schnitt"></option>
+            <option value="Color Grading"></option>
+            <option value="Sound Design"></option>
+            <option value="Musik"></option>
+            <option value="Fotografie"></option>
+            <option value="Design"></option>
+            <option value="Art Direction"></option>
+            <option value="Konzept"></option>
+            <option value="Styling"></option>
+            <option value="Motion Design"></option>
+            <option value="Postproduktion"></option>
+            <option value="Drohnenpilot"></option>
+          </datalist>
         </div>
 
         <div class="field field--full field--checkbox">
