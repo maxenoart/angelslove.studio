@@ -365,7 +365,7 @@ function shuffle(arr) {
   return a;
 }
 
-const CS_CARD_LIMIT = 14; // keep the grid to a fixed, manageable size
+const CS_CARD_LIMIT = 42; // enger gepacktes Grid -> 3x so viele Karten wie zuvor (14)
 
 function buildCreativeSpace() {
   const grid = document.getElementById('cs-grid');
@@ -393,7 +393,7 @@ function buildCreativeSpace() {
     ? CREATIVE_SPACE_ITEMS.filter(i => i.type === 'text')
     : [];
   const textItems = shuffle(allTextItems)
-    .slice(0, Math.min(2, allTextItems.length))
+    .slice(0, Math.min(4, allTextItems.length))
     .map((t, idx) => ({ ...t, accentBox: idx === 0 }));
 
   // Shuffle the media, cap the total card count, then drop the text
