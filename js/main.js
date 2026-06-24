@@ -752,7 +752,23 @@ if (contactForm) {
 
   function showSuccess() {
     contactForm.style.display = 'none';
-    document.getElementById('form-success').style.display = 'block';
+    document.getElementById('form-success').style.display = 'flex';
+    // Nach kurzer Zeit automatisch zurück auf die Startseite — macht
+    // deutlich, dass die Anfrage angekommen ist, statt einfach auf der
+    // Seite stehen zu bleiben.
+    setTimeout(() => {
+      showPage('home');
+      // Formular für den nächsten Besuch zurücksetzen
+      setTimeout(() => {
+        contactForm.reset();
+        contactForm.style.display = '';
+        document.getElementById('form-success').style.display = 'none';
+        const btn = contactForm.querySelector('button[type="submit"]');
+        btn.textContent = 'ABSENDEN';
+        btn.disabled = false;
+        Object.values(fields).forEach(({ el }) => el.closest('.form-field').classList.remove('has-error'));
+      }, 500);
+    }, 3200);
   }
 }
 
