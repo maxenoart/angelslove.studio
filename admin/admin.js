@@ -288,7 +288,7 @@ function addCreditRow(role = '', name = '') {
   row.className = 'credits-row';
   row.innerHTML = `
     <input type="text" placeholder="Rolle (z.B. Director)" class="credit-role" list="role-presets" value="${escapeHtml(role)}">
-    <input type="text" placeholder="Name" class="credit-name" value="${escapeHtml(name)}">
+    <input type="text" placeholder="Name" class="credit-name" list="name-presets" value="${escapeHtml(name)}">
     <button type="button" class="btn btn--ghost btn--small remove-credit">×</button>
   `;
   row.querySelector('.remove-credit').addEventListener('click', () => row.remove());
