@@ -371,7 +371,9 @@ const CS_CARD_LIMIT = 90;  // harte Obergrenze, falls extrem viele Projekte/BTS-
 let csAllItems = [];  // vollständige, gemischte Liste (Medien + Textblöcke)
 let csShown = 0;      // wie viele Karten aktuell im Grid stehen
 
-// Baut die komplette, gemischte Item-Liste einmal auf (Aufruf bei Seitenaufbau).
+// Baut die komplette Item-Liste einmal auf (Aufruf bei Seitenaufbau).
+// Nur noch Bilder — keine Textblöcke, keine Legenden: kompakter, grosser
+// Bild-an-Bild-Eindruck.
 function buildCreativeSpaceItems() {
   // Media: every project's cover + behind-the-scenes shots, clickable.
   const mediaItems = [];
@@ -386,38 +388,12 @@ function buildCreativeSpaceItems() {
     });
   }
 
-  // Editorial text blocks, if defined in creative-space-data.js. The first
-  // one gets a red accent background so a few boxes break up the imagery
-  // with color.
-  const allTextItems = (typeof CREATIVE_SPACE_ITEMS !== 'undefined')
-    ? CREATIVE_SPACE_ITEMS.filter(i => i.type === 'text')
-    : [];
-  const textItems = shuffle(allTextItems)
-    .slice(0, Math.min(6, allTextItems.length))
-    .map((t, idx) => ({ ...t, accentBox: idx === 0 }));
-
-  // Shuffle the media, cap the total card count, then drop the text
-  // blocks in at random spots — different selection/layout every load.
-  const items = shuffle(mediaItems).slice(0, Math.max(0, CS_CARD_LIMIT - textItems.length));
-  textItems.forEach(t => {
-    items.splice(Math.floor(Math.random() * (items.length + 1)), 0, t);
-  });
-
-  return items;
+  return shuffle(mediaItems).slice(0, CS_CARD_LIMIT);
 }
 
 function renderCsCard(item, i) {
   const RATIOS = ['4/3', '3/4', '1/1', '16/9'];
   const delay = `${(i % 6) * 0.06}s`;
-
-  if (item.type === 'text') {
-    const heading = item.heading.replace(/\n/g, '<br>');
-    const accentClass = item.accentBox ? ' cs__item--text-accent' : '';
-    return `
-      <div class="cs__item cs__item--text${accentClass}" style="transition-delay:${delay}">
-        <h3>${heading}</h3>
-      </div>`;
-  }
 
   const aspectRatio = RATIOS[i % RATIOS.length];
   return `
@@ -429,7 +405,6 @@ function renderCsCard(item, i) {
              onload="this.closest('.cs__img-wrap').classList.add('is-loaded')"
              onerror="this.closest('.cs__img-wrap').classList.add('is-loaded')">
       </span>
-      <span class="cs__item-caption">${item.caption}</span>
     </div>`;
 }
 
