@@ -446,12 +446,12 @@ body.is-home .nav--dark .nav__logo {
   font-size: 1.05rem;
 }
 
-/* Masonry grid — Bild an Bild, kein Abstand: kompakter, grosser Eindruck */
-.cs__grid { columns: 4; column-gap: 2px; }
+/* Masonry grid — enger: mehr Spalten, kleinere Abstände */
+.cs__grid { columns: 4; column-gap: 0.75rem; }
 
 .cs__item {
   break-inside: avoid;
-  margin-bottom: 2px;
+  margin-bottom: 0.75rem;
   overflow: hidden;
   position: relative;
   opacity: 0;
@@ -462,11 +462,26 @@ body.is-home .nav--dark .nav__logo {
 
 .cs__placeholder { width: 100%; background: var(--black); display: block; }
 
+.cs__item-caption {
+  padding: 0.6rem 0 0.35rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--grey-400);
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .cs__item--accent .cs__placeholder { background: var(--red); }
 
 .cs__item--clickable { cursor: pointer; }
 .cs__item--clickable img { transition: transform 0.5s ease; }
 .cs__item--clickable:hover img { transform: scale(1.045); }
+.cs__item--clickable:hover .cs__item-caption { color: var(--red); }
 
 /* Bild-Lade-Animation: Shimmer-Skeleton, bis das Bild geladen ist */
 .cs__img-wrap {
@@ -1558,7 +1573,7 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
    RESPONSIVE
    ============================================================ */
 @media (max-width: 900px) {
-  .cs__grid { columns: 3; column-gap: 2px; }
+  .cs__grid { columns: 3; column-gap: 0.7rem; }
   .detail__body { grid-template-columns: 1fr; gap: 2.5rem; }
   .about__people { gap: 2.5rem; }
   .book__body { grid-template-columns: 1fr; gap: 3rem; }
@@ -1571,8 +1586,9 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   :root { --nav-h: 60px; }
   .nav__links { display: none; }
   .nav__toggle { display: flex; }
-  .cs__grid { columns: 2; column-gap: 2px; }
-  .cs__item { margin-bottom: 2px; }
+  .cs__grid { columns: 2; column-gap: 0.5rem; }
+  .cs__item { margin-bottom: 0.5rem; }
+  .cs__item-caption { font-size: 0.6rem; padding: 0.5rem 0 0.4rem; }
   .projects__grid { grid-template-columns: 1fr; }
   .projects__hero { height: 80vh; height: 80dvh; margin-bottom: -32vh; }
   .about__people { grid-template-columns: 1fr; gap: 3rem; }

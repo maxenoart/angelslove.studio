@@ -405,6 +405,7 @@ function renderCsCard(item, i) {
              onload="this.closest('.cs__img-wrap').classList.add('is-loaded')"
              onerror="this.closest('.cs__img-wrap').classList.add('is-loaded')">
       </span>
+      <span class="cs__item-caption">${item.caption}</span>
     </div>`;
 }
 
