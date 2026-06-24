@@ -462,18 +462,27 @@ body.is-home .nav--dark .nav__logo {
 
 .cs__placeholder { width: 100%; background: var(--black); display: block; }
 
+/* Caption liegt direkt im Bild (unten links), invertiert sich farblich
+   gegen den Bildinhalt darunter — dadurch braucht sie keine eigene Zeile
+   und der Abstand zwischen allen Items bleibt überall gleich gross. */
 .cs__item-caption {
-  padding: 0.6rem 0 0.35rem;
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
+  position: absolute;
+  left: 0.55rem;
+  bottom: 0.5rem;
+  z-index: 1;
+  padding: 0;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   font-weight: 600;
-  color: var(--grey-400);
+  color: var(--white);
+  mix-blend-mode: difference;
   display: block;
-  max-width: 100%;
+  max-width: calc(100% - 1.1rem);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  pointer-events: none;
 }
 
 .cs__item--accent .cs__placeholder { background: var(--red); }
@@ -481,7 +490,6 @@ body.is-home .nav--dark .nav__logo {
 .cs__item--clickable { cursor: pointer; }
 .cs__item--clickable img { transition: transform 0.5s ease; }
 .cs__item--clickable:hover img { transform: scale(1.045); }
-.cs__item--clickable:hover .cs__item-caption { color: var(--red); }
 
 /* Bild-Lade-Animation: Shimmer-Skeleton, bis das Bild geladen ist */
 .cs__img-wrap {
@@ -1588,7 +1596,7 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   .nav__toggle { display: flex; }
   .cs__grid { columns: 2; column-gap: 0.5rem; }
   .cs__item { margin-bottom: 0.5rem; }
-  .cs__item-caption { font-size: 0.6rem; padding: 0.5rem 0 0.4rem; }
+  .cs__item-caption { font-size: 0.5rem; left: 0.4rem; bottom: 0.35rem; }
   .projects__grid { grid-template-columns: 1fr; }
   .projects__hero { height: 80vh; height: 80dvh; margin-bottom: -32vh; }
   .about__people { grid-template-columns: 1fr; gap: 3rem; }
