@@ -1172,6 +1172,18 @@ body.is-home .nav--dark .nav__logo {
   color: var(--grey-700);
 }
 
+.about__person-insta {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: lowercase;
+  color: var(--grey-400);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.about__person-insta:hover { color: var(--red); }
+
 /* ============================================================
    PAGE FLOW — next page navigation
    ============================================================ */
@@ -1396,6 +1408,12 @@ body.is-home .nav--dark .nav__logo {
   gap: 2rem;
 }
 .footer__copy { font-size: 0.7rem; color: var(--grey-400); letter-spacing: 0.05em; }
+.footer__links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: clamp(1rem, 2.5vw, 2rem);
+}
 .footer__logo { width: 28px; opacity: 0.4; transition: opacity var(--transition); }
 .footer__logo:hover { opacity: 0.9; }
 .footer__legal {
