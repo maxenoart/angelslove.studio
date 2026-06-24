@@ -82,7 +82,47 @@ function updateChromeForFlowSection(id) {
 }
 
 // ---- Page routing -----------------------------------------
+// Verlässt man ein Video-Projekt, läuft der YouTube-Ton sonst im
+// versteckten iFrame einfach weiter bzw. hört abrupt auf — hier wird er
+// (sofern möglich, via YouTube-postMessage-API) kurz sanft ausgefadet,
+// danach hart gestoppt. Klappt der Fade aus irgendeinem Grund nicht
+// (z.B. iFrame noch nicht bereit), geht der Ton sofort weg.
+function fadeOutAndStopVideo() {
+  const iframe = document.getElementById('detail-video');
+  if (!iframe || !iframe.src) return;
+
+  const win = iframe.contentWindow;
+  if (!win) { iframe.src = ''; return; }
+
+  const post = (func, args = []) => {
+    try {
+      win.postMessage(JSON.stringify({ event: 'command', func, args }), '*');
+    } catch (e) { /* iFrame evtl. nicht erreichbar — Sicherheitsnetz unten greift */ }
+  };
+
+  const steps = 6;
+  const stepDuration = 90;
+  let i = steps;
+  const fadeTimer = setInterval(() => {
+    i--;
+    post('setVolume', [Math.round((i / steps) * 100)]);
+    if (i <= 0) {
+      clearInterval(fadeTimer);
+      post('pauseVideo');
+      iframe.src = '';
+    }
+  }, stepDuration);
+
+  // Sicherheitsnetz: falls der Fade nicht ankommt, Ton nach kurzer Zeit
+  // trotzdem hart abschalten statt weiterlaufen zu lassen.
+  setTimeout(() => { iframe.src = ''; }, steps * stepDuration + 400);
+}
+
 function showPage(id, pushState = true) {
+
+  if (currentPage === 'project-detail' && id !== 'project-detail') {
+    fadeOutAndStopVideo();
+  }
 
   if (isFlowId(id)) {
     // Mount both flow sections together, hide everything else.
@@ -565,7 +605,7 @@ window.openProject = function(id) {
     const videoId = extractYouTubeId(p.video);
     videoWrap.style.display = '';
     if (videoId && videoId !== 'DEINE_YOUTUBE_ID') {
-      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1`;
+      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1&enablejsapi=1`;
       videoWrap.style.background = '';
     } else {
       iframe.src = '';
