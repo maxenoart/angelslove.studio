@@ -467,10 +467,10 @@ body.is-home .nav--dark .nav__logo {
    und der Abstand zwischen allen Items bleibt überall gleich gross. */
 .cs__item-caption {
   position: absolute;
-  left: 0.55rem;
-  bottom: 0.5rem;
+  left: 0;
+  bottom: 0;
   z-index: 1;
-  padding: 0;
+  padding: 0.5rem 0.55rem;
   font-size: 0.55rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -478,7 +478,8 @@ body.is-home .nav--dark .nav__logo {
   color: var(--white);
   mix-blend-mode: difference;
   display: block;
-  max-width: calc(100% - 1.1rem);
+  max-width: 100%;
+  box-sizing: border-box;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1596,7 +1597,7 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   .nav__toggle { display: flex; }
   .cs__grid { columns: 2; column-gap: 0.5rem; }
   .cs__item { margin-bottom: 0.5rem; }
-  .cs__item-caption { font-size: 0.5rem; left: 0.4rem; bottom: 0.35rem; }
+  .cs__item-caption { font-size: 0.5rem; padding: 0.4rem 0.45rem; }
   .projects__grid { grid-template-columns: 1fr; }
   .projects__hero { height: 80vh; height: 80dvh; margin-bottom: -32vh; }
   .about__people { grid-template-columns: 1fr; gap: 3rem; }
