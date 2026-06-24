@@ -495,6 +495,65 @@ body.is-home .nav--dark .nav__logo {
 .cs__item--text-accent { background: var(--red); }
 .cs__item--text-accent h3 { color: var(--white); }
 
+/* Bild-Lade-Animation: Shimmer-Skeleton, bis das Bild geladen ist */
+.cs__img-wrap {
+  position: relative;
+  display: block;
+  width: 100%;
+  background: var(--grey-100);
+  overflow: hidden;
+}
+.cs__img-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    var(--grey-100) 30%,
+    var(--grey-200, #e2e2e2) 50%,
+    var(--grey-100) 70%
+  );
+  background-size: 200% 100%;
+  animation: csShimmer 1.4s ease-in-out infinite;
+  opacity: 1;
+  transition: opacity 0.35s ease;
+}
+.cs__img-wrap img {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.cs__img-wrap.is-loaded::before { opacity: 0; }
+.cs__img-wrap.is-loaded img { opacity: 1; }
+
+@keyframes csShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* „Mehr laden“-Button unter dem Grid */
+.cs__load-more-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+.cs__load-more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 1rem 2.5rem;
+  border: 1.5px solid var(--black);
+  background: transparent;
+  color: var(--black);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.cs__load-more:hover { background: var(--black); color: var(--white); }
+
 /* ============================================================
    PROJECTS
    ============================================================ */

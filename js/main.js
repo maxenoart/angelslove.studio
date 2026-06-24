@@ -365,14 +365,14 @@ function shuffle(arr) {
   return a;
 }
 
-const CS_CARD_LIMIT = 42; // enger gepacktes Grid -> 3x so viele Karten wie zuvor (14)
+const CS_PAGE_SIZE = 18;   // wie viele Karten pro „Mehr laden“-Klick dazukommen
+const CS_CARD_LIMIT = 90;  // harte Obergrenze, falls extrem viele Projekte/BTS-Bilder existieren
 
-function buildCreativeSpace() {
-  const grid = document.getElementById('cs-grid');
-  if (!grid) return;
+let csAllItems = [];  // vollständige, gemischte Liste (Medien + Textblöcke)
+let csShown = 0;      // wie viele Karten aktuell im Grid stehen
 
-  const RATIOS = ['4/3', '3/4', '1/1', '16/9'];
-
+// Baut die komplette, gemischte Item-Liste einmal auf (Aufruf bei Seitenaufbau).
+function buildCreativeSpaceItems() {
   // Media: every project's cover + behind-the-scenes shots, clickable.
   const mediaItems = [];
   if (typeof PROJECTS !== 'undefined') {
@@ -386,14 +386,14 @@ function buildCreativeSpace() {
     });
   }
 
-  // Editorial text blocks, if defined in creative-space-data.js — cap to 2
-  // so the grid stays mostly imagery. The first one gets a red accent
-  // background so a few boxes break up the imagery with color.
+  // Editorial text blocks, if defined in creative-space-data.js. The first
+  // one gets a red accent background so a few boxes break up the imagery
+  // with color.
   const allTextItems = (typeof CREATIVE_SPACE_ITEMS !== 'undefined')
     ? CREATIVE_SPACE_ITEMS.filter(i => i.type === 'text')
     : [];
   const textItems = shuffle(allTextItems)
-    .slice(0, Math.min(4, allTextItems.length))
+    .slice(0, Math.min(6, allTextItems.length))
     .map((t, idx) => ({ ...t, accentBox: idx === 0 }));
 
   // Shuffle the media, cap the total card count, then drop the text
@@ -403,26 +403,70 @@ function buildCreativeSpace() {
     items.splice(Math.floor(Math.random() * (items.length + 1)), 0, t);
   });
 
-  grid.innerHTML = items.map((item, i) => {
-    const delay = `${(i % 6) * 0.06}s`;
+  return items;
+}
 
-    if (item.type === 'text') {
-      const heading = item.heading.replace(/\n/g, '<br>');
-      const accentClass = item.accentBox ? ' cs__item--text-accent' : '';
-      return `
-        <div class="cs__item cs__item--text${accentClass}" style="transition-delay:${delay}">
-          <h3>${heading}</h3>
-        </div>`;
-    }
+function renderCsCard(item, i) {
+  const RATIOS = ['4/3', '3/4', '1/1', '16/9'];
+  const delay = `${(i % 6) * 0.06}s`;
 
-    const aspectRatio = RATIOS[i % RATIOS.length];
+  if (item.type === 'text') {
+    const heading = item.heading.replace(/\n/g, '<br>');
+    const accentClass = item.accentBox ? ' cs__item--text-accent' : '';
     return `
-      <div class="cs__item cs__item--clickable" style="transition-delay:${delay}"
-           onclick="openProject(${item.projectId})" role="button" tabindex="0">
-        <img src="${item.src}" alt="${item.caption}" style="aspect-ratio:${aspectRatio};width:100%;object-fit:cover;display:block;">
-        <span class="cs__item-caption">${item.caption}</span>
+      <div class="cs__item cs__item--text${accentClass}" style="transition-delay:${delay}">
+        <h3>${heading}</h3>
       </div>`;
-  }).join('');
+  }
+
+  const aspectRatio = RATIOS[i % RATIOS.length];
+  return `
+    <div class="cs__item cs__item--clickable" style="transition-delay:${delay}"
+         onclick="openProject(${item.projectId})" role="button" tabindex="0">
+      <span class="cs__img-wrap" style="aspect-ratio:${aspectRatio}">
+        <img src="${item.src}" alt="${item.caption}" loading="lazy"
+             style="aspect-ratio:${aspectRatio};width:100%;object-fit:cover;display:block;"
+             onload="this.closest('.cs__img-wrap').classList.add('is-loaded')"
+             onerror="this.closest('.cs__img-wrap').classList.add('is-loaded')">
+      </span>
+      <span class="cs__item-caption">${item.caption}</span>
+    </div>`;
+}
+
+function renderCsLoadMoreState() {
+  const wrap = document.getElementById('cs-load-more-wrap');
+  if (!wrap) return;
+  wrap.style.display = csShown < csAllItems.length ? 'flex' : 'none';
+}
+
+// Hängt den nächsten Batch an Karten unten ans Grid an.
+function loadMoreCreativeSpace() {
+  const grid = document.getElementById('cs-grid');
+  if (!grid) return;
+
+  const next = csAllItems.slice(csShown, csShown + CS_PAGE_SIZE);
+  grid.insertAdjacentHTML('beforeend', next.map((item, idx) => renderCsCard(item, csShown + idx)).join(''));
+  csShown += next.length;
+
+  renderCsLoadMoreState();
+  triggerReveals();
+}
+
+function buildCreativeSpace() {
+  const grid = document.getElementById('cs-grid');
+  if (!grid) return;
+
+  csAllItems = buildCreativeSpaceItems();
+  csShown = 0;
+  grid.innerHTML = '';
+
+  loadMoreCreativeSpace();
+
+  const btn = document.getElementById('cs-load-more-btn');
+  if (btn && !btn.dataset.bound) {
+    btn.addEventListener('click', loadMoreCreativeSpace);
+    btn.dataset.bound = '1';
+  }
 }
 
 // ---- Date formatter ---------------------------------------
