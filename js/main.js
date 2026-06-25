@@ -422,6 +422,7 @@ let csAllItems = [];  // vollständige, gemischte Liste (Medien + Textblöcke)
 let csShown = 0;      // wie viele Karten aktuell im Grid stehen
 let csColumns = [];           // echte Spalten-DOM-Elemente (statt CSS-Mehrspalten-Layout)
 let csCurrentColumnCount = 0; // wie viele Spalten gerade aufgebaut sind
+let csColumnRatioCounts = []; // pro Spalte: wie viele Karten schon drin sind (für Format-Rotation)
 
 // Wie viele Spalten je nach Bildschirmbreite — entspricht den Breakpoints,
 // die früher in den CSS-"columns" Regeln standen (4 / 3 / 2).
@@ -439,11 +440,13 @@ function csBuildColumns() {
   csCurrentColumnCount = csColumnCount();
   grid.innerHTML = '';
   csColumns = [];
+  csColumnRatioCounts = [];
   for (let i = 0; i < csCurrentColumnCount; i++) {
     const col = document.createElement('div');
     col.className = 'cs__column';
     grid.appendChild(col);
     csColumns.push(col);
+    csColumnRatioCounts.push(0);
   }
 }
 
@@ -467,11 +470,15 @@ function buildCreativeSpaceItems() {
   return shuffle(mediaItems).slice(0, CS_CARD_LIMIT);
 }
 
-function renderCsCard(item, i) {
-  const RATIOS = ['4/3', '3/4', '1/1', '16/9'];
-  const delay = `${(i % 6) * 0.06}s`;
+const CS_RATIOS = ['4/3', '3/4', '1/1', '16/9'];
 
-  const aspectRatio = RATIOS[i % RATIOS.length];
+// "ratioIndex" zählt unabhängig von Spalte/Gesamt-Index pro Spalte hoch —
+// so bekommt jede Spalte für sich alle Formate gleich oft ab, statt dass
+// (bei z.B. 4 Spalten und 4 Formaten) jede Spalte immer dasselbe Format
+// bekommt, weil Spalten- und Format-Index sich sonst überlagern.
+function renderCsCard(item, i, ratioIndex) {
+  const delay = `${(i % 6) * 0.06}s`;
+  const aspectRatio = CS_RATIOS[ratioIndex % CS_RATIOS.length];
   return `
     <div class="cs__item cs__item--clickable" style="transition-delay:${delay}"
          onclick="openProject(${item.projectId})" role="button" tabindex="0">
@@ -503,8 +510,10 @@ function loadMoreCreativeSpace() {
   const next = csAllItems.slice(csShown, csShown + CS_PAGE_SIZE);
   next.forEach((item, idx) => {
     const globalIndex = csShown + idx;
-    const col = csColumns[globalIndex % csCurrentColumnCount];
-    col.insertAdjacentHTML('beforeend', renderCsCard(item, globalIndex));
+    const colIndex = globalIndex % csCurrentColumnCount;
+    const col = csColumns[colIndex];
+    const ratioIndex = csColumnRatioCounts[colIndex]++;
+    col.insertAdjacentHTML('beforeend', renderCsCard(item, globalIndex, ratioIndex));
   });
   csShown += next.length;
 
@@ -543,7 +552,9 @@ function buildCreativeSpace() {
           csBuildColumns();
           const toRestore = csAllItems.slice(0, shownCount);
           toRestore.forEach((item, idx) => {
-            csColumns[idx % csCurrentColumnCount].insertAdjacentHTML('beforeend', renderCsCard(item, idx));
+            const colIndex = idx % csCurrentColumnCount;
+            const ratioIndex = csColumnRatioCounts[colIndex]++;
+            csColumns[colIndex].insertAdjacentHTML('beforeend', renderCsCard(item, idx, ratioIndex));
           });
           csShown = shownCount;
           renderCsLoadMoreState();
