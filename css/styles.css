@@ -791,7 +791,7 @@ body.is-home .nav--dark .nav__logo {
 }
 
 .project-card__title {
-  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-size: clamp(1.2rem, 2.4vw, 1.5rem);
   font-weight: 700;
   letter-spacing: var(--tracking-headline);
   text-transform: uppercase;
@@ -809,7 +809,7 @@ body.is-home .nav--dark .nav__logo {
    optisch deutlich grösser wirkt als die anderen Titel-Schriftarten —
    daher hier kleiner skaliert. */
 .project-card__title[data-title-font="press-start-2p"] {
-  font-size: clamp(0.65rem, 1.3vw, 0.85rem);
+  font-size: clamp(0.78rem, 1.56vw, 1.02rem);
   letter-spacing: 0;
 }
 .detail__title[data-title-font="press-start-2p"] {
@@ -823,13 +823,13 @@ body.is-home .nav--dark .nav__logo {
    Handschrift und wirkt bei gleicher Punktgrösse kleiner — grösser
    skaliert. */
 .project-card__title[data-title-font="rock-salt"] {
-  font-size: clamp(0.8rem, 1.6vw, 1rem);
+  font-size: clamp(0.96rem, 1.92vw, 1.2rem);
 }
 .detail__title[data-title-font="rock-salt"] {
   font-size: clamp(1.6rem, 4vw, 3.4rem);
 }
 .project-card__title[data-title-font="reenie-beanie"] {
-  font-size: clamp(1.3rem, 2.6vw, 1.7rem);
+  font-size: clamp(1.56rem, 3.12vw, 2.04rem);
 }
 .detail__title[data-title-font="reenie-beanie"] {
   font-size: clamp(2.6rem, 6.5vw, 5.8rem);

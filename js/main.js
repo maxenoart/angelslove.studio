@@ -391,7 +391,7 @@ function shuffle(arr) {
   return a;
 }
 
-const CS_PAGE_SIZE = 18;   // wie viele Karten pro „Mehr laden“-Klick dazukommen
+const CS_PAGE_SIZE = 36;   // wie viele Karten pro „Mehr laden“-Klick dazukommen (inkl. erstem automatischem Laden)
 const CS_CARD_LIMIT = 90;  // harte Obergrenze, falls extrem viele Projekte/BTS-Bilder existieren
 
 let csAllItems = [];  // vollständige, gemischte Liste (Medien + Textblöcke)
