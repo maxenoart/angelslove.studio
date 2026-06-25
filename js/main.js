@@ -686,11 +686,12 @@ function bindProjectCardPreviews() {
     if (!preview || preview.dataset.bound) return;
     preview.dataset.bound = '1';
     let hoverTimer;
+    let revealTimer;
 
     const stop = () => {
       clearTimeout(hoverTimer);
+      clearTimeout(revealTimer);
       preview.dataset.loading = '0';
-      delete preview.dataset.revealed;
       preview.classList.remove('is-active');
       if (preview.__player && preview.__player.destroy) {
         try { preview.__player.destroy(); } catch (err) {}
@@ -716,16 +717,23 @@ function bindProjectCardPreviews() {
             },
             events: {
               onStateChange: e => {
-                // YouTube zeigt beim Start jedes Embeds für ca. 2s automatisch
-                // Titel + Kanalname ein (Pflicht-Branding, lässt sich über
-                // keinen Parameter abschalten) — das passiert erst NACH dem
-                // "playing"-Event, nicht davor. Darum hier zusätzlich kurz
-                // warten, damit diese Karte schon weg ist, bevor wir crossfaden.
-                if (preview.dataset.loading === '1' && e.data === YT.PlayerState.PLAYING && !preview.dataset.revealed) {
-                  preview.dataset.revealed = '1';
-                  setTimeout(() => {
+                if (preview.dataset.loading !== '1') return;
+                if (e.data === YT.PlayerState.PLAYING) {
+                  // YouTube zeigt nach JEDEM Start (auch nach jedem Loop-
+                  // Neustart über den playlist-Trick!) automatisch für ca.
+                  // 2s Titel + Kanalname ein — das passiert erst NACH dem
+                  // "playing"-Event. Darum bei jedem Play kurz warten, bis
+                  // das vorbei ist, bevor wir aufdecken.
+                  clearTimeout(revealTimer);
+                  revealTimer = setTimeout(() => {
                     if (preview.dataset.loading === '1') preview.classList.add('is-active');
                   }, 1800);
+                } else {
+                  // Pause/Puffern/Ende (z.B. genau der Moment des Loop-
+                  // Neustarts): sofort wieder mit dem Cover zudecken, bis
+                  // der nächste "playing"+Wartezeit-Zyklus durch ist.
+                  clearTimeout(revealTimer);
+                  preview.classList.remove('is-active');
                 }
               }
             }
