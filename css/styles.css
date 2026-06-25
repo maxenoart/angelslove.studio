@@ -543,22 +543,25 @@ body.is-home .nav--dark .nav__logo {
 /* ============================================================
    PROJECTS
    ============================================================ */
-/* ---- Hero — random project cover, fixed to the viewport so it stays
-   put while the page scrolls (no parallax movement), sitting behind
-   everything else. A scroll listener (js/main.js: onProjectsHeroScroll)
-   fades its opacity down to 0 as the user scrolls, revealing the
-   page's own black background underneath — i.e. it fades to black
-   instead of moving. The body (filters + grid) starts partway down
-   over it via margin-top, so cards and filters are always fully
-   crisp from the start. ------------------------------------------- */
+/* ---- Hero — random project cover, sticky to the top of the viewport
+   so it stays put while the page scrolls (no parallax movement),
+   sitting behind everything else. (Note: position:fixed doesn't work
+   here because .page has a transform on it, which makes fixed
+   descendants stick to the page instead of the viewport and scroll
+   along with it — sticky isn't affected by that.) A scroll listener
+   (js/main.js: onProjectsHeroScroll) fades its opacity down to 0 as
+   the user scrolls, revealing the page's own black background
+   underneath — i.e. it fades to black instead of moving. The body
+   (filters + grid) is pulled up over it via negative margin and
+   rendered ON TOP, so cards and filters are always fully crisp. ---- */
 .projects__hero {
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
   z-index: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
+  width: 100%;
+  height: 92vh;
+  height: 92dvh;
+  margin-bottom: -42vh;
   overflow: hidden;
   background: var(--black);
   pointer-events: none;
@@ -586,16 +589,14 @@ body.is-home .nav--dark .nav__logo {
   );
 }
 
-/* ---- Body — rendered ON TOP of the fixed hero (higher z-index),
-   starting partway down the screen via margin-top so the hero photo
-   is visible above it at first. Filters and cards are therefore
-   always fully visible and crisp by construction. Tight padding-top
-   so label / filters / cards sit close together. ------------------- */
+/* ---- Body — rendered ON TOP of the sticky hero (higher z-index),
+   pulled up over it via the hero's negative margin. Filters and cards
+   are therefore always fully visible and crisp by construction.
+   Tight padding-top so label / filters / cards sit close together. - */
 .projects__body {
   position: relative;
   z-index: 2;
   background: transparent;
-  margin-top: 54vh;
   padding-top: 1.5rem;
   padding-bottom: 8rem;
   padding-left: clamp(1.5rem, 4vw, 5rem);
@@ -1536,7 +1537,7 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   .cs__item { margin-bottom: 0.5rem; }
   .cs__item-caption { font-size: 0.5rem; padding: 0.4rem 0.45rem; }
   .projects__grid { grid-template-columns: 1fr; }
-  .projects__body { margin-top: 46vh; }
+  .projects__hero { height: 80vh; height: 80dvh; margin-bottom: -32vh; }
   .about__people { grid-template-columns: 1fr; gap: 3rem; }
   .home__cta { flex-direction: column; align-items: center; gap: 1rem; }
   .footer { flex-direction: column; align-items: flex-start; gap: 1rem; }
