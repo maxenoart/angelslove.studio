@@ -686,6 +686,11 @@ body.menu-open .nav__toggle span { background: var(--black); }
   color: var(--white);
 }
 
+/* ---- Handy: Dropdown statt einzelner Filter-Buttons — auf dem
+   Desktop nicht sichtbar, siehe @media (max-width: 600px) für das
+   eigentliche Erscheinungsbild. -------------------------------- */
+.projects__filter-mobile { display: none; }
+
 /* ---- Such-Button neben den Filtern — klappt per Klick zu einem
    Suchfeld auf (Lupe bleibt sichtbar, Eingabe wächst nach links), statt
    permanent Platz zu belegen. ------------------------------------- */
@@ -718,7 +723,9 @@ body.menu-open .nav__toggle span { background: var(--black); }
   margin-right: 0.6rem;
   border-color: rgba(255, 255, 255, 0.6);
 }
-.projects__search.is-open .projects__search-input:focus { border-color: var(--red); outline: none; }
+/* Bleibt weiss beim Anklicken/Fokussieren — wird nur beim Hovern rot. */
+.projects__search.is-open .projects__search-input:focus { border-color: var(--white); outline: none; }
+.projects__search.is-open .projects__search-input:hover { border-color: var(--red); }
 .projects__search-toggle {
   display: flex;
   align-items: center;
@@ -1714,16 +1721,49 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   .projects__grid { grid-template-columns: 1fr; }
   .projects__hero { height: 80vh; height: 80dvh; margin-bottom: -32vh; }
 
-  /* Suchbutton bekommt auf dem Handy eine eigene Zeile und bleibt dort
-     rechts bündig — statt zusammen mit dem letzten Filter-Button auf
-     einer Zeile mit grosser Lücke zu stehen. So liegt sein rechter
-     Rand zuverlässig auf dem gleichen Rand wie der restliche Inhalt. */
-  .projects__search {
-    flex: 1 1 100%;
-    justify-content: flex-end;
-    margin-left: 0;
-    margin-top: 0.5rem;
+  /* Handy: einzelne Filter-Buttons weg, dafür ein schlankes Dropdown
+     ohne Box — direkt rechts daneben die Lupe, ebenfalls ohne Box. */
+  .projects__filter { display: none; }
+  .projects__filters {
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.85rem;
   }
+  .projects__filter-mobile { display: block; }
+  .projects__filter-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.6);
+    color: var(--white);
+    font-family: var(--font);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.5rem 1.4rem 0.5rem 0;
+    cursor: pointer;
+    /* Eigener kleiner Pfeil statt der nativen Browser-Box/-Optik */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 14px;
+  }
+  .projects__filter-select:focus { outline: none; border-bottom-color: var(--white); }
+  .projects__filter-select option { color: var(--black); background: var(--white); }
+
+  /* Lupe bleibt auf dem Handy ohne Box, solange das Suchfeld
+     geschlossen ist — passt zum borderlosen Dropdown daneben. */
+  .projects__search { margin-left: auto; }
+  .projects__search-toggle {
+    border: none;
+    background: transparent;
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+  .projects__search.is-open .projects__search-toggle { border: none; }
+
   /* Mindestens 16px, sonst zoomt iOS Safari automatisch beim Fokus
      ins Suchfeld hinein. */
   .projects__search-input { font-size: 16px; }

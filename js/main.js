@@ -589,8 +589,17 @@ window.filterProjects = function(type) {
   document.querySelectorAll('.projects__filter').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.filter === type);
   });
+  const mobileSelect = document.getElementById('projects-filter-select');
+  if (mobileSelect) mobileSelect.value = type;
   buildProjectCards();
 };
+
+// ---- Handy: Filter-Dropdown statt einzelner Buttons ---------
+(function () {
+  const select = document.getElementById('projects-filter-select');
+  if (!select) return;
+  select.addEventListener('change', () => filterProjects(select.value));
+})();
 
 // ---- Projekt-Suche — Lupen-Button klappt zu Suchfeld auf ----------
 (function () {

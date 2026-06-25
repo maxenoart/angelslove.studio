@@ -161,6 +161,17 @@
     <button class="projects__filter" data-filter="photo" onclick="filterProjects('photo')">Fotografie</button>
     <button class="projects__filter" data-filter="design" onclick="filterProjects('design')">Design</button>
 
+    <!-- Handy: Dropdown statt einzelner Filter-Buttons, ohne Box —
+         siehe css/styles.css @media (max-width: 600px) -->
+    <div class="projects__filter-mobile">
+      <select class="projects__filter-select" id="projects-filter-select" aria-label="Projekte filtern">
+        <option value="all">Alle</option>
+        <option value="video">Video</option>
+        <option value="photo">Fotografie</option>
+        <option value="design">Design</option>
+      </select>
+    </div>
+
     <div class="projects__search" id="projects-search">
       <input type="text" class="projects__search-input" id="projects-search-input" placeholder="Suchen …" />
       <button type="button" class="projects__search-toggle" id="projects-search-toggle" aria-label="Projekte durchsuchen">
