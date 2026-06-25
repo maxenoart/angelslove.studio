@@ -420,6 +420,32 @@ const CS_CARD_LIMIT = 90;  // harte Obergrenze, falls extrem viele Projekte/BTS-
 
 let csAllItems = [];  // vollständige, gemischte Liste (Medien + Textblöcke)
 let csShown = 0;      // wie viele Karten aktuell im Grid stehen
+let csColumns = [];           // echte Spalten-DOM-Elemente (statt CSS-Mehrspalten-Layout)
+let csCurrentColumnCount = 0; // wie viele Spalten gerade aufgebaut sind
+
+// Wie viele Spalten je nach Bildschirmbreite — entspricht den Breakpoints,
+// die früher in den CSS-"columns" Regeln standen (4 / 3 / 2).
+function csColumnCount() {
+  const w = window.innerWidth;
+  if (w <= 600) return 2;
+  if (w <= 900) return 3;
+  return 4;
+}
+
+// Baut die Spalten-Container neu auf (leert das Grid dabei).
+function csBuildColumns() {
+  const grid = document.getElementById('cs-grid');
+  if (!grid) return;
+  csCurrentColumnCount = csColumnCount();
+  grid.innerHTML = '';
+  csColumns = [];
+  for (let i = 0; i < csCurrentColumnCount; i++) {
+    const col = document.createElement('div');
+    col.className = 'cs__column';
+    grid.appendChild(col);
+    csColumns.push(col);
+  }
+}
 
 // Baut die komplette Item-Liste einmal auf (Aufruf bei Seitenaufbau).
 // Nur noch Bilder — keine Textblöcke, keine Legenden: kompakter, grosser
@@ -465,13 +491,21 @@ function renderCsLoadMoreState() {
   wrap.style.display = csShown < csAllItems.length ? 'flex' : 'none';
 }
 
-// Hängt den nächsten Batch an Karten unten ans Grid an.
+// Hängt den nächsten Batch an Karten unten an "ihre" Spalte an (Round-Robin
+// per fortlaufendem Gesamt-Index). Dadurch bleibt jede bereits angezeigte
+// Karte für immer in derselben Spalte an derselben Stelle — anders als beim
+// alten CSS-"columns"-Layout, das beim Nachladen die Spaltenhöhen neu
+// balanciert und so auch bereits sichtbare Karten in andere Spalten
+// verschoben hat (sah aus wie ein Neuladen der linken Spalten).
 function loadMoreCreativeSpace() {
-  const grid = document.getElementById('cs-grid');
-  if (!grid) return;
+  if (!csColumns.length) return;
 
   const next = csAllItems.slice(csShown, csShown + CS_PAGE_SIZE);
-  grid.insertAdjacentHTML('beforeend', next.map((item, idx) => renderCsCard(item, csShown + idx)).join(''));
+  next.forEach((item, idx) => {
+    const globalIndex = csShown + idx;
+    const col = csColumns[globalIndex % csCurrentColumnCount];
+    col.insertAdjacentHTML('beforeend', renderCsCard(item, globalIndex));
+  });
   csShown += next.length;
 
   renderCsLoadMoreState();
@@ -484,7 +518,7 @@ function buildCreativeSpace() {
 
   csAllItems = buildCreativeSpaceItems();
   csShown = 0;
-  grid.innerHTML = '';
+  csBuildColumns();
 
   loadMoreCreativeSpace();
 
@@ -492,6 +526,31 @@ function buildCreativeSpace() {
   if (btn && !btn.dataset.bound) {
     btn.addEventListener('click', loadMoreCreativeSpace);
     btn.dataset.bound = '1';
+  }
+
+  // Bei Breakpoint-Wechsel (Fenster-Resize) muss die Spaltenzahl angepasst
+  // werden — dabei werden nur die bereits gezeigten Karten neu verteilt,
+  // das passiert aber nur beim Resize, nie beim simplen "Mehr laden".
+  if (!window.__csResizeBound) {
+    window.__csResizeBound = true;
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (!document.getElementById('cs-grid')) return;
+        if (csColumnCount() !== csCurrentColumnCount && csAllItems.length) {
+          const shownCount = csShown;
+          csBuildColumns();
+          const toRestore = csAllItems.slice(0, shownCount);
+          toRestore.forEach((item, idx) => {
+            csColumns[idx % csCurrentColumnCount].insertAdjacentHTML('beforeend', renderCsCard(item, idx));
+          });
+          csShown = shownCount;
+          renderCsLoadMoreState();
+          triggerReveals();
+        }
+      }, 200);
+    });
   }
 }
 

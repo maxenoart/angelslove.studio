@@ -470,12 +470,13 @@ body.menu-open .nav__toggle span { background: var(--black); }
   font-size: 1.05rem;
 }
 
-/* Masonry grid — enger: mehr Spalten, kleinere Abstände */
-.cs__grid { columns: 4; column-gap: 0.75rem; }
+/* Masonry grid — echte Spalten-Container (per JS befüllt), kein CSS-
+   Mehrspalten-Layout: so wird beim Nachladen niemals neu balanciert und
+   bereits sichtbare Karten bleiben exakt an ihrer Stelle. */
+.cs__grid { display: flex; align-items: flex-start; gap: 0.75rem; }
+.cs__column { display: flex; flex-direction: column; gap: 0.75rem; flex: 1 1 0; min-width: 0; }
 
 .cs__item {
-  break-inside: avoid;
-  margin-bottom: 0.75rem;
   overflow: hidden;
   position: relative;
   opacity: 0;
@@ -1703,7 +1704,8 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
    RESPONSIVE
    ============================================================ */
 @media (max-width: 900px) {
-  .cs__grid { columns: 3; column-gap: 0.7rem; }
+  .cs__grid { gap: 0.7rem; }
+  .cs__column { gap: 0.7rem; }
   .detail__body { grid-template-columns: 1fr; gap: 2.5rem; }
   .about__people { gap: 2.5rem; }
   .book__body { grid-template-columns: 1fr; gap: 3rem; }
@@ -1715,8 +1717,8 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   :root { --nav-h: 60px; }
   .nav__links { display: none; }
   .nav__toggle { display: flex; }
-  .cs__grid { columns: 2; column-gap: 0.5rem; }
-  .cs__item { margin-bottom: 0.5rem; }
+  .cs__grid { gap: 0.5rem; }
+  .cs__column { gap: 0.5rem; }
   .cs__item-caption { font-size: 0.5rem; padding: 0.4rem 0.45rem; }
   .projects__grid { grid-template-columns: 1fr; }
   .projects__hero { height: 80vh; height: 80dvh; margin-bottom: -32vh; }
