@@ -242,6 +242,7 @@ function openModal(project) {
   document.getElementById('modal-title').textContent = project ? 'Projekt bearbeiten' : 'Neues Projekt';
   document.getElementById('p-id').value       = project ? project.id : '';
   document.getElementById('p-title').value    = project ? project.title || '' : '';
+  document.getElementById('p-title-font').value = project ? project.title_font || '' : '';
   document.getElementById('p-type').value     = project ? project.type || 'video' : 'video';
   document.getElementById('p-category').value = project ? project.category || '' : '';
   document.getElementById('p-date').value     = project ? project.date || '' : '';
@@ -469,7 +470,8 @@ projectForm.addEventListener('submit', async e => {
   })).filter(c => c.role || c.name);
 
   const payload = {
-    title:     document.getElementById('p-title').value.trim(),
+    title:      document.getElementById('p-title').value.trim(),
+    title_font: document.getElementById('p-title-font').value || null,
     type:      document.getElementById('p-type').value,
     category:  document.getElementById('p-category').value.trim(),
     date:      document.getElementById('p-date').value || null,

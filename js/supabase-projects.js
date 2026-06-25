@@ -25,6 +25,7 @@
       type:     row.type,
       category: row.category,
       title:    row.title,
+      titleFont: row.title_font || '',
       date:     row.date,
       gear:     row.gear,
       longDesc: row.long_desc,

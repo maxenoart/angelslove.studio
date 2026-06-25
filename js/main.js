@@ -459,20 +459,22 @@ let currentProjectFilter = 'all';
 // ob es sich um ein Video-, Fotografie- oder Design-Projekt handelt.
 const PROJECT_TYPE_LABELS = { video: 'Video', photo: 'Fotografie', design: 'Design' };
 
-// TEST: zufällige Schriftarten für die Projekt-Titel, nur zum Ausprobieren.
-// Einfach das Array leeren oder TEST_RANDOM_TITLE_FONTS auf false setzen, um
-// wieder einheitlich Messina Sans zu verwenden.
-const TEST_RANDOM_TITLE_FONTS = true;
-const TEST_FONTS = [
-  'Georgia, serif',
-  '"Times New Roman", serif',
-  '"Courier New", monospace',
-  'Impact, "Arial Narrow", sans-serif',
-  '"Trebuchet MS", sans-serif',
-  '"Brush Script MT", cursive',
-  'Verdana, sans-serif',
-  '"Comic Sans MS", cursive',
-];
+// Titel-Schriftart: im Backend pro Projekt wählbar (Feld "Titel-Schriftart").
+// Leer/unbekannt => Standard Messina Sans (keine Inline-Schrift nötig).
+const TITLE_FONT_MAP = {
+  serif:   'Georgia, "Times New Roman", serif',
+  mono:    '"Courier New", monospace',
+  display: 'Impact, "Arial Narrow", sans-serif',
+  script:  '"Brush Script MT", cursive',
+  rounded: '"Trebuchet MS", "Verdana", sans-serif',
+};
+
+// Liefert ein fertiges style-Attribut (oder '') für eine optionale,
+// pro Projekt gewählte Titel-Schriftart.
+function titleFontStyle(titleFont) {
+  const fam = TITLE_FONT_MAP[titleFont];
+  return fam ? ` style="font-family:${fam}"` : '';
+}
 
 function buildProjectCards() {
   const grid = document.getElementById('projects-grid');
@@ -487,9 +489,7 @@ function buildProjectCards() {
       ? `style="background-image:url('${p.cover}');background-size:cover;background-position:center"`
       : '';
     const typeLabel = PROJECT_TYPE_LABELS[p.type] || '';
-    const titleFont = TEST_RANDOM_TITLE_FONTS
-      ? ` style="font-family:${TEST_FONTS[Math.floor(Math.random() * TEST_FONTS.length)]}"`
-      : '';
+    const titleFont = titleFontStyle(p.titleFont);
     return `
       <article class="project-card" onclick="openProject(${p.id})" role="button" tabindex="0">
         <div class="project-card__thumb" ${coverStyle}>
@@ -570,7 +570,9 @@ window.openProject = function(id) {
   // der Titel zusätzlich im Banner-Overlay, der Header selbst bleibt
   // dort aber ausgeblendet)
   document.getElementById('detail-category').textContent = p.category || '—';
-  document.getElementById('detail-title').textContent    = p.title    || '—';
+  const detailTitleEl = document.getElementById('detail-title');
+  detailTitleEl.textContent = p.title || '—';
+  detailTitleEl.style.fontFamily = TITLE_FONT_MAP[p.titleFont] || '';
 
   const isGalleryType = p.type === 'photo' || p.type === 'design';
   document.getElementById('project-detail').classList.toggle('project-detail--gallery', isGalleryType);
@@ -586,7 +588,9 @@ window.openProject = function(id) {
     bannerWrap.style.display = '';
     document.getElementById('detail-banner').src = p.cover || '';
     document.getElementById('detail-banner-category').textContent = p.category || '—';
-    document.getElementById('detail-banner-title').textContent    = p.title    || '—';
+    const detailBannerTitleEl = document.getElementById('detail-banner-title');
+    detailBannerTitleEl.textContent = p.title || '—';
+    detailBannerTitleEl.style.fontFamily = TITLE_FONT_MAP[p.titleFont] || '';
     // Beschreibung steht unten unter der Galerie, kurz über Datum/Gear.
     document.getElementById('detail-gallery-desc').textContent    = p.longDesc || p.shortDesc || '';
 
