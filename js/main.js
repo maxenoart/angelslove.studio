@@ -649,11 +649,34 @@ function buildProjectCards() {
   bindProjectCardPreviews();
 }
 
-// Spielt beim Hover über eine Video-Projektkarte das YouTube-Video stumm,
-// ohne Steuerleiste/Branding-Vorschläge ab (nur das YouTube-Pflichtlogo
-// bleibt sichtbar). Iframe wird erst bei Hover erzeugt (kein Vorladen
-// vieler Embeds) und beim Verlassen sofort entfernt, damit das Video
-// zuverlässig stoppt statt im Hintergrund weiterzulaufen.
+// Lädt die YouTube-IFrame-API einmalig nach (für echtes Play-Status-Wissen
+// statt eines geschätzten Timers) und liefert ein Promise, das aufgelöst
+// wird, sobald window.YT.Player verfügbar ist.
+let ytApiPromise = null;
+function loadYouTubeApi() {
+  if (window.YT && window.YT.Player) return Promise.resolve();
+  if (ytApiPromise) return ytApiPromise;
+  ytApiPromise = new Promise(resolve => {
+    const prevReady = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => {
+      if (typeof prevReady === 'function') prevReady();
+      resolve();
+    };
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
+  });
+  return ytApiPromise;
+}
+
+let ytPreviewCounter = 0;
+
+// Spielt beim Hover über eine Video-Projektkarte das YouTube-Video stumm im
+// Hintergrund ab. Das normale Cover bleibt davor sichtbar, bis der Player
+// per API tatsächlich den Status "playing" meldet — erst dann blendet die
+// Vorschau ein. So sieht man nie den kurzen Lade-/Branding-Blitz von
+// YouTube, weil der Crossfade erst nach Spielstart beginnt. Beim Verlassen
+// wird der Player zerstört, damit das Video zuverlässig stoppt.
 function bindProjectCardPreviews() {
   const grid = document.getElementById('projects-grid');
   if (!grid) return;
@@ -663,18 +686,46 @@ function bindProjectCardPreviews() {
     if (!preview || preview.dataset.bound) return;
     preview.dataset.bound = '1';
     let hoverTimer;
+
+    const stop = () => {
+      clearTimeout(hoverTimer);
+      preview.dataset.loading = '0';
+      preview.classList.remove('is-active');
+      if (preview.__player && preview.__player.destroy) {
+        try { preview.__player.destroy(); } catch (err) {}
+      }
+      preview.__player = null;
+      preview.innerHTML = '';
+    };
+
     card.addEventListener('mouseenter', () => {
       clearTimeout(hoverTimer);
       hoverTimer = setTimeout(() => {
-        preview.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&loop=1&playlist=${videoId}&iv_load_policy=3&disablekb=1&playsinline=1" frameborder="0" allow="autoplay; encrypted-media" tabindex="-1"></iframe>`;
-        preview.classList.add('is-active');
+        preview.dataset.loading = '1';
+        const containerId = `yt-preview-${++ytPreviewCounter}`;
+        preview.innerHTML = `<div id="${containerId}"></div>`;
+        loadYouTubeApi().then(() => {
+          // Falls die Maus inzwischen wieder verlassen hat: nicht mehr starten.
+          if (preview.dataset.loading !== '1' || !document.getElementById(containerId)) return;
+          preview.__player = new YT.Player(containerId, {
+            videoId,
+            playerVars: {
+              autoplay: 1, mute: 1, controls: 0, modestbranding: 1, rel: 0,
+              loop: 1, playlist: videoId, iv_load_policy: 3, disablekb: 1, playsinline: 1
+            },
+            events: {
+              onStateChange: e => {
+                if (preview.dataset.loading === '1' && e.data === YT.PlayerState.PLAYING) {
+                  preview.classList.add('is-active');
+                }
+              }
+            }
+          });
+        });
       }, 250);
     });
-    card.addEventListener('mouseleave', () => {
-      clearTimeout(hoverTimer);
-      preview.classList.remove('is-active');
-      preview.innerHTML = '';
-    });
+
+    card.addEventListener('mouseleave', stop);
   });
 }
 
