@@ -459,6 +459,21 @@ let currentProjectFilter = 'all';
 // ob es sich um ein Video-, Fotografie- oder Design-Projekt handelt.
 const PROJECT_TYPE_LABELS = { video: 'Video', photo: 'Fotografie', design: 'Design' };
 
+// TEST: zufällige Schriftarten für die Projekt-Titel, nur zum Ausprobieren.
+// Einfach das Array leeren oder TEST_RANDOM_TITLE_FONTS auf false setzen, um
+// wieder einheitlich Messina Sans zu verwenden.
+const TEST_RANDOM_TITLE_FONTS = true;
+const TEST_FONTS = [
+  'Georgia, serif',
+  '"Times New Roman", serif',
+  '"Courier New", monospace',
+  'Impact, "Arial Narrow", sans-serif',
+  '"Trebuchet MS", sans-serif',
+  '"Brush Script MT", cursive',
+  'Verdana, sans-serif',
+  '"Comic Sans MS", cursive',
+];
+
 function buildProjectCards() {
   const grid = document.getElementById('projects-grid');
   if (!grid || typeof PROJECTS === 'undefined') return;
@@ -472,6 +487,9 @@ function buildProjectCards() {
       ? `style="background-image:url('${p.cover}');background-size:cover;background-position:center"`
       : '';
     const typeLabel = PROJECT_TYPE_LABELS[p.type] || '';
+    const titleFont = TEST_RANDOM_TITLE_FONTS
+      ? ` style="font-family:${TEST_FONTS[Math.floor(Math.random() * TEST_FONTS.length)]}"`
+      : '';
     return `
       <article class="project-card" onclick="openProject(${p.id})" role="button" tabindex="0">
         <div class="project-card__thumb" ${coverStyle}>
@@ -479,7 +497,7 @@ function buildProjectCards() {
         </div>
         <div class="project-card__info">
           <span class="project-card__category">${p.category}</span>
-          <h3 class="project-card__title">${p.title}</h3>
+          <h3 class="project-card__title"${titleFont}>${p.title}</h3>
         </div>
       </article>`;
   }).join('');
