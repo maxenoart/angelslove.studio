@@ -599,9 +599,15 @@ window.filterProjects = function(type) {
   const input  = document.getElementById('projects-search-input');
   if (!wrap || !toggle || !input) return;
 
+  // Lupe öffnet das Suchfeld; ist es offen, zeigt der Button stattdessen
+  // ein Kreuz (siehe CSS) und schliesst + leert das Feld beim Klick.
   toggle.addEventListener('click', () => {
-    if (wrap.classList.contains('is-open') && !input.value) {
+    if (wrap.classList.contains('is-open')) {
+      input.value = '';
+      currentProjectSearch = '';
+      buildProjectCards();
       wrap.classList.remove('is-open');
+      input.blur();
       return;
     }
     wrap.classList.add('is-open');

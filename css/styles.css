@@ -735,6 +735,12 @@ body.menu-open .nav__toggle span { background: var(--black); }
 .projects__search-toggle:hover,
 .projects__search.is-open .projects__search-toggle { border-color: var(--red); color: var(--red); }
 
+/* Lupe ↔ Kreuz — zeigt im geschlossenen Zustand die Lupe, im offenen
+   Zustand ein Kreuz zum Schliessen (statt der gleichen Lupe). */
+.projects__search-icon--close { display: none; }
+.projects__search.is-open .projects__search-icon--search { display: none; }
+.projects__search.is-open .projects__search-icon--close { display: block; }
+
 /* ---- Project grid ----------------------------------------- */
 .projects__grid {
   display: grid;
@@ -1707,6 +1713,20 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   .cs__item-caption { font-size: 0.5rem; padding: 0.4rem 0.45rem; }
   .projects__grid { grid-template-columns: 1fr; }
   .projects__hero { height: 80vh; height: 80dvh; margin-bottom: -32vh; }
+
+  /* Suchbutton bekommt auf dem Handy eine eigene Zeile und bleibt dort
+     rechts bündig — statt zusammen mit dem letzten Filter-Button auf
+     einer Zeile mit grosser Lücke zu stehen. So liegt sein rechter
+     Rand zuverlässig auf dem gleichen Rand wie der restliche Inhalt. */
+  .projects__search {
+    flex: 1 1 100%;
+    justify-content: flex-end;
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+  /* Mindestens 16px, sonst zoomt iOS Safari automatisch beim Fokus
+     ins Suchfeld hinein. */
+  .projects__search-input { font-size: 16px; }
   .about__people { grid-template-columns: 1fr; gap: 3rem; }
   .home__cta { flex-direction: column; align-items: center; gap: 1rem; }
   .footer { flex-direction: column; align-items: flex-start; gap: 1rem; }
