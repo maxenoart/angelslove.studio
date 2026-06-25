@@ -81,6 +81,8 @@ const projectList = document.getElementById('project-list');
 const PROJECT_TYPE_LABELS = { video: 'Video', photo: 'Fotografie', design: 'Design' };
 const PROJECT_TYPE_ORDER  = ['video', 'photo', 'design'];
 
+let allProjects = [];
+
 async function loadProjects() {
   projectList.innerHTML = '<p class="loading-note">Lade Projekte …</p>';
   const { data, error } = await sb.from('projects').select('*').order('created_at', { ascending: false });
@@ -88,8 +90,29 @@ async function loadProjects() {
     projectList.innerHTML = `<p class="loading-note">Fehler beim Laden: ${error.message}</p>`;
     return;
   }
-  if (!data.length) {
+  allProjects = data || [];
+  renderProjectList();
+}
+
+// Rendert die Projektliste (gruppiert nach Typ) — gefiltert anhand des
+// Suchfeldes (Titel oder Kategorie, ohne Gross-/Kleinschreibung).
+function renderProjectList() {
+  const searchInput = document.getElementById('project-search-input');
+  const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
+
+  if (!allProjects.length) {
     projectList.innerHTML = '<div class="empty-state">Noch keine Projekte. Klicke auf „+ Neues Projekt".</div>';
+    return;
+  }
+
+  const data = query
+    ? allProjects.filter(p =>
+        (p.title || '').toLowerCase().includes(query) ||
+        (p.category || '').toLowerCase().includes(query))
+    : allProjects;
+
+  if (!data.length) {
+    projectList.innerHTML = `<div class="empty-state">Keine Projekte gefunden für „${escapeHtml(query)}".</div>`;
     return;
   }
 
@@ -140,6 +163,8 @@ async function loadProjects() {
     });
   });
 }
+
+document.getElementById('project-search-input').addEventListener('input', renderProjectList);
 
 // ---- Anfragen (Kontaktformular) --------------------------------
 const inquiryList = document.getElementById('inquiry-list');
@@ -242,7 +267,7 @@ function openModal(project) {
   document.getElementById('modal-title').textContent = project ? 'Projekt bearbeiten' : 'Neues Projekt';
   document.getElementById('p-id').value       = project ? project.id : '';
   document.getElementById('p-title').value    = project ? project.title || '' : '';
-  document.getElementById('p-title-font').value = project ? project.title_font || '' : '';
+  setFontPickerValue(project ? project.title_font || '' : '');
   document.getElementById('p-type').value     = project ? project.type || 'video' : 'video';
   document.getElementById('p-category').value = project ? project.category || '' : '';
   document.getElementById('p-date').value     = project ? project.date || '' : '';
@@ -269,6 +294,56 @@ function openModal(project) {
   modalBackdrop.classList.add('is-active');
 }
 function closeModal() { modalBackdrop.classList.remove('is-active'); }
+
+// ---- Titel-Schriftart: eigene Dropdown-Liste mit Live-Vorschau ----
+// Ein natives <select> kann einzelne Optionen nicht zuverlässig in der
+// jeweiligen Schriftart darstellen — daher eine eigene Liste, in der
+// jede Option bereits in ihrer eigenen Schriftart angezeigt wird, und
+// die per Hover hervorgehoben wird (Vorschau vor der Auswahl).
+const fontPicker        = document.getElementById('p-title-font-picker');
+const fontPickerTrigger = document.getElementById('p-title-font-trigger');
+const fontPickerLabel   = document.getElementById('p-title-font-trigger-label');
+const fontPickerPanel   = document.getElementById('p-title-font-panel');
+const fontPickerInput   = document.getElementById('p-title-font');
+
+function buildFontPicker() {
+  const options = window.TITLE_FONT_OPTIONS || [];
+  fontPickerPanel.innerHTML = options.map(f => `
+    <div class="font-picker__option" data-value="${escapeHtml(f.value)}" style="font-family:${escapeHtml(f.family)}">
+      ${escapeHtml(f.label)}
+    </div>
+  `).join('');
+
+  fontPickerPanel.querySelectorAll('.font-picker__option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      setFontPickerValue(opt.dataset.value);
+      closeFontPicker();
+    });
+  });
+}
+
+function setFontPickerValue(value) {
+  const options = window.TITLE_FONT_OPTIONS || [];
+  const opt = options.find(f => f.value === (value || '')) || options[0] || { value: '', label: 'Messina Sans (Standard)', family: '' };
+  fontPickerInput.value = opt.value;
+  fontPickerLabel.textContent = opt.label;
+  fontPickerLabel.style.fontFamily = opt.family;
+  fontPickerPanel.querySelectorAll('.font-picker__option').forEach(el => {
+    el.classList.toggle('is-selected', el.dataset.value === opt.value);
+  });
+}
+
+function openFontPicker()  { fontPicker.classList.add('is-open');    fontPickerPanel.classList.add('is-open'); }
+function closeFontPicker() { fontPicker.classList.remove('is-open'); fontPickerPanel.classList.remove('is-open'); }
+
+fontPickerTrigger.addEventListener('click', () => {
+  fontPicker.classList.contains('is-open') ? closeFontPicker() : openFontPicker();
+});
+document.addEventListener('click', e => {
+  if (!fontPicker.contains(e.target)) closeFontPicker();
+});
+
+buildFontPicker();
 
 // Blendet je nach Projekt-Typ die passenden Felder ein/aus: Video-ID +
 // Behind-the-Scenes nur für Video-Projekte, die freie Galerie nur für

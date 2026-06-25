@@ -6,6 +6,10 @@
 <meta name="robots" content="noindex, nofollow" />
 <title>angelslove — Admin</title>
 <link rel="stylesheet" href="admin.css" />
+<!-- Optionale Titel-Schriftarten für die Auswahl im Projekt-Formular (siehe js/title-fonts.js) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Syne+Mono&family=Cormorant+Garamond&family=Cinzel&family=Press+Start+2P&family=Playfair+Display+SC&family=Rock+Salt&family=Reenie+Beanie&family=Julius+Sans+One&family=Libre+Barcode+128&family=DotGothic16&family=Betania+Patmos+GuideLine&family=Lacquer&family=Codystar&display=swap" />
 </head>
 <body>
 
@@ -54,6 +58,9 @@
       <div class="main__header">
         <h1>Projekte</h1>
         <button class="btn btn--primary" id="new-project-btn" style="width:auto">+ Neues Projekt</button>
+      </div>
+      <div class="project-search">
+        <input type="text" id="project-search-input" placeholder="Projekte durchsuchen — Titel oder Kategorie …" />
       </div>
       <div class="project-list" id="project-list">
         <p class="loading-note">Lade Projekte …</p>
@@ -130,14 +137,14 @@
         </div>
         <div class="field field--full">
           <label>Titel-Schriftart</label>
-          <select id="p-title-font">
-            <option value="">Messina Sans (Standard)</option>
-            <option value="serif">Serif — Editorial</option>
-            <option value="mono">Mono — Typewriter</option>
-            <option value="display">Display — Bold</option>
-            <option value="script">Script — Handschrift</option>
-            <option value="rounded">Rounded — Freundlich</option>
-          </select>
+          <div class="font-picker" id="p-title-font-picker">
+            <button type="button" class="font-picker__trigger" id="p-title-font-trigger">
+              <span class="font-picker__trigger-label" id="p-title-font-trigger-label">Messina Sans (Standard)</span>
+              <span class="font-picker__trigger-arrow">▾</span>
+            </button>
+            <div class="font-picker__panel" id="p-title-font-panel"></div>
+            <input type="hidden" id="p-title-font" value="" />
+          </div>
         </div>
         <div class="field">
           <label>Typ</label>
@@ -240,6 +247,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <script src="../js/supabase-client.js"></script>
+<script src="../js/title-fonts.js"></script>
 <script src="admin.js"></script>
 </body>
 </html>

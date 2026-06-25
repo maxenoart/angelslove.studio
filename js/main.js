@@ -486,23 +486,14 @@ let currentProjectFilter = 'all';
 const PROJECT_TYPE_LABELS = { video: 'Video', photo: 'Fotografie', design: 'Design' };
 
 // Titel-Schriftart: im Backend pro Projekt wählbar (Feld "Titel-Schriftart").
+// Die eigentliche Liste/Zuordnung kommt aus js/title-fonts.js (window.TITLE_FONT_MAP),
+// damit Backend-Auswahl und öffentliche Seite immer dieselben Schriftarten kennen.
 // Leer/unbekannt => Standard Messina Sans (keine Inline-Schrift nötig).
-// Wichtig: einfache Anführungszeichen verwenden (nicht doppelte) — der
-// Wert landet auf der Projekt-Liste in einem style="..."-HTML-Attribut,
-// und doppelte Anführungszeichen darin würden das Attribut vorzeitig
-// beenden und die ganze Schriftart-Angabe kaputt machen.
-const TITLE_FONT_MAP = {
-  serif:   "Georgia, 'Times New Roman', serif",
-  mono:    "'Courier New', monospace",
-  display: "Impact, 'Arial Narrow', sans-serif",
-  script:  "'Brush Script MT', cursive",
-  rounded: "'Trebuchet MS', 'Verdana', sans-serif",
-};
 
 // Liefert ein fertiges style-Attribut (oder '') für eine optionale,
 // pro Projekt gewählte Titel-Schriftart.
 function titleFontStyle(titleFont) {
-  const fam = TITLE_FONT_MAP[titleFont];
+  const fam = (window.TITLE_FONT_MAP || {})[titleFont];
   return fam ? ` style="font-family:${fam}"` : '';
 }
 
@@ -607,7 +598,7 @@ window.openProject = function(id) {
   document.getElementById('detail-category').textContent = p.category || '—';
   const detailTitleEl = document.getElementById('detail-title');
   detailTitleEl.textContent = p.title || '—';
-  detailTitleEl.style.fontFamily = TITLE_FONT_MAP[p.titleFont] || '';
+  detailTitleEl.style.fontFamily = (window.TITLE_FONT_MAP || {})[p.titleFont] || '';
 
   const isGalleryType = p.type === 'photo' || p.type === 'design';
   document.getElementById('project-detail').classList.toggle('project-detail--gallery', isGalleryType);
@@ -625,7 +616,7 @@ window.openProject = function(id) {
     document.getElementById('detail-banner-category').textContent = p.category || '—';
     const detailBannerTitleEl = document.getElementById('detail-banner-title');
     detailBannerTitleEl.textContent = p.title || '—';
-    detailBannerTitleEl.style.fontFamily = TITLE_FONT_MAP[p.titleFont] || '';
+    detailBannerTitleEl.style.fontFamily = (window.TITLE_FONT_MAP || {})[p.titleFont] || '';
     // Beschreibung steht unten unter der Galerie, kurz über Datum/Gear.
     document.getElementById('detail-gallery-desc').textContent    = p.longDesc || p.shortDesc || '';
 
