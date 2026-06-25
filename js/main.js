@@ -289,6 +289,32 @@ function showPage(id, pushState = true) {
   }, { passive: true });
 })();
 
+// ---- Projects: Hero-Banner bleibt beim Scrollen statisch stehen (kein
+// Parallax) und blendet stattdessen langsam zu Schwarz aus, je weiter man
+// runterscrollt — fertig ausgeblendet nach ca. 90% der Bildschirmhöhe. ----
+(function () {
+  let ticking = false;
+
+  function onProjectsHeroScroll() {
+    ticking = false;
+    if (currentPage !== 'projects') return;
+
+    const hero = document.getElementById('projects-hero');
+    if (!hero) return;
+
+    const fadeDistance = window.innerHeight * 0.9;
+    const progress = Math.min(Math.max(window.scrollY / fadeDistance, 0), 1);
+    hero.style.opacity = String(1 - progress);
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(onProjectsHeroScroll);
+    }
+  }, { passive: true });
+})();
+
 // ---- Click handler (nav links + any [data-page]) ----------
 document.querySelectorAll('[data-page]').forEach(link => {
   link.addEventListener('click', e => {
@@ -519,6 +545,11 @@ function buildProjectsHero() {
 
   document.getElementById('projects-hero-img').src = pick.cover || '';
   document.getElementById('projects-hero-img').alt = '';
+
+  // Hero ist fixiert (bewegt sich nicht beim Scrollen) und blendet beim
+  // Scrollen langsam zu schwarz aus — bei jedem (Wieder-)Aufruf des Tabs
+  // wieder auf voll sichtbar zurücksetzen (siehe onProjectsHeroScroll unten).
+  hero.style.opacity = '1';
 }
 
 // ---- Project filter buttons --------------------------------
