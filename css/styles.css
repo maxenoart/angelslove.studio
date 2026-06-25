@@ -263,8 +263,8 @@ body.is-home .nav--dark .nav__logo {
 .nav--scrolled .nav__toggle span { background: var(--black); }
 
 /* While the mobile menu is open, force the icon dark so it stays
-   legible against the white circle-reveal underneath — regardless of
-   the nav's own light/dark state. */
+   legible against the white menu underneath — regardless of the
+   nav's own light/dark state. */
 body.menu-open .nav__toggle span { background: var(--black); }
 
 /* Hamburger → X */
@@ -272,8 +272,8 @@ body.menu-open .nav__toggle span { background: var(--black); }
 .nav__toggle.is-open span:nth-child(2) { opacity: 0; }
 .nav__toggle.is-open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
-/* Mobile menu — reveals as an expanding circle from the burger button
-   instead of an abrupt show/hide, then staggers the links in. */
+/* Mobile menu — fades/slides in (kein Kreis-Reveal), staggert dann
+   die Links nach. */
 .nav__mobile {
   display: flex;
   position: fixed;
@@ -284,16 +284,16 @@ body.menu-open .nav__toggle span { background: var(--black); }
   align-items: center;
   justify-content: center;
   gap: 2.5rem;
-  clip-path: circle(0% at calc(100% - 2.4rem) 2.6rem);
-  transition: clip-path 0.6s cubic-bezier(0.65,0,0.35,1), visibility 0s 0.6s;
+  opacity: 0;
+  transition: opacity 0.35s ease, visibility 0s 0.35s;
   visibility: hidden;
   pointer-events: none;
 }
 .nav__mobile.open {
-  clip-path: circle(150% at calc(100% - 2.4rem) 2.6rem);
+  opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  transition: clip-path 0.6s cubic-bezier(0.65,0,0.35,1);
+  transition: opacity 0.35s ease;
 }
 .nav__mobile .nav__link {
   font-size: 1.5rem;
@@ -1463,6 +1463,24 @@ body.menu-open .nav__toggle span { background: var(--black); }
 .form-field input:focus,
 .form-field textarea:focus { border-bottom-color: var(--white); }
 .form-field textarea { height: 120px; }
+
+/* Browser-Autofill (v.a. Chrome/Safari) legt sonst eine weisse Box
+   hinter ausgefüllte Felder — Feld soll transparent bleiben, nur die
+   Linie unten darf weiss werden (siehe :focus oben). */
+.form-field input:-webkit-autofill,
+.form-field input:-webkit-autofill:hover,
+.form-field input:-webkit-autofill:focus,
+.form-field textarea:-webkit-autofill {
+  -webkit-text-fill-color: var(--white);
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+  box-shadow: 0 0 0px 1000px transparent inset;
+  caret-color: var(--white);
+  transition: background-color 9999s ease-in-out 0s;
+}
+.form-field input:autofill,
+.form-field textarea:autofill {
+  background: transparent;
+}
 
 .form__submit { margin-top: 0.5rem; align-self: flex-start; }
 
