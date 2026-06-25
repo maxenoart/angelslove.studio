@@ -626,17 +626,13 @@ function buildProjectCards() {
       : '';
     const typeLabel = PROJECT_TYPE_LABELS[p.type] || '';
     const titleFont = titleFontStyle(p.titleFont);
-    // Video-Hover-Vorschau nur für Video-Projekte mit gültiger YouTube-ID.
-    const videoId = p.type === 'video' ? extractYouTubeId(p.video) : '';
-    const videoAttr = videoId && videoId !== 'DEINE_YOUTUBE_ID' ? ` data-video-id="${videoId}"` : '';
     // data-title-font erlaubt im CSS gezielte Anpassungen pro Schriftart
     // (z.B. kleinere Schriftgrösse für "Press Start 2P", die optisch viel
     // grösser wirkt als andere Schriftarten bei gleicher Punktgrösse).
     return `
-      <article class="project-card" onclick="openProject(${p.id})" role="button" tabindex="0"${videoAttr}>
+      <article class="project-card" onclick="openProject(${p.id})" role="button" tabindex="0">
         <div class="project-card__thumb" ${coverStyle}>
           ${typeLabel ? `<span class="project-card__type project-card__type--${p.type}">${typeLabel}</span>` : ''}
-          ${videoAttr ? '<div class="project-card__preview"></div>' : ''}
         </div>
         <div class="project-card__info">
           <span class="project-card__category">${p.category}</span>
@@ -646,104 +642,6 @@ function buildProjectCards() {
   }).join('');
 
   triggerReveals();
-  bindProjectCardPreviews();
-}
-
-// Lädt die YouTube-IFrame-API einmalig nach (für echtes Play-Status-Wissen
-// statt eines geschätzten Timers) und liefert ein Promise, das aufgelöst
-// wird, sobald window.YT.Player verfügbar ist.
-let ytApiPromise = null;
-function loadYouTubeApi() {
-  if (window.YT && window.YT.Player) return Promise.resolve();
-  if (ytApiPromise) return ytApiPromise;
-  ytApiPromise = new Promise(resolve => {
-    const prevReady = window.onYouTubeIframeAPIReady;
-    window.onYouTubeIframeAPIReady = () => {
-      if (typeof prevReady === 'function') prevReady();
-      resolve();
-    };
-    const tag = document.createElement('script');
-    tag.src = 'https://www.youtube.com/iframe_api';
-    document.head.appendChild(tag);
-  });
-  return ytApiPromise;
-}
-
-let ytPreviewCounter = 0;
-
-// Spielt beim Hover über eine Video-Projektkarte das YouTube-Video stumm im
-// Hintergrund ab. Das normale Cover bleibt davor sichtbar, bis der Player
-// per API tatsächlich den Status "playing" meldet — erst dann blendet die
-// Vorschau ein. So sieht man nie den kurzen Lade-/Branding-Blitz von
-// YouTube, weil der Crossfade erst nach Spielstart beginnt. Beim Verlassen
-// wird der Player zerstört, damit das Video zuverlässig stoppt.
-function bindProjectCardPreviews() {
-  const grid = document.getElementById('projects-grid');
-  if (!grid) return;
-  grid.querySelectorAll('.project-card[data-video-id]').forEach(card => {
-    const videoId = card.dataset.videoId;
-    const preview = card.querySelector('.project-card__preview');
-    if (!preview || preview.dataset.bound) return;
-    preview.dataset.bound = '1';
-    let hoverTimer;
-    let revealTimer;
-
-    const stop = () => {
-      clearTimeout(hoverTimer);
-      clearTimeout(revealTimer);
-      preview.dataset.loading = '0';
-      preview.classList.remove('is-active');
-      if (preview.__player && preview.__player.destroy) {
-        try { preview.__player.destroy(); } catch (err) {}
-      }
-      preview.__player = null;
-      preview.innerHTML = '';
-    };
-
-    card.addEventListener('mouseenter', () => {
-      clearTimeout(hoverTimer);
-      hoverTimer = setTimeout(() => {
-        preview.dataset.loading = '1';
-        const containerId = `yt-preview-${++ytPreviewCounter}`;
-        preview.innerHTML = `<div id="${containerId}"></div>`;
-        loadYouTubeApi().then(() => {
-          // Falls die Maus inzwischen wieder verlassen hat: nicht mehr starten.
-          if (preview.dataset.loading !== '1' || !document.getElementById(containerId)) return;
-          preview.__player = new YT.Player(containerId, {
-            videoId,
-            playerVars: {
-              autoplay: 1, mute: 1, controls: 0, modestbranding: 1, rel: 0,
-              loop: 1, playlist: videoId, iv_load_policy: 3, disablekb: 1, playsinline: 1
-            },
-            events: {
-              onStateChange: e => {
-                if (preview.dataset.loading !== '1') return;
-                if (e.data === YT.PlayerState.PLAYING) {
-                  // YouTube zeigt nach JEDEM Start (auch nach jedem Loop-
-                  // Neustart über den playlist-Trick!) automatisch für ca.
-                  // 2s Titel + Kanalname ein — das passiert erst NACH dem
-                  // "playing"-Event. Darum bei jedem Play kurz warten, bis
-                  // das vorbei ist, bevor wir aufdecken.
-                  clearTimeout(revealTimer);
-                  revealTimer = setTimeout(() => {
-                    if (preview.dataset.loading === '1') preview.classList.add('is-active');
-                  }, 1800);
-                } else {
-                  // Pause/Puffern/Ende (z.B. genau der Moment des Loop-
-                  // Neustarts): sofort wieder mit dem Cover zudecken, bis
-                  // der nächste "playing"+Wartezeit-Zyklus durch ist.
-                  clearTimeout(revealTimer);
-                  preview.classList.remove('is-active');
-                }
-              }
-            }
-          });
-        });
-      }, 250);
-    });
-
-    card.addEventListener('mouseleave', stop);
-  });
 }
 
 // ---- Projects hero — shows a random project cover each time the

@@ -804,26 +804,6 @@ body.menu-open .nav__toggle span { background: var(--black); }
 }
 .project-card:hover .project-card__thumb img { transform: scale(1.04); }
 
-/* Video-Vorschau beim Hover: spielt stumm in Schleife über dem Cover,
-   ohne YouTube-Steuerleiste/Branding-Vorschläge (nur das kleine
-   YouTube-Logo bleibt — das schreibt YouTube fix vor). Iframe wird erst
-   bei Hover erzeugt und beim Verlassen sofort entfernt, damit das Video
-   zuverlässig stoppt und nicht dutzende Embeds gleichzeitig laufen. */
-.project-card__preview {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-.project-card__preview.is-active { opacity: 1; }
-.project-card__preview iframe {
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
 /* Typ-Label (Video / Fotografie / Design) — macht auf einen Blick
    klar, um welche Art Projekt es sich handelt, ohne eine Box oder
    zusätzliche Farbe einzuführen: reiner Text in Weiss, der sich per
