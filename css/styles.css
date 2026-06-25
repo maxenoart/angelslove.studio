@@ -258,13 +258,24 @@ body.is-home .nav--dark .nav__logo {
   width: 24px;
   height: 1.5px;
   background: var(--white);
-  transition: background var(--transition);
+  transition: background var(--transition), transform 0.35s cubic-bezier(0.65,0,0.35,1), opacity 0.25s ease;
 }
 .nav--scrolled .nav__toggle span { background: var(--black); }
 
-/* Mobile menu */
+/* While the mobile menu is open, force the icon dark so it stays
+   legible against the white circle-reveal underneath — regardless of
+   the nav's own light/dark state. */
+body.menu-open .nav__toggle span { background: var(--black); }
+
+/* Hamburger → X */
+.nav__toggle.is-open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.nav__toggle.is-open span:nth-child(2) { opacity: 0; }
+.nav__toggle.is-open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+/* Mobile menu — reveals as an expanding circle from the burger button
+   instead of an abrupt show/hide, then staggers the links in. */
 .nav__mobile {
-  display: none;
+  display: flex;
   position: fixed;
   inset: 0;
   background: var(--white);
@@ -273,13 +284,33 @@ body.is-home .nav--dark .nav__logo {
   align-items: center;
   justify-content: center;
   gap: 2.5rem;
+  clip-path: circle(0% at calc(100% - 2.4rem) 2.6rem);
+  transition: clip-path 0.6s cubic-bezier(0.65,0,0.35,1), visibility 0s 0.6s;
+  visibility: hidden;
+  pointer-events: none;
 }
-.nav__mobile.open { display: flex; }
+.nav__mobile.open {
+  clip-path: circle(150% at calc(100% - 2.4rem) 2.6rem);
+  visibility: visible;
+  pointer-events: auto;
+  transition: clip-path 0.6s cubic-bezier(0.65,0,0.35,1);
+}
 .nav__mobile .nav__link {
   font-size: 1.5rem;
   letter-spacing: 0.1em;
   color: var(--black);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
+.nav__mobile.open .nav__link {
+  opacity: 1;
+  transform: translateY(0);
+}
+.nav__mobile.open .nav__link:nth-child(1) { transition-delay: 0.18s; }
+.nav__mobile.open .nav__link:nth-child(2) { transition-delay: 0.25s; }
+.nav__mobile.open .nav__link:nth-child(3) { transition-delay: 0.32s; }
+.nav__mobile.open .nav__link:nth-child(4) { transition-delay: 0.39s; }
 .nav__mobile .nav__link.active { color: var(--red); }
 
 /* ============================================================
@@ -1471,40 +1502,68 @@ body.is-home .nav--dark .nav__logo {
   color: var(--red);
 }
 
-.form__success {
-  display: none;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.85rem;
-  padding: 2rem clamp(1.5rem, 3vw, 2.25rem);
-  border: 1.5px solid rgba(255,255,255,0.6);
-}
-.form__success-icon {
+/* ============================================================
+   KONTAKT-ERFOLGSMELDUNG — Kreis breitet sich vom Absenden-Button
+   über die ganze Seite aus. Invertierte Farben zur restlichen
+   Kontaktseite: weisser Hintergrund statt rot, roter Text statt weiss.
+   ============================================================ */
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: var(--white);
+  color: var(--red);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  background: var(--white);
-  color: var(--red);
-  font-size: 1.1rem;
-  font-weight: 700;
+  padding: 2rem;
+  clip-path: circle(0% at var(--ox, 50%) var(--oy, 50%));
+  transition: clip-path 0.9s cubic-bezier(0.65,0,0.35,1), visibility 0s 0.9s;
+  visibility: hidden;
+  pointer-events: none;
 }
-.form__success-title {
-  font-size: 1rem;
-  letter-spacing: 0.05em;
-  color: var(--white);
+.success-overlay.is-open {
+  clip-path: circle(150% at var(--ox, 50%) var(--oy, 50%));
+  visibility: visible;
+  pointer-events: auto;
+  transition: clip-path 0.9s cubic-bezier(0.65,0,0.35,1);
+}
+.success-overlay__content {
+  max-width: 480px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.success-overlay.is-open .success-overlay__content {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.45s;
+}
+.success-overlay__title {
+  display: block;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
   font-weight: 700;
+  letter-spacing: var(--tracking-headline);
   text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 1rem;
 }
-.form__success-text {
-  font-size: 0.85rem;
+.success-overlay__text {
+  font-size: 0.95rem;
   line-height: 1.6;
-  color: rgba(255,255,255,0.75);
-  font-weight: 300;
-  text-transform: none;
-  letter-spacing: normal;
+  color: rgba(226, 7, 59, 0.75);
+  margin-bottom: 2.25rem;
 }
+.success-overlay__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.btn--overlay { color: var(--red); border-color: var(--red); }
+.btn--overlay:hover { background: var(--red); color: var(--white); }
 
 /* ============================================================
    FOOTER

@@ -8,6 +8,9 @@ const toggle     = document.getElementById('nav-toggle');
 const mobileMenu = document.getElementById('mobile-menu');
 
 let currentPage = 'home';
+// Welche Seite war zuletzt aktiv, bevor man auf Kontakt gegangen ist —
+// für den "Zurück"-Button in der Erfolgsmeldung des Kontaktformulars.
+let pageBeforeContact = 'home';
 
 // ---- Home video: force-start playback ----------------------
 // iOS sometimes ignores the autoplay attribute on the very first load
@@ -122,6 +125,17 @@ function showPage(id, pushState = true) {
 
   if (currentPage === 'project-detail' && id !== 'project-detail') {
     fadeOutAndStopVideo();
+  }
+
+  // Merkt sich, von welcher Seite aus man zu Kontakt navigiert hat —
+  // damit der "Zurück"-Button in der Erfolgsmeldung weiss, wohin.
+  if (id === 'book' && currentPage !== 'book') {
+    pageBeforeContact = currentPage;
+  }
+
+  // Kontaktformular soll bei jedem (erneuten) Aufruf wieder frisch sein.
+  if (id === 'book' && typeof resetContactForm === 'function') {
+    resetContactForm();
   }
 
   if (isFlowId(id)) {
@@ -322,14 +336,24 @@ document.querySelectorAll('[data-page]').forEach(link => {
     const page = link.dataset.page;
     if (page) {
       showPage(page);
-      mobileMenu.classList.remove('open');
+      closeMobileMenu();
     }
   });
 });
 
-// ---- Hamburger --------------------------------------------
+// ---- Hamburger ---------------------------------------------
+// Verwandelt sich beim Öffnen in ein X und löst den Kreis-Reveal des
+// Mobile-Menüs aus (siehe css/styles.css ".nav__mobile").
+function closeMobileMenu() {
+  mobileMenu.classList.remove('open');
+  toggle.classList.remove('is-open');
+  document.body.classList.remove('menu-open');
+}
+
 toggle.addEventListener('click', () => {
-  mobileMenu.classList.toggle('open');
+  const isOpen = mobileMenu.classList.toggle('open');
+  toggle.classList.toggle('is-open', isOpen);
+  document.body.classList.toggle('menu-open', isOpen);
 });
 
 // ---- Home video: extra safety nets on top of the showPage() retries ----
@@ -831,7 +855,53 @@ function renderLightbox() {
 })();
 
 // ---- Contact form -----------------------------------------
-const contactForm = document.getElementById('contact-form');
+const contactForm    = document.getElementById('contact-form');
+const successOverlay = document.getElementById('success-overlay');
+
+// Setzt das Kontaktformular + die Erfolgsmeldung wieder in den
+// Ausgangszustand zurück — wird bei jedem (erneuten) Aufruf der
+// Kontaktseite über showPage() ausgelöst, damit man jederzeit eine
+// neue Anfrage senden kann.
+function resetContactForm() {
+  if (successOverlay) successOverlay.classList.remove('is-open');
+  if (!contactForm) return;
+  contactForm.reset();
+  contactForm.style.display = '';
+  contactForm.querySelectorAll('.form-field').forEach(f => f.classList.remove('has-error'));
+  const btn = contactForm.querySelector('button[type="submit"]');
+  if (btn) { btn.textContent = 'ABSENDEN'; btn.disabled = false; }
+}
+
+// Öffnet die Erfolgsmeldung als Kreis, der sich vom Absenden-Button aus
+// über die ganze Seite ausbreitet (invertierte Farben: weiss/rot).
+function openSuccessOverlay() {
+  if (!successOverlay) return;
+  const btn = contactForm.querySelector('button[type="submit"]');
+  const rect = btn ? btn.getBoundingClientRect() : null;
+  const ox = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+  const oy = rect ? rect.top + rect.height / 2 : window.innerHeight / 2;
+  successOverlay.style.setProperty('--ox', ox + 'px');
+  successOverlay.style.setProperty('--oy', oy + 'px');
+  // Im nächsten Frame öffnen, damit der Browser die Startposition des
+  // Kreises (0%) erst sauber rendert, bevor er auf 150% expandiert.
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => successOverlay.classList.add('is-open'));
+  });
+}
+
+if (successOverlay) {
+  const homeBtn = document.getElementById('success-home-btn');
+  const backBtn = document.getElementById('success-back-btn');
+  if (homeBtn) homeBtn.addEventListener('click', () => {
+    successOverlay.classList.remove('is-open');
+    showPage('home');
+  });
+  if (backBtn) backBtn.addEventListener('click', () => {
+    successOverlay.classList.remove('is-open');
+    showPage(pageBeforeContact);
+  });
+}
+
 if (contactForm) {
   const fields = {
     name:    { el: document.getElementById('f-name'),    validate: v => v.trim().length > 0 },
@@ -892,7 +962,7 @@ if (contactForm) {
           headers: { 'Accept': 'application/json' },
         });
         if (res.ok) {
-          showSuccess();
+          openSuccessOverlay();
         } else {
           btn.textContent = 'ABSENDEN';
           btn.disabled = false;
@@ -905,30 +975,9 @@ if (contactForm) {
       }
     } else {
       // No Formspree ID yet — show success for preview
-      showSuccess();
+      openSuccessOverlay();
     }
   });
-
-  function showSuccess() {
-    contactForm.style.display = 'none';
-    document.getElementById('form-success').style.display = 'flex';
-    // Nach kurzer Zeit automatisch zurück auf die Startseite — macht
-    // deutlich, dass die Anfrage angekommen ist, statt einfach auf der
-    // Seite stehen zu bleiben.
-    setTimeout(() => {
-      showPage('home');
-      // Formular für den nächsten Besuch zurücksetzen
-      setTimeout(() => {
-        contactForm.reset();
-        contactForm.style.display = '';
-        document.getElementById('form-success').style.display = 'none';
-        const btn = contactForm.querySelector('button[type="submit"]');
-        btn.textContent = 'ABSENDEN';
-        btn.disabled = false;
-        Object.values(fields).forEach(({ el }) => el.closest('.form-field').classList.remove('has-error'));
-      }, 500);
-    }, 3200);
-  }
 }
 
 // ---- Browser back/forward ---------------------------------

@@ -54,6 +54,20 @@
   <a class="nav__link" href="#book"           data-page="book">CONTACT US</a>
 </div>
 
+<!-- Kontakt-Erfolgsmeldung — breitet sich als Kreis vom Absenden-Button
+     aus über die ganze Seite aus (invertierte Farben: weiss/rot statt
+     rot/weiss), siehe css/styles.css ".success-overlay" -->
+<div class="success-overlay" id="success-overlay" role="dialog" aria-label="Anfrage gesendet">
+  <div class="success-overlay__content">
+    <span class="success-overlay__title">Danke für die Anfrage</span>
+    <p class="success-overlay__text">Wir melden uns so schnell wie möglich bei Ihnen.</p>
+    <div class="success-overlay__actions">
+      <button type="button" class="btn btn--overlay" id="success-home-btn">ZUR STARTSEITE</button>
+      <button type="button" class="btn btn--overlay" id="success-back-btn">ZURÜCK</button>
+    </div>
+  </div>
+</div>
+
 
 <!-- ============================================================
      HOME
@@ -438,12 +452,6 @@
         </div>
 
       </form>
-
-      <div class="form__success" id="form-success">
-        <span class="form__success-icon" aria-hidden="true">&#10003;</span>
-        <span class="form__success-title">Anfrage gesendet</span>
-        <span class="form__success-text">Danke — wir melden uns innerhalb von 24 Stunden bei dir. Du wirst gleich zur Startseite weitergeleitet …</span>
-      </div>
     </div>
 
   </div>
