@@ -1621,17 +1621,17 @@ body.menu-open .nav__toggle span { background: var(--black); }
   margin-top: clamp(4rem, 8vw, 7rem);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
+  gap: clamp(2rem, 5vw, 4rem);
 }
 .footer__copy { font-size: 0.7rem; color: var(--grey-400); letter-spacing: 0.05em; }
-.footer__links {
+/* Je eine Spalte: Copyright über Impressum, Instagram über Mail —
+   gestapelt statt in einer Zeile. */
+.footer__col {
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: clamp(1rem, 2.5vw, 2rem);
+  flex-direction: column;
+  gap: 0.5rem;
 }
-.footer__logo { width: 28px; opacity: 0.4; transition: opacity var(--transition); }
+.footer__logo { width: 28px; opacity: 0.4; transition: opacity var(--transition); margin-left: auto; }
 .footer__logo:hover { opacity: 0.9; }
 .footer__legal {
   font-size: 0.7rem;
