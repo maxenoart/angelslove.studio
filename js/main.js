@@ -487,12 +487,16 @@ const PROJECT_TYPE_LABELS = { video: 'Video', photo: 'Fotografie', design: 'Desi
 
 // Titel-Schriftart: im Backend pro Projekt wählbar (Feld "Titel-Schriftart").
 // Leer/unbekannt => Standard Messina Sans (keine Inline-Schrift nötig).
+// Wichtig: einfache Anführungszeichen verwenden (nicht doppelte) — der
+// Wert landet auf der Projekt-Liste in einem style="..."-HTML-Attribut,
+// und doppelte Anführungszeichen darin würden das Attribut vorzeitig
+// beenden und die ganze Schriftart-Angabe kaputt machen.
 const TITLE_FONT_MAP = {
-  serif:   'Georgia, "Times New Roman", serif',
-  mono:    '"Courier New", monospace',
-  display: 'Impact, "Arial Narrow", sans-serif',
-  script:  '"Brush Script MT", cursive',
-  rounded: '"Trebuchet MS", "Verdana", sans-serif',
+  serif:   "Georgia, 'Times New Roman', serif",
+  mono:    "'Courier New', monospace",
+  display: "Impact, 'Arial Narrow', sans-serif",
+  script:  "'Brush Script MT', cursive",
+  rounded: "'Trebuchet MS', 'Verdana', sans-serif",
 };
 
 // Liefert ein fertiges style-Attribut (oder '') für eine optionale,
