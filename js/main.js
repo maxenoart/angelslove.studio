@@ -690,6 +690,7 @@ function bindProjectCardPreviews() {
     const stop = () => {
       clearTimeout(hoverTimer);
       preview.dataset.loading = '0';
+      delete preview.dataset.revealed;
       preview.classList.remove('is-active');
       if (preview.__player && preview.__player.destroy) {
         try { preview.__player.destroy(); } catch (err) {}
@@ -715,8 +716,16 @@ function bindProjectCardPreviews() {
             },
             events: {
               onStateChange: e => {
-                if (preview.dataset.loading === '1' && e.data === YT.PlayerState.PLAYING) {
-                  preview.classList.add('is-active');
+                // YouTube zeigt beim Start jedes Embeds für ca. 2s automatisch
+                // Titel + Kanalname ein (Pflicht-Branding, lässt sich über
+                // keinen Parameter abschalten) — das passiert erst NACH dem
+                // "playing"-Event, nicht davor. Darum hier zusätzlich kurz
+                // warten, damit diese Karte schon weg ist, bevor wir crossfaden.
+                if (preview.dataset.loading === '1' && e.data === YT.PlayerState.PLAYING && !preview.dataset.revealed) {
+                  preview.dataset.revealed = '1';
+                  setTimeout(() => {
+                    if (preview.dataset.loading === '1') preview.classList.add('is-active');
+                  }, 1800);
                 }
               }
             }
