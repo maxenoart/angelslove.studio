@@ -973,6 +973,13 @@ function resetContactForm() {
 // über die ganze Seite ausbreitet (invertierte Farben: weiss/rot).
 function openSuccessOverlay() {
   if (!successOverlay) return;
+
+  // Eingegebene E-Mail in den Erfolgstext einsetzen, damit der Nutzer sieht,
+  // dass sie korrekt angekommen ist (Tippfehler-Sicherheit).
+  const emailEl = document.getElementById('f-email');
+  const emailSpan = document.getElementById('success-overlay-email');
+  if (emailSpan) emailSpan.textContent = emailEl ? emailEl.value.trim() : '';
+
   const btn = contactForm.querySelector('button[type="submit"]');
   const rect = btn ? btn.getBoundingClientRect() : null;
   const ox = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
@@ -1016,6 +1023,13 @@ if (contactForm) {
 
   contactForm.addEventListener('submit', async e => {
     e.preventDefault();
+
+    // Honeypot: für Menschen unsichtbares Feld. Bots, die Formulare
+    // automatisch ausfüllen, tragen hier meist etwas ein — ist es befüllt,
+    // wird der Submit ohne Fehlermeldung verworfen (kein Hinweis an den Bot,
+    // dass etwas geprüft wurde).
+    const honeypot = document.getElementById('f-website');
+    if (honeypot && honeypot.value.trim() !== '') return;
 
     // Validate
     let valid = true;

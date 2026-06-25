@@ -60,7 +60,7 @@
 <div class="success-overlay" id="success-overlay" role="dialog" aria-label="Anfrage gesendet">
   <div class="success-overlay__content">
     <span class="success-overlay__title">Danke für die Anfrage</span>
-    <p class="success-overlay__text">Wir melden uns so schnell wie möglich bei Ihnen.</p>
+    <p class="success-overlay__text">Wir melden uns bei Ihnen (<span id="success-overlay-email"></span>) so schnell wie möglich.</p>
     <div class="success-overlay__actions">
       <button type="button" class="btn btn--overlay" id="success-home-btn">ZUR STARTSEITE</button>
       <button type="button" class="btn btn--overlay" id="success-back-btn">ZURÜCK</button>
@@ -434,6 +434,15 @@
     <div class="reveal" style="transition-delay:0.1s">
       <form class="book__form" id="contact-form" novalidate
             action="https://formspree.io/f/mlgkegka" method="POST">
+
+        <!-- Honeypot gegen Spam-Bots: für Menschen unsichtbar (nicht per
+             display:none, das erkennen manche Bots), Formulare füllen aber
+             trotzdem jedes Feld aus — ist es befüllt, wird der Submit in
+             js/main.js stillschweigend abgewiesen. -->
+        <div class="form-field__honeypot" aria-hidden="true">
+          <label for="f-website">Website</label>
+          <input type="text" id="f-website" name="website" tabindex="-1" autocomplete="off">
+        </div>
 
         <div class="form-field" id="field-name">
           <label for="f-name">Name <span class="required">*</span></label>

@@ -510,7 +510,7 @@ body.menu-open .nav__toggle span { background: var(--black); }
 }
 
 .cs__item--clickable { cursor: pointer; }
-.cs__item--clickable img { transition: transform 0.5s ease; }
+.cs__item--clickable img { transition: transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
 .cs__item--clickable:hover img { transform: scale(1.045); }
 
 /* Bild-Lade-Animation: Shimmer-Skeleton, bis das Bild geladen ist */
@@ -1448,6 +1448,18 @@ body.menu-open .nav__toggle span { background: var(--black); }
 .book__form { display: flex; flex-direction: column; gap: 1.5rem; }
 
 .form-field { display: flex; flex-direction: column; gap: 0.5rem; }
+
+/* Honeypot: ausserhalb des Bildschirms statt display:none/visibility:hidden,
+   damit Bots, die solche Tricks kennen, das Feld trotzdem als "echt" sehen
+   und ausfüllen — Menschen sehen und erreichen es nie. */
+.form-field__honeypot {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
 
 .form-field label {
   font-size: 0.65rem;
