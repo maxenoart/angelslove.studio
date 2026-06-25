@@ -510,7 +510,6 @@ body.menu-open .nav__toggle span { background: var(--black); }
 }
 
 .cs__item--clickable { cursor: pointer; }
-.cs__item--clickable img { transition: transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
 .cs__item--clickable:hover img { transform: scale(1.045); }
 
 /* Bild-Lade-Animation: Shimmer-Skeleton, bis das Bild geladen ist */
@@ -538,7 +537,11 @@ body.menu-open .nav__toggle span { background: var(--black); }
 }
 .cs__img-wrap img {
   opacity: 0;
-  transition: opacity 0.5s ease;
+  /* Beide Übergänge müssen in einer Deklaration stehen — sonst überschreibt
+     diese Regel (gleiche Spezifität, kommt später im Stylesheet) die
+     transform-Transition der Hover-Zoom-Regel komplett, und der Zoom
+     springt instant statt smooth zu sein. */
+  transition: opacity 0.5s ease, transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .cs__img-wrap.is-loaded::before { opacity: 0; }
 .cs__img-wrap.is-loaded img { opacity: 1; }
