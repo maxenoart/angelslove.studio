@@ -354,8 +354,8 @@ function triggerReveals() {
 // ---- Build Creative Space grid: random project covers + BTS shots ----
 // Pulls every project's cover image and behind-the-scenes shots, shuffles
 // them into a fresh random order on each page load, and makes each one
-// clickable through to its project. A couple of curated story/text
-// blocks (from creative-space-data.js, if present) get sprinkled in too.
+// clickable through to its project. Wird seitenweise per "Mehr laden"
+// nachgeladen (siehe loadMoreCreativeSpace).
 function shuffle(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {

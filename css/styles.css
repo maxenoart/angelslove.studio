@@ -394,13 +394,6 @@ body.is-home .nav--dark .nav__logo {
   z-index: 1;
 }
 
-.home__video-placeholder {
-  position: absolute;
-  inset: 0;
-  background: var(--black);
-  z-index: 0;
-}
-
 
 .home__center {
   position: relative;
@@ -460,8 +453,6 @@ body.is-home .nav--dark .nav__logo {
 }
 .cs__item.revealed { opacity: 1; transform: translateY(0); }
 
-.cs__placeholder { width: 100%; background: var(--black); display: block; }
-
 /* Caption liegt direkt im Bild (unten links), invertiert sich farblich
    gegen den Bildinhalt darunter — dadurch braucht sie keine eigene Zeile
    und der Abstand zwischen allen Items bleibt überall gleich gross. */
@@ -485,8 +476,6 @@ body.is-home .nav--dark .nav__logo {
   text-overflow: ellipsis;
   pointer-events: none;
 }
-
-.cs__item--accent .cs__placeholder { background: var(--red); }
 
 .cs__item--clickable { cursor: pointer; }
 .cs__item--clickable img { transition: transform 0.5s ease; }
@@ -775,8 +764,6 @@ body.is-home .nav--dark .nav__logo {
 #project-detail .detail__desc { color: rgba(255, 255, 255, 0.7); }
 #project-detail .detail__meta-value,
 #project-detail .detail__credit-name { color: var(--white); }
-#project-detail .detail__back { color: rgba(255, 255, 255, 0.5); }
-#project-detail .detail__back:hover { color: var(--red); }
 #project-detail .detail__gallery-item { background: rgba(255, 255, 255, 0.06); }
 
 #project-detail .page-next__label { color: rgba(255, 255, 255, 0.5); }
@@ -947,21 +934,6 @@ body.is-home .nav--dark .nav__logo {
   text-transform: lowercase;
 }
 
-.detail__back {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--grey-400);
-  margin-bottom: 3rem;
-  cursor: pointer;
-  transition: color var(--transition);
-}
-.detail__back:hover { color: var(--red); }
-
 /* ---- Banner + Galerie (Fotografie / Design) ------------------ */
 /* Banner ist ein Hero-Block: nur der Titel liegt als Overlay unten links
    auf dem Bild, das nach unten zum Seitenhintergrund ausfadet. Direkt
@@ -1086,8 +1058,7 @@ body.is-home .nav--dark .nav__logo {
   columns: 3;
   column-gap: clamp(0.75rem, 1.5vw, 1.5rem);
 }
-.detail__gallery--masonry .detail__gallery-item,
-.detail__gallery--masonry .detail__gallery-info {
+.detail__gallery--masonry .detail__gallery-item {
   break-inside: avoid;
   width: 100%;
   margin-bottom: clamp(0.75rem, 1.5vw, 1.5rem);
@@ -1101,26 +1072,6 @@ body.is-home .nav--dark .nav__logo {
   object-fit: unset;
 }
 .detail__gallery--masonry .detail__gallery-item:hover img { transform: none; }
-.detail__gallery--masonry .detail__gallery-info { grid-column: auto; }
-
-/* Die "unsichtbare Karte": kein Rahmen, kein Schatten — sitzt einfach
-   als Text-Feld zwischen den Galerie-Bildern, weil die Seite ohnehin
-   weiss ist. Enthält Kurztext, Datum, Gear/Programm und Credits. */
-.detail__gallery-info {
-  grid-column: span 2;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: left;
-  gap: 1.75rem;
-  padding: 1.5rem 0;
-}
-.detail__gallery-info .detail__desc { margin: 0; }
-.detail__gallery-info .detail__meta-list {
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: clamp(2rem, 5vw, 4rem);
-}
 
 .detail__credits-list--inline {
   display: flex;
@@ -1291,18 +1242,6 @@ body.is-home .nav--dark .nav__logo {
 #book .page-next__arrow { color: var(--white); }
 #book .page-next:hover { background: rgba(255,255,255,0.08); }
 
-/* page-next leading to Book Us — red background */
-.page-next--red {
-  background: var(--red);
-  border-top-color: var(--red);
-}
-.page-next--red .page-next__label { color: rgba(255,255,255,0.6); }
-.page-next--red .page-next__title,
-.page-next--red .page-next__arrow { color: var(--white); }
-.page-next--red:hover { background: #c9062f; }
-.page-next--red:hover .page-next__title,
-.page-next--red:hover .page-next__arrow { color: var(--white); }
-
 /* ============================================================
    BOOK US — CI/CD red background
    ============================================================ */
@@ -1363,10 +1302,6 @@ body.is-home .nav--dark .nav__logo {
   margin-bottom: 0.4rem;
 }
 .book__email-val { font-size: 1rem; font-weight: 400; color: var(--white); }
-
-.section__label--book {
-  color: rgba(255,255,255,0.6);
-}
 
 /* Form on red background */
 .book__form { display: flex; flex-direction: column; gap: 1.5rem; }
@@ -1587,7 +1522,6 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   .about__people { gap: 2.5rem; }
   .book__body { grid-template-columns: 1fr; gap: 3rem; }
   .detail__gallery { grid-template-columns: repeat(2, 1fr); }
-  .detail__gallery-info { grid-column: span 2; }
   .detail__gallery--masonry { columns: 2; }
 }
 
@@ -1612,12 +1546,9 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
     gap: 1.25rem;
   }
   .detail__gallery { grid-template-columns: 1fr; }
-  .detail__gallery-info { grid-column: span 1; }
-  .detail__gallery-info .detail__meta-list { flex-direction: column; gap: 1.5rem; }
   /* Fotografie: auch auf dem Handy 2 Spalten statt nur 1 */
   .detail__gallery--masonry { columns: 2; column-gap: 0.6rem; }
-  .detail__gallery--masonry .detail__gallery-item,
-  .detail__gallery--masonry .detail__gallery-info { margin-bottom: 0.6rem; }
+  .detail__gallery--masonry .detail__gallery-item { margin-bottom: 0.6rem; }
 
   /* Im Banner steht auf dem Handy nur noch der (kurze) Titel, daher
      reicht eine normale Hero-Höhe statt der früheren 80vh. Titel bleibt
