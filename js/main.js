@@ -422,7 +422,7 @@ let csAllItems = [];  // vollständige, gemischte Liste (Medien + Textblöcke)
 let csShown = 0;      // wie viele Karten aktuell im Grid stehen
 let csColumns = [];           // echte Spalten-DOM-Elemente (statt CSS-Mehrspalten-Layout)
 let csCurrentColumnCount = 0; // wie viele Spalten gerade aufgebaut sind
-let csColumnRatioCounts = []; // pro Spalte: wie viele Karten schon drin sind (für Format-Rotation)
+let csColumnRatioQueues = []; // pro Spalte: gemischte Warteschlange an Format-Indizes
 
 // Wie viele Spalten je nach Bildschirmbreite — entspricht den Breakpoints,
 // die früher in den CSS-"columns" Regeln standen (4 / 3 / 2).
@@ -440,14 +440,26 @@ function csBuildColumns() {
   csCurrentColumnCount = csColumnCount();
   grid.innerHTML = '';
   csColumns = [];
-  csColumnRatioCounts = [];
+  csColumnRatioQueues = [];
   for (let i = 0; i < csCurrentColumnCount; i++) {
     const col = document.createElement('div');
     col.className = 'cs__column';
     grid.appendChild(col);
     csColumns.push(col);
-    csColumnRatioCounts.push(0);
+    csColumnRatioQueues.push([]);
   }
+}
+
+// Nächstes Format für eine Spalte: zieht aus einer gemischten 4er-Warteschlange
+// (je ein 4/3, 3/4, 1/1, 16/9), die bei Bedarf neu gemischt nachgefüllt wird.
+// So sieht die Reihenfolge pro Spalte zufällig aus, aber jede Spalte bekommt
+// über die Zeit trotzdem gleich viel von jedem Format — Spaltenenden bleiben
+// ungefähr gleich hoch, ohne dass alle Spalten im selben Rhythmus wechseln.
+function csNextRatioIndex(colIndex) {
+  if (!csColumnRatioQueues[colIndex] || csColumnRatioQueues[colIndex].length === 0) {
+    csColumnRatioQueues[colIndex] = shuffle([0, 1, 2, 3]);
+  }
+  return csColumnRatioQueues[colIndex].shift();
 }
 
 // Baut die komplette Item-Liste einmal auf (Aufruf bei Seitenaufbau).
@@ -512,7 +524,7 @@ function loadMoreCreativeSpace() {
     const globalIndex = csShown + idx;
     const colIndex = globalIndex % csCurrentColumnCount;
     const col = csColumns[colIndex];
-    const ratioIndex = csColumnRatioCounts[colIndex]++;
+    const ratioIndex = csNextRatioIndex(colIndex);
     col.insertAdjacentHTML('beforeend', renderCsCard(item, globalIndex, ratioIndex));
   });
   csShown += next.length;
@@ -553,7 +565,7 @@ function buildCreativeSpace() {
           const toRestore = csAllItems.slice(0, shownCount);
           toRestore.forEach((item, idx) => {
             const colIndex = idx % csCurrentColumnCount;
-            const ratioIndex = csColumnRatioCounts[colIndex]++;
+            const ratioIndex = csNextRatioIndex(colIndex);
             csColumns[colIndex].insertAdjacentHTML('beforeend', renderCsCard(item, idx, ratioIndex));
           });
           csShown = shownCount;
