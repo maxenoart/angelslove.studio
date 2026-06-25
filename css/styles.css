@@ -655,11 +655,67 @@ body.is-home .nav--dark .nav__logo {
   color: var(--white);
 }
 
+/* ---- Such-Button neben den Filtern — klappt per Klick zu einem
+   Suchfeld auf (Lupe bleibt sichtbar, Eingabe wächst nach links), statt
+   permanent Platz zu belegen. ------------------------------------- */
+.projects__search {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+.projects__search-input {
+  width: 0;
+  min-width: 0;
+  height: 2.5rem;
+  padding: 0 0;
+  margin-right: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--white);
+  font-family: var(--font);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  overflow: hidden;
+  transition: width 0.3s ease, opacity 0.2s ease, padding 0.3s ease, margin 0.3s ease, border-color var(--transition);
+}
+.projects__search-input::placeholder { color: rgba(255, 255, 255, 0.5); }
+.projects__search.is-open .projects__search-input {
+  width: clamp(160px, 30vw, 240px);
+  opacity: 1;
+  padding: 0 1rem;
+  margin-right: 0.6rem;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+.projects__search.is-open .projects__search-input:focus { border-color: var(--red); outline: none; }
+.projects__search-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: var(--white);
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
+}
+.projects__search-toggle:hover,
+.projects__search.is-open .projects__search-toggle { border-color: var(--red); color: var(--red); }
+
 /* ---- Project grid ----------------------------------------- */
 .projects__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
   gap: clamp(1.25rem, 2.5vw, 2rem);
+}
+.projects__empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem 1rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
 }
 
 /* ---- Project card — flush image, no white panel; sits directly
@@ -741,6 +797,24 @@ body.is-home .nav--dark .nav__logo {
   text-transform: uppercase;
   color: var(--white);
   line-height: 1.1;
+  /* Bleibt einzeilig — ein zu langer Titel wird mit "…" abgeschnitten,
+     statt die Karte nach unten zu verlängern. */
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* "Press Start 2P" ist eine Pixel-Schrift, die bei gleicher Punktgrösse
+   optisch deutlich grösser wirkt als die anderen Titel-Schriftarten —
+   daher hier kleiner skaliert. */
+.project-card__title[data-title-font="press-start-2p"] {
+  font-size: clamp(0.65rem, 1.3vw, 0.85rem);
+  letter-spacing: 0;
+}
+.detail__title[data-title-font="press-start-2p"] {
+  font-size: clamp(1.2rem, 3vw, 2.4rem);
+  letter-spacing: 0;
 }
 
 /* ---- Project Detail --------------------------------------- */

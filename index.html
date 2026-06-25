@@ -146,6 +146,13 @@
     <button class="projects__filter" data-filter="video" onclick="filterProjects('video')">Video</button>
     <button class="projects__filter" data-filter="photo" onclick="filterProjects('photo')">Fotografie</button>
     <button class="projects__filter" data-filter="design" onclick="filterProjects('design')">Design</button>
+
+    <div class="projects__search" id="projects-search">
+      <input type="text" class="projects__search-input" id="projects-search-input" placeholder="Suchen …" />
+      <button type="button" class="projects__search-toggle" id="projects-search-toggle" aria-label="Projekte durchsuchen">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </button>
+    </div>
   </div>
 
   <!-- Cards werden automatisch aus js/projects-data.js generiert -->

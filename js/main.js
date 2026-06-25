@@ -480,6 +480,7 @@ function formatDate(dateStr) {
 
 // ---- Build project cards (sorted newest first) ------------
 let currentProjectFilter = 'all';
+let currentProjectSearch = '';
 
 // Klartext-Label je Projekt-Typ — macht auf der Karte sofort sichtbar,
 // ob es sich um ein Video-, Fotografie- oder Design-Projekt handelt.
@@ -503,7 +504,15 @@ function buildProjectCards() {
 
   const sorted = [...PROJECTS]
     .filter(p => currentProjectFilter === 'all' || p.type === currentProjectFilter)
+    .filter(p => !currentProjectSearch
+      || (p.title || '').toLowerCase().includes(currentProjectSearch)
+      || (p.category || '').toLowerCase().includes(currentProjectSearch))
     .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+  if (!sorted.length) {
+    grid.innerHTML = '<p class="projects__empty">Keine Projekte gefunden.</p>';
+    return;
+  }
 
   grid.innerHTML = sorted.map(p => {
     const coverStyle = p.cover
@@ -511,6 +520,9 @@ function buildProjectCards() {
       : '';
     const typeLabel = PROJECT_TYPE_LABELS[p.type] || '';
     const titleFont = titleFontStyle(p.titleFont);
+    // data-title-font erlaubt im CSS gezielte Anpassungen pro Schriftart
+    // (z.B. kleinere Schriftgrösse für "Press Start 2P", die optisch viel
+    // grösser wirkt als andere Schriftarten bei gleicher Punktgrösse).
     return `
       <article class="project-card" onclick="openProject(${p.id})" role="button" tabindex="0">
         <div class="project-card__thumb" ${coverStyle}>
@@ -518,7 +530,7 @@ function buildProjectCards() {
         </div>
         <div class="project-card__info">
           <span class="project-card__category">${p.category}</span>
-          <h3 class="project-card__title"${titleFont}>${p.title}</h3>
+          <h3 class="project-card__title" data-title-font="${p.titleFont || ''}"${titleFont}>${p.title}</h3>
         </div>
       </article>`;
   }).join('');
@@ -555,6 +567,43 @@ window.filterProjects = function(type) {
   });
   buildProjectCards();
 };
+
+// ---- Projekt-Suche — Lupen-Button klappt zu Suchfeld auf ----------
+(function () {
+  const wrap   = document.getElementById('projects-search');
+  const toggle = document.getElementById('projects-search-toggle');
+  const input  = document.getElementById('projects-search-input');
+  if (!wrap || !toggle || !input) return;
+
+  toggle.addEventListener('click', () => {
+    if (wrap.classList.contains('is-open') && !input.value) {
+      wrap.classList.remove('is-open');
+      return;
+    }
+    wrap.classList.add('is-open');
+    input.focus();
+  });
+
+  input.addEventListener('input', () => {
+    currentProjectSearch = input.value.trim().toLowerCase();
+    buildProjectCards();
+  });
+
+  input.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    input.value = '';
+    currentProjectSearch = '';
+    buildProjectCards();
+    wrap.classList.remove('is-open');
+    input.blur();
+  });
+
+  // Schliesst das Suchfeld wieder, wenn man daneben klickt und es leer ist.
+  document.addEventListener('click', e => {
+    if (wrap.contains(e.target)) return;
+    if (!input.value) wrap.classList.remove('is-open');
+  });
+})();
 
 // Holt die reine YouTube-Video-ID egal ob eine ganze URL
 // (youtu.be/..., youtube.com/watch?v=..., .../embed/...) oder
@@ -599,6 +648,7 @@ window.openProject = function(id) {
   const detailTitleEl = document.getElementById('detail-title');
   detailTitleEl.textContent = p.title || '—';
   detailTitleEl.style.fontFamily = (window.TITLE_FONT_MAP || {})[p.titleFont] || '';
+  detailTitleEl.dataset.titleFont = p.titleFont || '';
 
   const isGalleryType = p.type === 'photo' || p.type === 'design';
   document.getElementById('project-detail').classList.toggle('project-detail--gallery', isGalleryType);
@@ -617,6 +667,7 @@ window.openProject = function(id) {
     const detailBannerTitleEl = document.getElementById('detail-banner-title');
     detailBannerTitleEl.textContent = p.title || '—';
     detailBannerTitleEl.style.fontFamily = (window.TITLE_FONT_MAP || {})[p.titleFont] || '';
+    detailBannerTitleEl.dataset.titleFont = p.titleFont || '';
     // Beschreibung steht unten unter der Galerie, kurz über Datum/Gear.
     document.getElementById('detail-gallery-desc').textContent    = p.longDesc || p.shortDesc || '';
 
