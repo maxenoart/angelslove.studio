@@ -626,13 +626,17 @@ function buildProjectCards() {
       : '';
     const typeLabel = PROJECT_TYPE_LABELS[p.type] || '';
     const titleFont = titleFontStyle(p.titleFont);
+    // Video-Hover-Vorschau nur für Video-Projekte mit gültiger YouTube-ID.
+    const videoId = p.type === 'video' ? extractYouTubeId(p.video) : '';
+    const videoAttr = videoId && videoId !== 'DEINE_YOUTUBE_ID' ? ` data-video-id="${videoId}"` : '';
     // data-title-font erlaubt im CSS gezielte Anpassungen pro Schriftart
     // (z.B. kleinere Schriftgrösse für "Press Start 2P", die optisch viel
     // grösser wirkt als andere Schriftarten bei gleicher Punktgrösse).
     return `
-      <article class="project-card" onclick="openProject(${p.id})" role="button" tabindex="0">
+      <article class="project-card" onclick="openProject(${p.id})" role="button" tabindex="0"${videoAttr}>
         <div class="project-card__thumb" ${coverStyle}>
           ${typeLabel ? `<span class="project-card__type project-card__type--${p.type}">${typeLabel}</span>` : ''}
+          ${videoAttr ? '<div class="project-card__preview"></div>' : ''}
         </div>
         <div class="project-card__info">
           <span class="project-card__category">${p.category}</span>
@@ -642,6 +646,36 @@ function buildProjectCards() {
   }).join('');
 
   triggerReveals();
+  bindProjectCardPreviews();
+}
+
+// Spielt beim Hover über eine Video-Projektkarte das YouTube-Video stumm,
+// ohne Steuerleiste/Branding-Vorschläge ab (nur das YouTube-Pflichtlogo
+// bleibt sichtbar). Iframe wird erst bei Hover erzeugt (kein Vorladen
+// vieler Embeds) und beim Verlassen sofort entfernt, damit das Video
+// zuverlässig stoppt statt im Hintergrund weiterzulaufen.
+function bindProjectCardPreviews() {
+  const grid = document.getElementById('projects-grid');
+  if (!grid) return;
+  grid.querySelectorAll('.project-card[data-video-id]').forEach(card => {
+    const videoId = card.dataset.videoId;
+    const preview = card.querySelector('.project-card__preview');
+    if (!preview || preview.dataset.bound) return;
+    preview.dataset.bound = '1';
+    let hoverTimer;
+    card.addEventListener('mouseenter', () => {
+      clearTimeout(hoverTimer);
+      hoverTimer = setTimeout(() => {
+        preview.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&loop=1&playlist=${videoId}&iv_load_policy=3&disablekb=1&playsinline=1" frameborder="0" allow="autoplay; encrypted-media" tabindex="-1"></iframe>`;
+        preview.classList.add('is-active');
+      }, 250);
+    });
+    card.addEventListener('mouseleave', () => {
+      clearTimeout(hoverTimer);
+      preview.classList.remove('is-active');
+      preview.innerHTML = '';
+    });
+  });
 }
 
 // ---- Projects hero — shows a random project cover each time the
