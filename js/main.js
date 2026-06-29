@@ -36,6 +36,7 @@ const PAGE_DISPLAY = {
   'about':          'block',
   'book':           'block',
   'impressum':      'block',
+  'datenschutz':    'block',
 };
 
 // Home + Creative Space behave as one continuous, softly-scrolling
