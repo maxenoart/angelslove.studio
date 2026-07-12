@@ -76,7 +76,7 @@ function updateChromeForFlowSection(id) {
 
   document.body.classList.remove('is-book');
   document.body.classList.remove('is-projects');
-  document.querySelector('.nav__logo').style.filter = '';
+  document.querySelectorAll('.nav__logo').forEach(el => { el.style.filter = ''; });
 
   const themeMeta = document.getElementById('theme-color-meta');
   if (themeMeta) {
@@ -240,7 +240,7 @@ function showPage(id, pushState = true) {
   // Logo-Video ist weiss: auf den dunklen/roten Seiten (Book, Projects,
   // Projekt-Detail) soll es weiss bleiben (filter:none), auf hellen Seiten
   // entscheidet das CSS (nav--scrolled → invert(1) = schwarz auf weiss).
-  document.querySelector('.nav__logo').style.filter = (id === 'book' || id === 'projects' || id === 'project-detail') ? 'none' : '';
+  document.querySelectorAll('.nav__logo').forEach(el => { el.style.filter = (id === 'book' || id === 'projects' || id === 'project-detail') ? 'none' : ''; });
 
   // Status bar tint follows page background (white / red / dark)
   const themeMeta = document.getElementById('theme-color-meta');
@@ -274,7 +274,10 @@ const heroChromeEl   = document.getElementById('home-hero-chrome');
 const heroLogoLinkEl = document.getElementById('home-hero-logo-link'); // wird per transform gedockt
 const heroLogoEl     = document.getElementById('home-hero-logo');
 const heroTextEl     = document.getElementById('home-hero-text');
-const navLogoEl      = document.getElementById('nav-logo');
+// Ziel-Position fürs Docking = Nav-Logo-Spalte. Bewusst der Wrapper und nicht
+// das Video (#nav-logo), da das Video auf dem Handy per CSS ausgeblendet ist
+// (display:none → rect wäre 0). Der Wrapper ist immer gelayoutet.
+const navLogoEl      = document.querySelector('.nav__logo-wrap');
 
 // Basiswerte, einmal gemessen (nicht pro Frame): ungetransformte Position des
 // grossen Hero-Logos und Zielposition (Nav-Logo). Ändern sich nur bei Resize.
@@ -338,14 +341,16 @@ function syncHomeHeroChrome() {
   syncHomeHeroChrome();
   // Logo evtl. beim ersten Sync noch nicht vermessbar — nach dem Laden neu.
   // 'load' für das <img>-Fallback, 'loadeddata' für das <video> (feuert kein load).
-  if (heroLogoEl) {
-    const remeasure = () => {
-      heroLogoBase = null; navLogoTarget = null;
-      syncHomeHeroChrome();
-    };
-    heroLogoEl.addEventListener('load', remeasure);
-    heroLogoEl.addEventListener('loadeddata', remeasure);
-  }
+  const remeasure = () => {
+    heroLogoBase = null; navLogoTarget = null;
+    syncHomeHeroChrome();
+  };
+  // Sowohl das Video (Desktop, 'loadeddata') als auch das statische PNG
+  // (Mobile, 'load') anhängen — je nach Gerät ist nur eines sichtbar.
+  document.querySelectorAll('.home__hero-logo').forEach(el => {
+    el.addEventListener('load', remeasure);
+    el.addEventListener('loadeddata', remeasure);
+  });
 })();
 
 // ---- One-pager scroll tracking (Home ↔ Creative Space) -----

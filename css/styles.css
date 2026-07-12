@@ -198,6 +198,21 @@ p  { line-height: 1.7; font-weight: 450; }
 
 .nav__logo:hover { opacity: 0.75; }
 
+/* Logo: animiertes WebM-Video am Desktop, statisches PNG auf dem Handy.
+   Grund: iOS (Safari/Chrome) spielt WebM/VP9 nicht ab und das Video hat
+   keinen Alpha-Kanal → auf Mobile sonst ein weisses Rechteck. Standard =
+   Desktop (Video sichtbar, PNG versteckt); die Media Query dreht es fürs
+   Handy um. Gilt für Nav-Logo UND grosses Hero-Logo. */
+.nav__logo--static,
+.home__hero-logo--static { display: none; }
+
+@media (max-width: 600px) {
+  .nav__logo--motion,
+  .home__hero-logo--motion { display: none; }
+  .nav__logo--static { display: block; }
+  .home__hero-logo--static { display: block; }
+}
+
 /* Links — center column */
 .nav__links {
   display: flex;

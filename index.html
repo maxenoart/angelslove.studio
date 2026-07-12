@@ -25,11 +25,13 @@
 
   <!-- Butterfly imagemark — left, acts as home button -->
   <a class="nav__logo-wrap" href="#home" data-page="home" aria-label="angelslove — zur Startseite">
-    <video class="nav__logo" id="nav-logo" autoplay muted loop playsinline
+    <video class="nav__logo nav__logo--motion" id="nav-logo" autoplay muted loop playsinline
            poster="Website/HOME/assets/angelslove-logo-white.png?v=3" aria-label="angelslove">
       <source src="Website/HOME/assets/angelslove-logo-white.webm?v=3" type="video/webm" />
-      <img src="Website/HOME/assets/angelslove-logo-white.png?v=3" alt="angelslove" class="nav__logo" />
     </video>
+    <!-- Statisches Logo für Mobile (iOS spielt kein WebM/VP9, Video hat keinen
+         Alpha-Kanal → sonst weisses Rechteck). CSS blendet je nach Gerät um. -->
+    <img src="Website/HOME/assets/angelslove-logo-white.png?v=3" alt="angelslove" class="nav__logo nav__logo--static" />
   </a>
 
   <!-- Links — immer zentriert, "Contact Us" ist auf allen Seiten dauerhaft
@@ -66,11 +68,12 @@
 <div class="home__hero-chrome" id="home-hero-chrome">
   <div class="home__hero-intro">
     <a class="home__hero-logo-link" id="home-hero-logo-link" href="#home" data-page="home" aria-label="angelslove — zur Startseite">
-      <video class="home__hero-logo" id="home-hero-logo" autoplay muted loop playsinline
+      <video class="home__hero-logo home__hero-logo--motion" id="home-hero-logo" autoplay muted loop playsinline
              poster="Website/HOME/assets/angelslove-logo-white.png?v=3" aria-label="angelslove">
         <source src="Website/HOME/assets/angelslove-logo-white.webm?v=3" type="video/webm" />
-        <img src="Website/HOME/assets/angelslove-logo-white.png?v=3" alt="angelslove" class="home__hero-logo" />
       </video>
+      <!-- Statisches Logo für Mobile (siehe Nav-Logo). -->
+      <img src="Website/HOME/assets/angelslove-logo-white.png?v=3" alt="angelslove" class="home__hero-logo home__hero-logo--static" />
     </a>
     <div class="home__hero-text" id="home-hero-text">
       <p class="home__hero-tagline">Wir sind angelslove, ein Film-Studio aus zwei Freunden, die ihre Leidenschaft verfolgen.</p>
