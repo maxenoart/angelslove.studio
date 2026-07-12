@@ -46,6 +46,7 @@
 
 /* --- Variables --------------------------------------------- */
 :root {
+  /* Marken-Rot — Akzentfarbe der Seite: Hover, aktiver Zustand, Labels. */
   --red:      #e2073b;
   --black:    #0e0e0e;
   --white:    #ffffff;
@@ -55,7 +56,16 @@
   --grey-700: #444444;
 
   --font:               'Messina Sans', sans-serif;
-  --tracking-headline:  -0.1em;
+
+  /* --- Definiertes Type-System (CI/CD) ----------------------------
+     Die ganze Seite baut auf wenigen, festen Bausteinen auf. Grössen
+     und Laufweiten sind zentral hier definiert, damit gleiche Elemente
+     überall gleich aussehen. */
+  --tracking-headline:  -0.1em;   /* Big Headline (h1) */
+  --tracking-subline:   -0.05em;  /* Subline (h2 / page-next) */
+  --tracking-ui:        0.15em;   /* ALLE Mikro-UI: Nav, Tabs, Buttons, Links, Labels */
+  --ui-size:            0.7rem;   /* einheitliche Grösse für ALLE Mikro-UI */
+
   --nav-h:              72px;
   --transition:         0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -65,7 +75,8 @@
 
 html {
   font-size: 16px;
-  scroll-behavior: smooth;
+  /* Kein scroll-behavior: smooth mehr — das übernimmt jetzt Lenis
+     (js/main.js), sonst würden sich beide in die Quere kommen. */
   scroll-padding-top: var(--nav-h);
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none; /* no rubber-band bounce → no white flash above the video */
@@ -90,32 +101,48 @@ a { color: inherit; text-decoration: none; }
 button { font-family: var(--font); cursor: pointer; border: none; background: none; }
 
 /* --- Typography -------------------------------------------- */
+/* IDENTITÄT (CI/CD): Headlines + Sublines durchgehend Messina Sans,
+   Mixed-Case (damit "angelslove" klein bleibt), sehr enge Laufweite —
+   exakt wie im Figma-CI/CD ("Big Headlines" / "Subline"). Zwei feste
+   Stufen: h1 = Big Headline (SemiBold, -0.1em), h2 = Subline
+   (Regular, -0.05em). */
 h1, h2, h3, h4 {
-  font-weight: 700;
-  letter-spacing: var(--tracking-headline);
-  text-transform: uppercase;
+  font-family: var(--font);
+  text-transform: none;
   line-height: 1.05;
   overflow-wrap: break-word;
 }
-h1 { font-size: clamp(2.5rem, 7vw, 6rem); }
-h2 { font-size: clamp(1.8rem, 4vw, 3.5rem); }
-h3 { font-size: clamp(1.2rem, 2.5vw, 2rem); }
-h4 { font-size: clamp(1rem, 1.8vw, 1.4rem); }
-p  { line-height: 1.7; font-weight: 300; }
+h1 { font-size: clamp(2.4rem, 6vw, 5.2rem); font-weight: 600; letter-spacing: var(--tracking-headline); }
+h2 { font-size: clamp(1.9rem, 4.2vw, 3.4rem); font-weight: 600; letter-spacing: var(--tracking-subline); }
+h3 { font-size: clamp(1.2rem, 2.5vw, 2rem); font-weight: 600; letter-spacing: var(--tracking-subline); }
+h4 { font-size: clamp(1rem, 1.8vw, 1.4rem); font-weight: 600; letter-spacing: var(--tracking-subline); }
+p  { line-height: 1.7; font-weight: 450; }
+
+/* Projekt-Titel behalten ihr eigenes System (admin-wählbare Display-Fonts,
+   Uppercase, enge Laufweite) — nicht von der Serif-Identität überschreiben. */
+.detail__title,
+.detail__banner-title {
+  font-family: var(--font);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-headline);
+}
 
 /* ============================================================
    NAVIGATION
    ============================================================ */
 
 /*
- * Layout: 3-column grid — logo (left) | links (center) | spacer (right)
- * nav--dark    : transparent bg, white links — used on home page
- * nav--scrolled: white bg, black links     — used when scrolled / on subpages
- *
- * Logo colour:
- *   body.is-home + nav--dark → red  (butterfly on home hero)
- *   nav--dark (subpages)     → white (inverted)
- *   nav--scrolled            → black (natural SVG)
+ * Layout: 3-column grid — logo (left) | links (center) | spacer (right).
+ * Die Nav ist in jedem Zustand transparent (kein Hintergrundbalken).
+ * Lesbarkeit über einen einheitlichen S/W-Farbwechsel:
+ *   nav--dark     → weisser Text/Logo (über dunklen Flächen)
+ *   nav--scrolled → schwarzer Text/Logo (über hellen Flächen)
+ * Im Home-Flow misst zusätzlich js/main.js die Video-Helligkeit und setzt
+ * bei hellen Frames .is-lum-light (dunkler Text). Der aktive Tab ist rot
+ * (Ausnahme Contact Us: weiss auf rotem Grund).
+ * Auf Home/Creative Space ist .nav__logo-wrap unsichtbar — dort übernimmt
+ * optisch das grosse Hero-Logo, das in diese Position dockt.
  */
 
 .nav {
@@ -132,57 +159,26 @@ p  { line-height: 1.7; font-weight: 300; }
   padding-left: clamp(1.5rem, 4vw, 4rem);
   padding-right: clamp(1.5rem, 4vw, 4rem);
   background: transparent;
-  transition: background var(--transition),
-              backdrop-filter var(--transition),
-              border-color var(--transition);
+  transition: border-color var(--transition), top var(--transition);
   border-bottom: 1px solid transparent;
 }
 
-/* Dark state — transparent, over video/dark bg */
-.nav--dark {
+/* Nav bleibt in jedem Zustand transparent. Lesbarkeit kommt über einen
+   EINHEITLICHEN Farbwechsel (kein Blend mehr — der lag nur im Home-Flow und
+   machte den Header dort inkonsistent + kippte Rot zu Türkis): weisser
+   Text/Logo über dunklen Flächen (nav--dark), dunkler über hellen
+   (nav--scrolled). Der Zustand wird beim Scrollen gesetzt (js/main.js). So
+   sieht der Header auf ALLEN Seiten gleich aus. */
+.nav--dark,
+.nav--scrolled {
   background: transparent;
   border-bottom-color: transparent;
 }
 
-.nav--dark .nav__link {
-  color: var(--white);
-}
-
-.nav--dark .nav__link.active,
-.nav--dark .nav__link:hover {
-  color: var(--red);
-}
-
-.nav--dark .nav__logo {
-  filter: invert(1); /* black SVG → white */
-}
-
-/* On home: logo is red instead of white */
-body.is-home .nav--dark .nav__logo {
-  filter: invert(9%) sepia(97%) saturate(7494%)
-          hue-rotate(337deg) brightness(95%) contrast(110%);
-}
-
-/* Scrolled state — white bg */
-.nav--scrolled {
-  background: rgba(255, 255, 255, 0.97);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom-color: var(--grey-200);
-}
-
-.nav--scrolled .nav__link {
-  color: var(--black);
-}
-
-.nav--scrolled .nav__link.active,
-.nav--scrolled .nav__link:hover {
-  color: var(--red);
-}
-
-.nav--scrolled .nav__logo {
-  filter: none; /* black SVG stays black */
-}
+/* Logo-Video ist bereits weiss: über dunklen Flächen unverändert lassen,
+   nur auf hellem (reinweissem) Grund zu schwarz invertieren. */
+.nav--dark .nav__logo    { filter: none; }
+.nav--scrolled .nav__logo { filter: invert(1); }
 
 /* Logo wrap — left column */
 .nav__logo-wrap {
@@ -192,10 +188,11 @@ body.is-home .nav--dark .nav__logo {
 }
 
 .nav__logo {
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   display: block;
   flex-shrink: 0;
+  object-fit: contain;
   transition: filter var(--transition), opacity var(--transition);
 }
 
@@ -211,15 +208,25 @@ body.is-home .nav--dark .nav__logo {
 }
 
 .nav__link {
-  font-size: 0.7rem;
+  font-size: var(--ui-size);
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: var(--tracking-ui);
   text-transform: uppercase;
-  color: var(--white);
+  color: #fff; /* Standard: weiss (über dunklen Flächen, nav--dark) */
   transition: color var(--transition);
   position: relative;
   padding-bottom: 2px;
 }
+/* Heller Hintergrund (nav--scrolled, z.B. Creative Space) → dunkler Text. */
+.nav--scrolled .nav__link { color: var(--black); }
+
+/* Im Home-Flow misst js/main.js die Video-Helligkeit hinter der Nav: über
+   heller Video-Stelle → .is-lum-light → dunkler Text (sonst weiss). Rein
+   S/W. Der aktive Tab bleibt trotzdem rot. */
+body.home-flow-active .nav.is-lum-light .nav__link { color: var(--black); }
+body.home-flow-active .nav.is-lum-light .nav__toggle span { background: var(--black); }
+body.home-flow-active .nav.is-lum-light .nav__link.active,
+body.home-flow-active .nav.is-lum-light .nav__link:hover { color: var(--red); }
 
 .nav__link::after {
   content: '';
@@ -227,7 +234,9 @@ body.is-home .nav--dark .nav__logo {
   bottom: -2px; left: 0;
   width: 0;
   height: 1.5px;
-  background: var(--red);
+  /* currentColor: der Strich folgt der Textfarbe des aktiven Links — auf
+     normalen Seiten also unser Rot, auf Contact Us weiss (siehe unten). */
+  background: currentColor;
   transition: width var(--transition);
 }
 
@@ -236,13 +245,47 @@ body.is-home .nav--dark .nav__logo {
   width: 100%;
 }
 
+/* Aktiv/Hover: unser Rot — auf ALLEN Seiten (inkl. Creative Space). */
 .nav__link.active,
 .nav__link:hover {
   color: var(--red);
 }
+/* Contact Us hat einen roten Hintergrund — Rot wäre dort unsichtbar. Also
+   auf dieser Seite alle Links weiss und der aktive/Hover-Tab weiss
+   unterstrichen (currentColor → weisser Strich). */
+body.is-book .nav__link { color: #fff; }
+body.is-book .nav__link.active,
+body.is-book .nav__link:hover { color: #fff; }
+
+/* Home/Creative-Space-Flow: die normale Nav-Logo + der "Contact Us"-Link
+   im zentrierten Link-Cluster werden ausgeblendet — diese Rolle
+   übernimmt stattdessen .home__hero-chrome (Logo/Wordmark + Buttons über
+   dem Hero-Video), das beim Scrollen selbst in den Header wandert (siehe
+   js/main.js syncHomeHeroChrome + weiter unten im CSS). So bleiben die
+   zentrierten Links auf Home nur "CREATIVE SPACE / PROJECTS / ABOUT US",
+   exakt wie im Referenz-Design. */
+/* Wichtig: .nav__logo-wrap per visibility (nicht display:none) ausblenden!
+   .nav ist ein 3-Spalten-Grid (Logo | Links | Spacer) OHNE explizite
+   grid-column-Zuweisung der Kinder — bei display:none würde das Kind
+   komplett aus der Grid-Auto-Platzierung herausfallen und die Links
+   rutschen dadurch eine Spalte nach links (in die Logo-Spalte statt die
+   mittlere "1fr"-Spalte), die zentrierten Links landen so am linken statt
+   in der Mitte. Mit visibility:hidden bleibt die (0px breite bzw.
+   34px, exakt wie der Spacer) Spalte erhalten, die Links bleiben in der
+   mittleren Spalte und damit echt zentriert. */
+/* Im Home-Flow ist das normale Nav-Logo unsichtbar — seine Rolle übernimmt
+   optisch das grosse Hero-Logo, das per JS in genau diese Position dockt.
+   Es bleibt aber KLICKBAR (pointer-events: auto): weil die Nav über dem
+   Hero-Chrome liegt, fängt dieses unsichtbare Nav-Logo den Klick auf das
+   angedockte Logo ab → zurück nach oben (href="#home"). "Contact Us" ist
+   dauerhaft in der Nav sichtbar. */
+body.home-flow-active .nav__logo-wrap {
+  opacity: 0;
+  pointer-events: auto;
+}
 
 /* Right spacer — mirrors logo width so links stay centred */
-.nav__spacer { width: 34px; }
+.nav__spacer { width: 44px; }
 
 /* Hamburger — mobile only */
 .nav__toggle {
@@ -257,15 +300,17 @@ body.is-home .nav--dark .nav__logo {
   display: block;
   width: 24px;
   height: 1.5px;
-  background: var(--white);
+  background: #fff; /* weiss über dunkel (nav--dark) */
   transition: background var(--transition), transform 0.35s cubic-bezier(0.65,0,0.35,1), opacity 0.25s ease;
 }
-.nav--scrolled .nav__toggle span { background: var(--black); }
+.nav--scrolled .nav__toggle span { background: var(--black); } /* dunkel über hell */
+body.is-book .nav__toggle span { background: #fff; }           /* weiss über rot */
 
-/* While the mobile menu is open, force the icon dark so it stays
-   legible against the white menu underneath — regardless of the
-   nav's own light/dark state. */
-body.menu-open .nav__toggle span { background: var(--black); }
+/* While the mobile menu is open, force the icon flat black so it stays
+   legible against the white menu underneath. */
+body.menu-open .nav__toggle span {
+  background: var(--black);
+}
 
 /* Hamburger → X */
 .nav__toggle.is-open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
@@ -336,34 +381,76 @@ body.menu-open .nav__toggle span { background: var(--black); }
   align-items: center;
   justify-content: center;
   font-family: var(--font);
-  font-size: 0.7rem;
+  font-size: var(--ui-size);
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: var(--tracking-ui);
   text-transform: uppercase;
-  padding: 1rem 2.5rem;
-  border: 1.5px solid currentColor;
+  padding: 0.7rem 1.6rem;   /* schlank, nicht bulky */
+  border: 1px solid currentColor;
   transition: all var(--transition);
   cursor: pointer;
 }
+/* CI/CD-Standard: jeder Button füllt sich beim Hover mit dem Marken-Rot
+   (weisser Text). Die Varianten unterscheiden sich nur im Ruhezustand
+   (Rahmenfarbe), der Hover-Zustand ist überall identisch rot. */
 .btn--white { color: var(--white); border-color: var(--white); }
-.btn--white:hover { background: var(--white); color: var(--black); }
+.btn--white:hover { background: var(--red); color: var(--white); border-color: var(--red); }
 .btn--outline { color: var(--black); border-color: var(--black); }
-.btn--outline:hover { background: var(--black); color: var(--white); }
+.btn--outline:hover { background: var(--red); color: var(--white); border-color: var(--red); }
 .btn--red { color: var(--white); background: var(--red); border-color: var(--red); }
 .btn--red:hover { background: transparent; color: var(--red); }
 
 /* ============================================================
+   CI/CD-STANDARD — LINKS (mit Pfeil + Wave)
+   Inhalts-Links (Instagram, Mail, "Inspire me"): Pfeil-Prefix, Grösse
+   --ui-size, Laufweite --tracking-ui, Semibold, Rot bei Hover, und beim
+   Hover wandert das GANZE Element als Welle von links nach rechts.
+   Die Default-Textfarbe bleibt kontextabhängig (weiss über dem Hero).
+   Ausnahme Footer: eigener, ruhiger Stil (siehe Footer-Sektion).
+   ============================================================ */
+.link,
+.about__person-insta,
+.home__hero-inspire {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  font-family: var(--font);
+  font-size: var(--ui-size);
+  font-weight: 600;
+  letter-spacing: var(--tracking-ui);
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--transition), translate var(--transition);
+}
+.link::before,
+.about__person-insta::before,
+.home__hero-inspire::before {
+  content: "→";
+  display: inline-block;
+  font-size: 1.05em;
+  line-height: 1;
+}
+.link:hover,
+.about__person-insta:hover,
+.home__hero-inspire:hover {
+  color: var(--red);
+  animation: linkWaveLTR 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+}
+
+/* ============================================================
    SECTION BASE
    ============================================================ */
-.section { padding: clamp(5rem, 10vw, 10rem) clamp(1.5rem, 5vw, 6rem); }
+.section { padding: clamp(7rem, 13vw, 15rem) clamp(1.5rem, 5vw, 6rem); }
 
+/* Einheitliches Mikro-Label: schlichte graue Caps, weite Laufweite. */
 .section__label {
-  font-size: 0.65rem;
+  font-size: var(--ui-size);
   font-weight: 600;
-  letter-spacing: 0.25em;
+  letter-spacing: var(--tracking-ui);
   text-transform: uppercase;
-  color: var(--red);
-  margin-bottom: 1.5rem;
+  color: var(--grey-400);
+  margin-bottom: clamp(2rem, 4vw, 3rem);
   display: block;
 }
 
@@ -376,17 +463,55 @@ body.menu-open .nav__toggle span { background: var(--black); }
 .reveal.revealed { opacity: 1; transform: translateY(0); }
 
 /* ============================================================
-   HOME
+   CI/CD-STANDARD — QUOTES / KURZE EINLEITUNGEN
+   Zitate und kurze Einleitungen sind durchgehend Messina Sans Italic
+   (keine Serifenschrift mehr auf der Seite).
+   Eine einzige wiederverwendbare Klasse .quote statt verstreuter Stile.
    ============================================================ */
+.quote {
+  font-family: var(--font);
+  font-style: italic;
+  font-weight: 400;
+}
+@media (prefers-reduced-motion: reduce) {
+  .link:hover,
+  .about__person-insta:hover,
+  .home__hero-inspire:hover { animation: none; translate: 4px 0; }
+  .page-next:hover .page-next__arrow { animation: none; translate: 8px 0; }
+}
+
+/* ============================================================
+   HOME
+   ============================================================
+   "Shrink-to-Header"-Aufbau: #home bleibt ein normaler, scrollbarer
+   Block, .home__hero ist darin nur noch ein 100dvh hoher Platzhalter im
+   Dokumentfluss (reserviert den Scroll-Platz für Intro/Statement/
+   Creative-Space darunter, siehe js/main.js: csEl.offsetTop-Logik bleibt
+   dadurch unverändert). Das eigentliche Video steckt in
+   .home__hero-shrink — fixed, volle Viewport-Breite, deren Höhe per JS
+   beim Scrollen von 100dvh auf Nav-Höhe animiert wird. Weil das Video
+   darin object-fit:cover + object-position:center nutzt, bleibt der
+   Bildausschnitt exakt mittig, während der Platz kleiner wird. Logo +
+   Buttons liegen NICHT hier, sondern in .home__hero-chrome (eigenes fixed
+   Overlay, direkt nach der Nav im Markup) und wandern synchron dazu nach
+   oben, siehe weiter unten. */
 #home {
+  position: relative;
+}
+
+.home__hero {
   position: relative;
   height: 100vh;
   height: 100dvh; /* real visible viewport on mobile — no white bar at bottom */
+}
+
+.home__hero-shrink {
+  /* Liegt jetzt im normalen Fluss innerhalb von .home__hero und scrollt
+     ganz normal mit weg — keine Fixed-/Shrink-Animation mehr. */
+  position: absolute;
+  inset: 0;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  z-index: 0;
 }
 
 .home__video-wrap {
@@ -401,6 +526,7 @@ body.menu-open .nav__toggle span { background: var(--black); }
 .home__video-wrap video {
   width: 100%; height: 100%;
   object-fit: cover;
+  object-position: center; /* Fokus bleibt immer mittig, auch während .home__hero-shrink schrumpft */
 }
 
 /* YouTube iframe — cover technique:
@@ -421,34 +547,212 @@ body.menu-open .nav__toggle span { background: var(--black); }
 .home__overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  /* Keine Abdunklung mehr — das Video läuft in voller Helligkeit. Die
+     Lesbarkeit von Logo/Text kommt über den Invert-Blend (difference). */
+  background: transparent;
   z-index: 1;
 }
 
+/* ---- Hero Chrome — Logo/Wordmark (unten links) + "Inspire Me"/
+   "Contact Us" (unten rechts), liegen über dem Hero-Video. Fixed und
+   unabhängig von der Nav; js/main.js (syncHomeHeroChrome) lässt Logo +
+   "Contact Us" beim Scrollen nach oben in den Header wandern, während
+   Wordmark + "Inspire Me" ausblenden (werden nicht übernommen — "Inspire
+   Me" wird im Header später durch den Link "Creative Space" ersetzt).
+   Nur sichtbar, solange body.home-flow-active gesetzt ist (siehe
+   js/main.js). ---- */
+.home__hero-chrome {
+  /* Fixed über dem Video, damit das Logo beim Scrollen in den (fixierten)
+     Header docken kann. Nur im Home-Flow sichtbar. Lesbarkeit über eine
+     harte S/W-Umschaltung (kein Blend → keine bunten Artefakte): weiss über
+     dem dunklen Video, schwarz über dem hellen Creative Space. */
+  position: fixed;
+  inset: 0;
+  z-index: 999;              /* unter der Nav (1000) */
+  pointer-events: none;
+  visibility: hidden;
+}
+body.home-flow-active .home__hero-chrome { visibility: visible; }
+/* Wenn das mobile Menü offen ist, Hero-Logo + Tagline ausblenden — sie sollen
+   nicht durch das/über dem Overlay sichtbar sein. */
+body.menu-open .home__hero-chrome { visibility: hidden; }
 
-.home__center {
-  position: relative;
-  z-index: 2;
+/* Logo (links) + Serif-Satz, vertikal mittig. Der ganze Block ist mittig
+   verankert; das Logo dockt per JS-Transform von hier in den Header. */
+.home__hero-intro {
+  position: absolute;
+  left: clamp(1.5rem, 5vw, 5rem);
+  right: clamp(1.5rem, 5vw, 5rem);   /* volle Breite verfügbar, Tagline begrenzt sich selbst */
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex: 1;
-  width: 100%;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  pointer-events: none;
 }
 
-.home__logo {
-  width: clamp(220px, 35vw, 400px);
-  filter: invert(1);
+/* Der klickbare Logo-Link wird von js/main.js (syncHomeHeroChrome) per
+   transform in die Nav-Logo-Position bewegt + skaliert. */
+.home__hero-logo-link {
+  flex-shrink: 0;
+  display: block;
+  pointer-events: auto;
+  transform-origin: left center;
+  will-change: transform;
+}
+.home__hero-logo {
+  /* An die Tagline-Grösse gekoppelt: das Video hat ~30% transparenten Rand,
+     daher wird die Box grösser gewählt, damit das sichtbare Zeichen etwas
+     grösser als der danebenstehende Text wirkt (und mit ihm mitskaliert). */
+  width: calc(clamp(1.3rem, 2.4vw, 2.3rem) * 4.6);
+  height: auto;
+  aspect-ratio: 1 / 1;              /* stabile Grösse (Video 1:1), unabhängig vom Laden */
+  object-fit: contain;
+  display: block;
+  filter: none;                     /* Logo-Video ist bereits weiss */
+  transition: filter var(--transition);
 }
 
-.home__cta {
-  position: absolute;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(2.5rem, 5vh, 5rem));
-  left: 50%;
-  transform: translateX(-50%);
+/* Serif-Satz + Inspire-Link — blenden beim Scrollen aus (JS setzt opacity). */
+.home__hero-text {
+  pointer-events: auto;
+  will-change: transform, opacity;
+}
+.home__hero-tagline {
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: clamp(1.3rem, 2.4vw, 2.3rem);
+  letter-spacing: var(--tracking-subline);
+  line-height: 1.22;
+  color: #fff;
+  margin: 0;
+  max-width: min(880px, 72vw);   /* breit genug für ~2 Zeilen, bis zur Mitte */
+  transition: color var(--transition);
+}
+
+.home__hero-inspire {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  margin-top: clamp(1rem, 1.8vw, 1.6rem);
+  font-family: var(--font);
+  font-size: var(--ui-size);
+  font-weight: 600;
+  letter-spacing: var(--tracking-ui);
+  text-transform: uppercase;
+  color: #fff;
+  text-decoration: none;
+  transition: color var(--transition), translate var(--transition);
+}
+
+/* Luminanzbasierte S/W-Umschaltung (js/main.js misst die Video-Helligkeit
+   hinter dem Logo): über heller Stelle → schwarz, sonst weiss. Rein S/W. */
+.home__hero-chrome.is-lum-light .home__hero-logo { filter: invert(1); }
+.home__hero-chrome.is-lum-light .home__hero-tagline,
+.home__hero-chrome.is-lum-light .home__hero-inspire { color: var(--black); }
+
+@media (max-width: 600px) {
+  /* Handy: Logo ÜBER dem Text stapeln (statt daneben), damit der Text die
+     volle Breite bekommt. */
+  .home__hero-intro { flex-direction: column; align-items: flex-start; gap: 1rem; max-width: 90vw; }
+  .home__hero-tagline { font-size: 1.25rem; max-width: 100%; }
+}
+
+
+/* ---- Intro — "Hey, wir sind angelslove" + kleines Thumbnail-Raster ----
+   Massstab/Proportionen 1:1 aus dem Figma-Mockup (CI/CD, Projekt_Page,
+   node 219:138-153) übernommen: Frame-Breite 2527px als Referenz,
+   alle Grössen als vw-Anteile davon (px / 2527 * 100). */
+
+/* Kleiner, klarer boxy Button (1px, scharfe Ecken, kleine Caps) */
+.btn--minimal {
+  display: inline-block;
+  margin-top: clamp(2.5rem, 4vw, 3.5rem);
+  padding: 0.7rem 1.5rem;
+  border: 1px solid var(--black);
+  font-family: var(--font);
+  font-size: var(--ui-size);
+  font-weight: 600;
+  letter-spacing: var(--tracking-ui);
+  text-transform: uppercase;
+  color: var(--black);
+  text-decoration: none;
+  transition: background var(--transition), color var(--transition);
+}
+.btn--minimal:hover { background: var(--red); color: var(--white); border-color: var(--red); }
+
+.home__intro {
   display: flex;
-  gap: 1.5rem;
-  z-index: 2;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: clamp(2rem, 6vw, 6rem);
+  padding: clamp(8rem, 16vw, 16rem) clamp(1.5rem, 5vw, 6rem) clamp(6rem, 12vw, 12rem);
+}
+
+.home__intro-text h1 {
+  max-width: 15ch;
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: clamp(2.6rem, 6.2vw, 5.4rem);
+  letter-spacing: var(--tracking-subline);
+  text-transform: none;
+  color: var(--black);
+  line-height: 1.02;
+}
+
+.home__intro-text h1 .home__intro-bold {
+  font-weight: 600; /* "love" bleibt als Gewicht-Akzent erhalten */
+}
+
+.home__intro-reg {
+  font-size: 0.3em;
+  font-weight: 400;
+  vertical-align: super;
+}
+
+.home__intro-sub {
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+  max-width: 34ch;
+  color: var(--grey-400);
+  font-family: var(--font);
+  font-weight: 400;
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.home__intro-thumbs {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  width: clamp(110px, 12vw, 168px);
+}
+
+.home__intro-thumbs img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  display: block;
+  background: var(--grey-100);
+}
+
+/* ---- Statement — minimalistisch: kleines Label, grosse Serif-Italic-
+   Aussage, sehr viel Whitespace, dünne Trennlinie oben. ---- */
+.home__statement {
+  padding: clamp(9rem, 20vw, 18rem) clamp(1.5rem, 5vw, 6rem);
+  border-top: 1px solid var(--grey-200);
+}
+
+.home__statement-text {
+  margin: 0;
+  max-width: 24ch;
+  font-family: var(--font);
+  font-weight: 600;
+  font-style: normal;
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  letter-spacing: var(--tracking-subline);
+  line-height: 1.15;
+  color: var(--black);
 }
 
 /* ============================================================
@@ -461,29 +765,64 @@ body.menu-open .nav__toggle span { background: var(--black); }
   padding-right: clamp(1.5rem, 4vw, 5rem);
 }
 
-.cs__header { margin-bottom: clamp(2.5rem, 5vw, 5rem); }
+.cs__header { margin-bottom: clamp(4rem, 9vw, 8rem); }
 .cs__header h1 { max-width: 800px; }
 .cs__subtitle {
-  margin-top: 1.2rem;
-  max-width: 500px;
+  margin-top: clamp(1.2rem, 2.5vw, 2rem);
+  max-width: 44ch;
   color: var(--grey-700);
-  font-size: 1.05rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+/* Zentrierte Variante (Mockup): nur das kleine rote Label, mittig, viel
+   Luft bis zum ersten Bild des Feldes darunter. */
+.cs__header--center {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.cs__header--center .cs__subtitle { margin-left: auto; margin-right: auto; }
+.cs__header--center .section__label {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  margin-bottom: 0;
 }
 
-/* Masonry grid — echte Spalten-Container (per JS befüllt), kein CSS-
-   Mehrspalten-Layout: so wird beim Nachladen niemals neu balanciert und
-   bereits sichtbare Karten bleiben exakt an ihrer Stelle. */
-.cs__grid { display: flex; align-items: flex-start; gap: 0.75rem; }
-.cs__column { display: flex; flex-direction: column; gap: 0.75rem; flex: 1 1 0; min-width: 0; }
+/* Freies "3D-Feld" statt Spalten-Masonry: jedes Bild bekommt per JS eine
+   absolute Position/Grösse + eine individuelle Parallax-Geschwindigkeit
+   (--cs-speed), sodass beim Scrollen der Eindruck eines Bild-Raums mit
+   Tiefe entsteht (siehe js/main.js buildCreativeSpace/onCsFieldScroll).
+   Höhe wird per JS gesetzt, abhängig von der Anzahl Bilder. */
+.cs__field {
+  position: relative;
+  width: 100%;
+}
 
 .cs__item {
+  position: absolute;
   overflow: hidden;
-  position: relative;
   opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition: opacity 0.7s ease;
+  width: var(--cs-w);
+  left: var(--cs-x);
+  top: var(--cs-y);
+  /* Kein dauerhaftes will-change mehr: nur sichtbare Bilder werden per JS
+     transformiert (translate3d → eigene GPU-Ebene nur solange nötig). Sonst
+     wären ALLE geladenen Bilder dauerhaft eigene Ebenen → progressiver Lag.
+     transform wird laufend per JS gesetzt (onCsFieldScroll) — bewusst KEINE
+     CSS-Transition darauf, sonst hinkt die Bewegung dem Scrollen hinterher. */
 }
-.cs__item.revealed { opacity: 1; transform: translateY(0); }
+.cs__item.revealed { opacity: 1; }
+/* Eingangsanimation (Fade+Rise beim ersten Erscheinen) läuft über eine
+   separate Inner-Hülle, damit sie sich nicht mit dem Parallax-Transform
+   auf dem äusseren .cs__item überschneidet. */
+.cs__item-inner {
+  transform: translateY(40px);
+  transition: transform 0.7s ease;
+  width: 100%;
+}
+.cs__item.revealed .cs__item-inner { transform: translateY(0); }
 
 /* Caption liegt direkt im Bild (unten links), invertiert sich farblich
    gegen den Bildinhalt darunter — dadurch braucht sie keine eigene Zeile
@@ -510,7 +849,9 @@ body.menu-open .nav__toggle span { background: var(--black); }
 }
 
 .cs__item--clickable { cursor: pointer; }
-.cs__item--clickable:hover img { transform: scale(1.045); }
+.cs__item--clickable:hover .cs__img-wrap {
+  transform: scale(1.045);
+}
 
 /* Bild-Lade-Animation: Shimmer-Skeleton, bis das Bild geladen ist */
 .cs__img-wrap {
@@ -519,6 +860,8 @@ body.menu-open .nav__toggle span { background: var(--black); }
   width: 100%;
   background: var(--grey-100);
   overflow: hidden;
+  transform: scale(1);
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .cs__img-wrap::before {
   content: '';
@@ -537,14 +880,23 @@ body.menu-open .nav__toggle span { background: var(--black); }
 }
 .cs__img-wrap img {
   opacity: 0;
-  /* Beide Übergänge müssen in einer Deklaration stehen — sonst überschreibt
-     diese Regel (gleiche Spezifität, kommt später im Stylesheet) die
-     transform-Transition der Hover-Zoom-Regel komplett, und der Zoom
-     springt instant statt smooth zu sein. */
-  transition: opacity 0.5s ease, transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity 0.5s ease;
 }
 .cs__img-wrap.is-loaded::before { opacity: 0; }
 .cs__img-wrap.is-loaded img { opacity: 1; }
+
+/* Hover-Video-Preview im Creative Space — spielt nur beim Darüberfahren. */
+.cs__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.cs__item--has-video:hover .cs__video { opacity: 1; }
 
 @keyframes csShimmer {
   0%   { background-position: 200% 0; }
@@ -562,18 +914,18 @@ body.menu-open .nav__toggle span { background: var(--black); }
   align-items: center;
   justify-content: center;
   font-family: var(--font);
-  font-size: 0.7rem;
+  font-size: var(--ui-size);
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: var(--tracking-ui);
   text-transform: uppercase;
-  padding: 1rem 2.5rem;
-  border: 1.5px solid var(--black);
+  padding: 0.7rem 1.6rem;
+  border: 1px solid var(--black);
   background: transparent;
   color: var(--black);
   cursor: pointer;
   transition: all var(--transition);
 }
-.cs__load-more:hover { background: var(--black); color: var(--white); }
+.cs__load-more:hover { background: var(--red); color: var(--white); border-color: var(--red); }
 
 /* ============================================================
    PROJECTS
@@ -602,7 +954,10 @@ body.menu-open .nav__toggle span { background: var(--black); }
   pointer-events: none;
 }
 
-.projects__hero-img {
+.projects__hero-img,
+.projects__hero-video {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -666,29 +1021,42 @@ body.menu-open .nav__toggle span { background: var(--black); }
 .projects__filters {
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(0.75rem, 1.8vw, 1.1rem);
+  gap: clamp(1.2rem, 3vw, 2.2rem);
   margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
 }
 
+/* CI/CD-Standard TAB/FILTER — 1:1 identisch zu den Nav-Links im Header:
+   gleiche Schriftgrösse (--ui-size), gleiche Laufweite (--tracking-ui),
+   gleicher Unterstrich, der von 0 auf 100% wächst, aktiv/hover in Rot.
+   Header-Tabs und Projekt-Filter sind damit exakt dasselbe Element. */
 .projects__filter {
+  position: relative;
   font-family: var(--font);
-  font-size: 0.7rem;
+  font-size: var(--ui-size);
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: var(--tracking-ui);
   text-transform: uppercase;
-  color: var(--white);
+  color: #fff;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  padding: 0.6rem 1.3rem;
+  border: none;
+  line-height: 1;
+  padding: 0 0 2px;
   cursor: pointer;
-  transition: border-color var(--transition), color var(--transition), background var(--transition);
+  transition: color var(--transition);
 }
-.projects__filter:hover { border-color: var(--red); color: var(--red); }
-.projects__filter.active {
-  background: var(--red);
-  border-color: var(--red);
-  color: var(--white);
+.projects__filter::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: -2px;
+  width: 0;
+  height: 1.5px;
+  background: currentColor;
+  transition: width var(--transition);
 }
+.projects__filter:hover,
+.projects__filter.active { color: var(--red); }
+.projects__filter:hover::after,
+.projects__filter.active::after { width: 100%; }
 
 /* ---- Handy: Dropdown statt einzelner Filter-Buttons — auf dem
    Desktop nicht sichtbar, siehe @media (max-width: 600px) für das
@@ -698,10 +1066,39 @@ body.menu-open .nav__toggle span { background: var(--black); }
 /* ---- Such-Button neben den Filtern — klappt per Klick zu einem
    Suchfeld auf (Lupe bleibt sichtbar, Eingabe wächst nach links), statt
    permanent Platz zu belegen. ------------------------------------- */
+/* Rechte Aktionsgruppe: Titel-Umschalter + Suche, gemeinsam rechtsbündig. */
+.projects__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-left: auto;
+}
+
+/* Titel-Umschalter — gleiche Box-Optik wie der Such-Button. Aktiv = Rot. */
+.projects__titles-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: var(--white);
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
+}
+/* An (Titel sichtbar) = weiss (Basis oben); Aus (Titel versteckt) = rot. */
+.projects__titles-toggle[aria-pressed="false"] { color: var(--red); border-color: var(--red); }
+.projects__titles-toggle:hover { border-color: currentColor; }
+
+/* Titel dauerhaft sichtbar, wenn der Umschalter aktiv ist. */
+.projects__grid.show-titles .project-card__info { opacity: 1; transform: none; }
+
 .projects__search {
   display: flex;
   align-items: center;
-  margin-left: auto;
+  margin-left: 0;
 }
 .projects__search-input {
   width: 0;
@@ -755,8 +1152,9 @@ body.menu-open .nav__toggle span { background: var(--black); }
 /* ---- Project grid ----------------------------------------- */
 .projects__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
-  gap: clamp(1.25rem, 2.5vw, 2rem);
+  /* Grössere Cards, weniger Spalten, mehr Luft — weniger gleichzeitig im Blick. */
+  grid-template-columns: repeat(auto-fill, minmax(min(420px, 100%), 1fr));
+  gap: clamp(1.75rem, 3.5vw, 3rem);
 }
 .projects__empty {
   grid-column: 1 / -1;
@@ -816,31 +1214,69 @@ body.menu-open .nav__toggle span { background: var(--black); }
   z-index: 1;
   color: var(--white);
   mix-blend-mode: difference;
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
+  font-size: var(--ui-size);
+  font-weight: 600;
+  letter-spacing: var(--tracking-ui);
   text-transform: uppercase;
 }
 
+/* Ruhezustand: nur das Bild. Titel + Kategorie (mit Gradient) blenden erst
+   beim Hover/Fokus sanft ein — das Raster wirkt dadurch ruhig wie eine
+   Galerie, gelesen wird nur, wo man hinschaut. */
 .project-card__info {
   position: absolute;
   left: 0; right: 0; bottom: 0;
   padding: clamp(1.5rem, 4vw, 2.5rem) 1.4rem 1.2rem;
   background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0) 100%);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity var(--transition), transform var(--transition);
+}
+.project-card:hover .project-card__info,
+.project-card:focus-visible .project-card__info {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Bei aktiver Suche: Titel/Kategorie dauerhaft sichtbar (siehe main.js). */
+.projects__grid.is-searching .project-card__info {
+  opacity: 1;
+  transform: none;
 }
 
 .project-card__category {
   display: block;
-  font-size: 0.62rem;
+  font-size: var(--ui-size);
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: var(--tracking-ui);
   text-transform: uppercase;
-  color: var(--red);
+  /* Rot nur beim Hover — im Ruhezustand gedämpft (Regel: Rot = Akzent). */
+  color: rgba(255, 255, 255, 0.75);
   margin-bottom: 0.45rem;
+  transition: color var(--transition);
 }
+.project-card:hover .project-card__category { color: var(--red); }
+
+/* Vorbereitet für spätere Hover-Video-Preview (nur bei echten Videofiles,
+   nicht bei YouTube-Links): ein <video class="project-card__video"> im Thumb
+   wird beim Hover eingeblendet und abgespielt. Ohne Element passiert nichts. */
+.project-card__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--transition);
+  pointer-events: none;
+}
+.project-card:hover .project-card__video { opacity: 1; }
+/* Video-Cards: beim Hover Text ausblenden, damit das Video frei liegt.
+   Höhere Spezifität als .show-titles, damit es auch bei sichtbaren Titeln greift. */
+.projects__grid .project-card--has-video:hover .project-card__info { opacity: 0; }
 
 .project-card__title {
-  font-size: clamp(1.2rem, 2.4vw, 1.5rem);
+  /* Grösser, da der Titel nur beim Hover (bzw. bei Suche) erscheint. */
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
   font-weight: 700;
   letter-spacing: var(--tracking-headline);
   text-transform: uppercase;
@@ -947,9 +1383,9 @@ body.menu-open .nav__toggle span { background: var(--black); }
 }
 
 .detail__category {
-  font-size: 0.65rem;
+  font-size: var(--ui-size);
   font-weight: 600;
-  letter-spacing: 0.25em;
+  letter-spacing: var(--tracking-ui);
   text-transform: uppercase;
   color: var(--red);
   margin-bottom: 1rem;
@@ -977,7 +1413,7 @@ body.menu-open .nav__toggle span { background: var(--black); }
   font-size: 1.05rem;
   color: var(--grey-700);
   line-height: 1.85;
-  font-weight: 300;
+  font-weight: 450;
 }
 
 .detail__meta-list {
@@ -989,9 +1425,9 @@ body.menu-open .nav__toggle span { background: var(--black); }
 .detail__meta-item {}
 
 .detail__meta-label {
-  font-size: 0.6rem;
+  font-size: var(--ui-size);
   font-weight: 600;
-  letter-spacing: 0.22em;
+  letter-spacing: var(--tracking-ui);
   text-transform: uppercase;
   color: var(--grey-400);
   margin-bottom: 0.3rem;
@@ -1010,9 +1446,9 @@ body.menu-open .nav__toggle span { background: var(--black); }
 }
 
 .detail__bts-label {
-  font-size: 0.65rem;
+  font-size: var(--ui-size);
   font-weight: 600;
-  letter-spacing: 0.25em;
+  letter-spacing: var(--tracking-ui);
   text-transform: uppercase;
   color: var(--red);
   margin-bottom: 2rem;
@@ -1045,9 +1481,9 @@ body.menu-open .nav__toggle span { background: var(--black); }
 }
 
 .detail__credits-label {
-  font-size: 0.65rem;
+  font-size: var(--ui-size);
   font-weight: 600;
-  letter-spacing: 0.25em;
+  letter-spacing: var(--tracking-ui);
   text-transform: uppercase;
   color: var(--red);
   margin-bottom: 2rem;
@@ -1063,9 +1499,9 @@ body.menu-open .nav__toggle span { background: var(--black); }
 }
 
 .detail__credit-role {
-  font-size: 0.6rem;
+  font-size: var(--ui-size);
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: var(--tracking-ui);
   text-transform: uppercase;
   color: var(--grey-400);
   margin-bottom: 0.2rem;
@@ -1135,7 +1571,7 @@ body.menu-open .nav__toggle span { background: var(--black); }
 .detail__gallery-desc {
   max-width: 680px;
   font-size: 1.05rem;
-  font-weight: 300;
+  font-weight: 450;
   line-height: 1.85;
   color: rgba(255, 255, 255, 0.75);
   margin-bottom: clamp(2.5rem, 5vw, 4rem);
@@ -1236,11 +1672,11 @@ body.menu-open .nav__toggle span { background: var(--black); }
 }
 
 .about__intro {
-  max-width: 720px;
-  margin-bottom: clamp(5rem, 9vw, 9rem);
+  max-width: 620px;
+  margin-bottom: clamp(6rem, 11vw, 11rem);
 }
-.about__intro h1 { margin-bottom: 2rem; }
-.about__intro p { font-size: 1.15rem; color: var(--grey-700); }
+.about__intro h1 { margin-bottom: clamp(2rem, 4vw, 3rem); }
+.about__intro p { font-size: 0.95rem; line-height: 1.7; color: var(--grey-700); max-width: 42ch; }
 
 /* Single screen-filling hero image of both founders — sits flush at
    the very top of the page, full-bleed, with the nav floating over it
@@ -1293,8 +1729,8 @@ body.menu-open .nav__toggle span { background: var(--black); }
 
 .about__role {
   display: block;
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
+  font-size: var(--ui-size);
+  letter-spacing: var(--tracking-ui);
   text-transform: uppercase;
   color: var(--red);
   font-weight: 600;
@@ -1325,16 +1761,18 @@ body.menu-open .nav__toggle span { background: var(--black); }
 }
 
 .about__person-insta {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
   margin-top: 1rem;
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: lowercase;
+  font-size: var(--ui-size);
+  font-weight: 600;
+  letter-spacing: var(--tracking-ui);
+  text-transform: uppercase;
   color: var(--grey-400);
   text-decoration: none;
-  transition: color var(--transition);
+  transition: color var(--transition), translate var(--transition);
 }
-.about__person-insta:hover { color: var(--red); }
 
 /* ============================================================
    PAGE FLOW — next page navigation
@@ -1352,21 +1790,22 @@ body.menu-open .nav__toggle span { background: var(--black); }
 .page-next:hover { background: var(--grey-100); }
 
 .page-next__label {
-  font-size: 0.65rem;
+  font-size: var(--ui-size);
   font-weight: 600;
-  letter-spacing: 0.25em;
+  letter-spacing: var(--tracking-ui);
   text-transform: uppercase;
   color: var(--grey-400);
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.9rem;
 }
 
 .page-next__title {
-  font-size: clamp(1.8rem, 4vw, 3.5rem);
-  font-weight: 700;
-  letter-spacing: var(--tracking-headline);
-  text-transform: uppercase;
+  font-family: var(--font);
+  font-size: clamp(2rem, 4.4vw, 3.6rem);
+  font-weight: 600;
+  letter-spacing: var(--tracking-subline);
+  text-transform: none;
   color: var(--black);
-  line-height: 1;
+  line-height: 1.02;
   transition: color var(--transition);
 }
 .page-next:hover .page-next__title { color: var(--red); }
@@ -1374,12 +1813,41 @@ body.menu-open .nav__toggle span { background: var(--black); }
 .page-next__arrow {
   font-size: clamp(2rem, 4vw, 3.5rem);
   color: var(--black);
-  transition: transform var(--transition), color var(--transition);
+  /* translate (nicht transform) animiert, damit die gespiegelte
+     Zurück-Variante ihr inline transform:scaleX(-1) behält. */
+  transition: translate var(--transition), color var(--transition);
   line-height: 1;
 }
+/* CI/CD-Standard für Links: der Pfeil "wandert" beim Hover in einer
+   ruhigen Welle von links nach rechts und wieder zurück (Endlosschleife),
+   in Marken-Rot. */
 .page-next:hover .page-next__arrow {
-  transform: translateX(8px);
   color: var(--red);
+  animation: linkWaveLTR 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+}
+@keyframes linkWaveLTR {
+  0%   { translate: 0 0; }
+  50%  { translate: 12px 0; }
+  100% { translate: 0 0; }
+}
+
+
+/* ---- Related-Projekte: normale Card-Grösse, gefüllte Reihe ----
+   Die Spaltenanzahl setzt js/main.js (repeat(N,1fr)) passend zur Breite,
+   sodass die Reihe gefüllt ist und die Cards die gleiche Grösse wie im
+   Projects-Grid haben (nicht riesig). */
+.detail__related {
+  padding: clamp(5rem, 10vw, 9rem) clamp(1.5rem, 4vw, 5rem) 0;
+}
+.detail__related .section__label { color: rgba(255, 255, 255, 0.55); }
+.detail__related-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Fallback; JS überschreibt */
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+@media (max-width: 700px) {
+  .detail__related-grid { grid-template-columns: 1fr !important; }
 }
 
 /* Book Us page: arrow and title in white */
@@ -1429,7 +1897,7 @@ body.menu-open .nav__toggle span { background: var(--black); }
 }
 .book__phone:hover { opacity: 0.7; }
 
-.book__tagline { font-size: 0.9rem; color: rgba(255,255,255,0.6); font-weight: 300; }
+.book__tagline { font-size: 0.9rem; color: rgba(255,255,255,0.6); font-weight: 450; }
 
 .book__divider {
   width: 1.5rem;
@@ -1439,8 +1907,8 @@ body.menu-open .nav__toggle span { background: var(--black); }
 }
 
 .book__email-label {
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
+  font-size: var(--ui-size);
+  letter-spacing: var(--tracking-ui);
   text-transform: uppercase;
   font-weight: 600;
   color: rgba(255,255,255,0.55);
@@ -1466,9 +1934,9 @@ body.menu-open .nav__toggle span { background: var(--black); }
 }
 
 .form-field label {
-  font-size: 0.65rem;
+  font-size: var(--ui-size);
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: var(--tracking-ui);
   text-transform: uppercase;
   color: rgba(255,255,255,0.6);
 }
@@ -1477,7 +1945,7 @@ body.menu-open .nav__toggle span { background: var(--black); }
 .form-field textarea {
   font-family: var(--font);
   font-size: 0.95rem;
-  font-weight: 300;
+  font-weight: 450;
   color: var(--white);
   background: transparent;
   border: none;
@@ -1618,13 +2086,13 @@ body.menu-open .nav__toggle span { background: var(--black); }
    ============================================================ */
 .footer {
   border-top: 1px solid var(--grey-200);
-  padding: 3rem clamp(1.5rem, 4vw, 5rem);
+  padding: clamp(3rem, 5vw, 4.5rem) clamp(1.5rem, 4vw, 5rem);
   margin-top: clamp(4rem, 8vw, 7rem);
   display: flex;
   align-items: center;
   gap: clamp(2rem, 5vw, 4rem);
 }
-.footer__copy { font-size: 0.7rem; color: var(--grey-400); letter-spacing: 0.05em; }
+.footer__copy { font-size: 0.62rem; color: var(--grey-400); letter-spacing: 0.1em; text-transform: uppercase; }
 /* Je eine Spalte: Copyright über Impressum, Instagram über Mail —
    gestapelt statt in einer Zeile. */
 .footer__col {
@@ -1634,10 +2102,18 @@ body.menu-open .nav__toggle span { background: var(--black); }
 }
 .footer__logo { width: 28px; opacity: 0.4; transition: opacity var(--transition); margin-left: auto; }
 .footer__logo:hover { opacity: 0.9; }
+/* Footer-Links: ohne Pfeil UND ohne Wave, Gewicht Regular (die einzige
+   Ausnahme vom Semibold-Standard der Mikro-UI). Gleiche Grösse + Laufweite,
+   Rot nur beim Hover. */
 .footer__legal {
-  font-size: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font);
+  font-size: var(--ui-size);
+  font-weight: 450;
+  letter-spacing: var(--tracking-ui);
+  text-transform: uppercase;
   color: var(--grey-400);
-  letter-spacing: 0.05em;
   text-decoration: none;
   transition: color var(--transition);
 }
@@ -1645,27 +2121,9 @@ body.menu-open .nav__toggle span { background: var(--black); }
 #book .footer__legal { color: rgba(255,255,255,0.45); }
 #book .footer__legal:hover { color: var(--white); }
 
-/* Nav on Book Us — red background */
-body.is-book .nav--scrolled {
-  background: var(--red);
-  border-bottom-color: rgba(255,255,255,0.15);
-}
-body.is-book .nav--scrolled .nav__link { color: var(--white); }
-body.is-book .nav--scrolled .nav__link.active,
-body.is-book .nav--scrolled .nav__link:hover { color: rgba(255,255,255,0.6); }
-body.is-book .nav--scrolled .nav__link::after { background: var(--white); }
-body.is-book .nav--scrolled .nav__toggle span { background: var(--white); }
-
-/* Nav on Projects — dark background, since the page itself is dark now */
-body.is-projects .nav--scrolled {
-  background: rgba(14, 14, 14, 0.92);
-  border-bottom-color: rgba(255, 255, 255, 0.12);
-}
-body.is-projects .nav--scrolled .nav__link { color: var(--white); }
-body.is-projects .nav--scrolled .nav__link.active,
-body.is-projects .nav--scrolled .nav__link:hover { color: rgba(255, 255, 255, 0.6); }
-body.is-projects .nav--scrolled .nav__link::after { background: var(--white); }
-body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
+/* Book Us & Projects nutzen denselben einheitlichen Nav-Balken wie alle
+   anderen Seiten (.nav--scrolled: weisser Balken, schwarze Links) —
+   keine eigene Balkenfarbe pro Seite mehr. */
 
 /* Footer on Book Us (red bg) */
 #book .footer {
@@ -1720,11 +2178,12 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
    RESPONSIVE
    ============================================================ */
 @media (max-width: 900px) {
-  .cs__grid { gap: 0.7rem; }
-  .cs__column { gap: 0.7rem; }
   .detail__body { grid-template-columns: 1fr; gap: 2.5rem; }
   .about__people { gap: 2.5rem; }
-  .book__body { grid-template-columns: 1fr; gap: 3rem; }
+  /* Schmale Screens: Formular zuerst (direkt unter "Lass uns
+     zusammenarbeiten"), Kontakt-Infos darunter. column-reverse dreht die
+     DOM-Reihenfolge (Info, Formular) → Formular oben. */
+  .book__body { display: flex; flex-direction: column-reverse; gap: 3rem; align-items: stretch; }
   .detail__gallery { grid-template-columns: repeat(2, 1fr); }
   .detail__gallery--masonry { columns: 2; }
 }
@@ -1733,10 +2192,10 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   :root { --nav-h: 60px; }
   .nav__links { display: none; }
   .nav__toggle { display: flex; }
-  .cs__grid { gap: 0.5rem; }
-  .cs__column { gap: 0.5rem; }
   .cs__item-caption { font-size: 0.5rem; padding: 0.4rem 0.45rem; }
   .projects__grid { grid-template-columns: 1fr; }
+  /* Handy hat kein Hover: Titel/Kategorie dezent dauerhaft zeigen. */
+  .project-card__info { opacity: 1; transform: none; }
   .projects__hero { height: 80vh; height: 80dvh; margin-bottom: -32vh; }
 
   /* Handy: einzelne Filter-Buttons weg, dafür ein schlankes Dropdown
@@ -1774,6 +2233,8 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   /* Lupe bleibt auf dem Handy ohne Box, solange das Suchfeld
      geschlossen ist — passt zum borderlosen Dropdown daneben. */
   .projects__search { margin-left: auto; }
+  /* Titel-Umschalter weg — auf dem Handy sind die Titel ohnehin sichtbar. */
+  .projects__titles-toggle { display: none; }
   .projects__search-toggle {
     border: none;
     background: transparent;
@@ -1786,9 +2247,18 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
      ins Suchfeld hinein. */
   .projects__search-input { font-size: 16px; }
   .about__people { grid-template-columns: 1fr; gap: 3rem; }
-  .home__cta { flex-direction: column; align-items: center; gap: 1rem; }
+  .home__intro { flex-direction: column; gap: 2rem; }
+  .home__intro-thumbs { width: 100%; max-width: 220px; }
   .footer { flex-direction: column; align-items: flex-start; gap: 1rem; }
   .book__header h1 { font-size: clamp(1.8rem, 9vw, 2.6rem); }
+  /* Kontakt-Infos unter dem Formular kompakter + ruhiger — nicht
+     überfordernd: kleinere Überschrift/Telefon, engere Abstände. */
+  .book__info h3 { font-size: 1.1rem; margin-bottom: 1rem; }
+  .book__phone { font-size: 1.15rem; margin-bottom: 0.35rem; }
+  .book__tagline { font-size: 0.85rem; }
+  .book__divider { margin: 1.25rem 0; }
+  .book__email-label { margin-bottom: 0.15rem; }
+  .book__email-val { font-size: 0.95rem; }
   .detail__credits-list {
     grid-template-rows: none;
     grid-auto-flow: row;
@@ -1812,17 +2282,6 @@ body.is-projects .nav--scrolled .nav__toggle span { background: var(--white); }
   .detail__gallery-desc { font-size: 0.95rem; margin-bottom: 1.75rem; }
 }
 
-/* Vertical responsiveness for Home — buttons always visible without scrolling,
-   regardless of screen height (short phones, landscape, tablets …) */
-@media (max-height: 700px) {
-  .home__logo { width: clamp(160px, 32vw, 320px); }
-  .home__cta { bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(1.25rem, 4vh, 2.5rem)); }
-}
-@media (max-height: 480px) {
-  .home__logo { width: clamp(120px, 26vw, 220px); }
-  .home__cta { bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem); gap: 0.5rem; }
-  .home__cta .btn { padding: 0.6rem 1.1rem; font-size: 0.56rem; letter-spacing: 0.1em; }
-}
 
 /* ---- Lightbox — Vollbild-Ansicht für Galerie- & BTS-Bilder ---- */
 .lightbox {

@@ -30,15 +30,17 @@
       gear:     row.gear,
       longDesc: row.long_desc,
       video:    row.video,
+      videoFile: row.video_file || '',
       cover:    row.cover,
       bts:      row.bts || [],
       gallery:  row.gallery || [],
       credits:  row.credits || [],
     }));
 
-    if (typeof window.buildCreativeSpace === 'function') window.buildCreativeSpace();
-    if (typeof window.buildProjectCards   === 'function') window.buildProjectCards();
-    if (typeof window.buildProjectsHero   === 'function') window.buildProjectsHero();
+    if (typeof window.buildCreativeSpace   === 'function') window.buildCreativeSpace();
+    if (typeof window.buildProjectCards    === 'function') window.buildProjectCards();
+    if (typeof window.buildProjectsHero    === 'function') window.buildProjectsHero();
+    if (typeof window.buildHomeIntroThumbs === 'function') window.buildHomeIntroThumbs();
   } catch (e) {
     // Verbindung fehlgeschlagen — lokale Fallback-Daten bleiben aktiv.
   }

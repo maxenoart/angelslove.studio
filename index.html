@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Syne+Mono&family=Cormorant+Garamond&family=Cinzel&family=Press+Start+2P&family=Playfair+Display+SC&family=Rock+Salt&family=Reenie+Beanie&family=Julius+Sans+One&family=Libre+Barcode+128&family=DotGothic16&family=Betania+Patmos+GuideLine&family=Lacquer&family=Codystar&display=swap" />
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/styles.css?v=20260709v" />
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png" />
@@ -25,15 +25,20 @@
 
   <!-- Butterfly imagemark — left, acts as home button -->
   <a class="nav__logo-wrap" href="#home" data-page="home" aria-label="angelslove — zur Startseite">
-    <img src="Website/HOME/assets/angelslove_imagemark_black.svg" alt="angelslove" class="nav__logo" id="nav-logo" />
+    <video class="nav__logo" id="nav-logo" autoplay muted loop playsinline
+           poster="Website/HOME/assets/angelslove-logo-white.png?v=3" aria-label="angelslove">
+      <source src="Website/HOME/assets/angelslove-logo-white.webm?v=3" type="video/webm" />
+      <img src="Website/HOME/assets/angelslove-logo-white.png?v=3" alt="angelslove" class="nav__logo" />
+    </video>
   </a>
 
-  <!-- Links — centred -->
+  <!-- Links — immer zentriert, "Contact Us" ist auf allen Seiten dauerhaft
+       sichtbar. Farbe/Lesbarkeit steuert css/styles.css + js/main.js. -->
   <ul class="nav__links" role="list">
     <li><a class="nav__link" href="#creative-space" data-page="creative-space">CREATIVE SPACE</a></li>
     <li><a class="nav__link" href="#projects"       data-page="projects">PROJECTS</a></li>
     <li><a class="nav__link" href="#about"          data-page="about">ABOUT US</a></li>
-    <li><a class="nav__link" href="#book"           data-page="book">CONTACT US</a></li>
+    <li class="nav__link-book"><a class="nav__link" href="#book" data-page="book">CONTACT US</a></li>
   </ul>
 
   <!-- Spacer — balances grid so links stay centred -->
@@ -52,6 +57,26 @@
   <a class="nav__link" href="#projects"       data-page="projects">PROJECTS</a>
   <a class="nav__link" href="#about"          data-page="about">ABOUT US</a>
   <a class="nav__link" href="#book"           data-page="book">CONTACT US</a>
+</div>
+
+<!-- Home-Hero-Chrome: fixed über dem Video. Das grosse Logo dockt beim
+     Scrollen smooth von der Mitte in den Header (Home-Button), der Serif-
+     Satz wandert mit hoch und blendet aus. Lesbarkeit über luminanzbasierte
+     S/W-Umschaltung (js/main.js). Nur im Home-Flow sichtbar. -->
+<div class="home__hero-chrome" id="home-hero-chrome">
+  <div class="home__hero-intro">
+    <a class="home__hero-logo-link" id="home-hero-logo-link" href="#home" data-page="home" aria-label="angelslove — zur Startseite">
+      <video class="home__hero-logo" id="home-hero-logo" autoplay muted loop playsinline
+             poster="Website/HOME/assets/angelslove-logo-white.png?v=3" aria-label="angelslove">
+        <source src="Website/HOME/assets/angelslove-logo-white.webm?v=3" type="video/webm" />
+        <img src="Website/HOME/assets/angelslove-logo-white.png?v=3" alt="angelslove" class="home__hero-logo" />
+      </video>
+    </a>
+    <div class="home__hero-text" id="home-hero-text">
+      <p class="home__hero-tagline">Wir sind angelslove, ein Film-Studio aus zwei Freunden, die ihre Leidenschaft verfolgen.</p>
+      <a class="home__hero-inspire" id="home-hero-inspire" href="#creative-space" data-page="creative-space">Inspire me</a>
+    </div>
+  </div>
 </div>
 
 <!-- Kontakt-Erfolgsmeldung — breitet sich als Kreis vom Absenden-Button
@@ -74,25 +99,28 @@
      ============================================================ -->
 <main id="home" class="page" role="main" style="display:none">
 
-  <!-- Fullscreen YouTube background video
-       → Ersetze xmSaFciuSg4 mit der ID aus deinem YouTube-Link
-         Beispiel: https://youtube.com/watch?v=xmSaFciuSg4        -->
-  <div class="home__video-wrap">
-    <video id="home-video" autoplay muted loop playsinline webkit-playsinline preload="auto">
-      <source src="Website/HOME/assets/angelslove-home-video-1.mp4" type="video/mp4">
-    </video>
-  </div>
-  <div class="home__overlay"></div>
+  <!-- Vollbild-Hero: das Video (.home__hero-shrink) liegt im normalen Fluss
+       und scrollt einfach mit weg. Logo + Serif-Satz liegen im fixierten
+       .home__hero-chrome (siehe oben, direkt nach der Nav). -->
+  <div class="home__hero">
+    <div class="home__hero-shrink" id="home-hero-shrink">
+      <div class="home__video-wrap">
+        <video id="home-video" autoplay muted loop playsinline webkit-playsinline preload="auto">
+          <source src="Website/HOME/assets/angelslove-home-video-1.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="home__overlay"></div>
+    </div>
 
-  <!-- Centred wordmark -->
-  <div class="home__center">
-    <img src="Website/HOME/assets/angelslove_logo_black.svg" alt="angelslove" class="home__logo" />
   </div>
 
-  <!-- CTAs -->
-  <div class="home__cta">
-    <a href="#creative-space" data-page="creative-space" class="btn btn--white">INSPIRE ME</a>
-    <a href="#book"           data-page="book"           class="btn btn--red">CONTACT US</a>
+  <!-- Weisse Präsentations-Sektion: hier stellen wir uns kurz vor, als
+       Auftakt zum Creative Space darunter. -->
+  <div class="home__statement">
+    <span class="section__label">Creative Space</span>
+    <p class="home__statement-text reveal">
+      Hey, wir sind angelslove — ein Studio für Film, Fotografie und Design, aus zwei Freunden mit Liebe zum Detail.
+    </p>
   </div>
 
 </main>
@@ -103,16 +131,16 @@
      ============================================================ -->
 <section id="creative-space" class="page" role="main" style="display:none">
 
-  <div class="cs__header reveal">
+  <div class="cs__header cs__header--center reveal">
     <span class="section__label">Creative Space</span>
-    <h1>Something beautiful .</h1>
-    <p class="cs__subtitle">
-      Ein lebendiges Archiv unserer Gedanken, Bilder und Momente die fortlaufend erweitert werden.
-    </p>
   </div>
 
-  <!-- Items werden automatisch aus den Projekt-Covers/BTS-Bildern generiert (js/main.js: buildCreativeSpace) -->
-  <div class="cs__grid" id="cs-grid"></div>
+  <!-- Items werden automatisch aus den Projekt-Covers/BTS-Bildern generiert (js/main.js: buildCreativeSpace).
+       Statt eines geordneten Spalten-Grids ist dies jetzt ein frei positioniertes
+       "Feld": jedes Bild bekommt eine zufällige Position/Grösse + eigene
+       Parallax-Geschwindigkeit, sodass die Bilder beim Scrollen wie in einem
+       3D-Raum unterschiedlich schnell durch den Screen laufen. -->
+  <div class="cs__field" id="cs-grid"></div>
 
   <div class="cs__load-more-wrap" id="cs-load-more-wrap" style="display:none">
     <button type="button" class="cs__load-more" id="cs-load-more-btn">Mehr laden</button>
@@ -131,7 +159,6 @@
     <div class="footer__col">
       <span class="footer__copy">&copy; 2026 angelslove — all rights reserved</span>
       <a href="#impressum" data-page="impressum" class="footer__legal">Impressum</a>
-      <a href="#datenschutz" data-page="datenschutz" class="footer__legal">Datenschutz</a>
     </div>
     <div class="footer__col">
       <a href="https://instagram.com/angelslove.studio" target="_blank" rel="noopener" class="footer__legal">@angelslove.studio</a>
@@ -152,6 +179,9 @@
        white at the bottom so the grid underneath is already visible
        (same hero treatment as Home / About Us) -->
   <div class="projects__hero" id="projects-hero">
+    <!-- Banner-Video: läuft, wenn das gewählte Projekt eine Videodatei hat
+         (js/main.js buildProjectsHero); sonst wird das Cover-Bild gezeigt. -->
+    <video class="projects__hero-video" id="projects-hero-video" muted loop playsinline preload="metadata" style="display:none"></video>
     <img src="" alt="" class="projects__hero-img" id="projects-hero-img">
     <div class="projects__hero-overlay"></div>
   </div>
@@ -175,17 +205,23 @@
       </select>
     </div>
 
-    <div class="projects__search" id="projects-search">
-      <input type="text" class="projects__search-input" id="projects-search-input" placeholder="Suchen …" />
-      <button type="button" class="projects__search-toggle" id="projects-search-toggle" aria-label="Projekte durchsuchen">
-        <svg class="projects__search-icon projects__search-icon--search" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <svg class="projects__search-icon projects__search-icon--close" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"></line><line x1="19" y1="5" x2="5" y2="19"></line></svg>
+    <div class="projects__actions">
+      <!-- Titel-Umschalter: blendet die Projekt-Titel dauerhaft ein/aus -->
+      <button type="button" class="projects__titles-toggle" id="projects-titles-toggle" aria-label="Titel anzeigen" aria-pressed="true" title="Titel ausblenden">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
       </button>
+      <div class="projects__search" id="projects-search">
+        <input type="text" class="projects__search-input" id="projects-search-input" placeholder="Suchen …" />
+        <button type="button" class="projects__search-toggle" id="projects-search-toggle" aria-label="Projekte durchsuchen">
+          <svg class="projects__search-icon projects__search-icon--search" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <svg class="projects__search-icon projects__search-icon--close" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"></line><line x1="19" y1="5" x2="5" y2="19"></line></svg>
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- Cards werden automatisch aus js/projects-data.js generiert -->
-  <div class="projects__grid" id="projects-grid"></div>
+  <div class="projects__grid show-titles" id="projects-grid"></div>
 
   <!-- Next page -->
   <div class="page-next" onclick="showPage('about')" role="button" tabindex="0">
@@ -200,7 +236,6 @@
     <div class="footer__col">
       <span class="footer__copy">&copy; 2026 angelslove — all rights reserved</span>
       <a href="#impressum" data-page="impressum" class="footer__legal">Impressum</a>
-      <a href="#datenschutz" data-page="datenschutz" class="footer__legal">Datenschutz</a>
     </div>
     <div class="footer__col">
       <a href="https://instagram.com/angelslove.studio" target="_blank" rel="noopener" class="footer__legal">@angelslove.studio</a>
@@ -221,6 +256,9 @@
 
   <!-- Fullscreen video (nur Video-Projekte) -->
   <div class="detail__video-wrap" id="detail-video-wrap">
+    <!-- Echte Videodatei (bevorzugt) — wird von js/main.js eingeblendet, wenn
+         das Projekt eine hochgeladene Datei hat; sonst greift das YouTube-iframe. -->
+    <video id="detail-video-file" controls playsinline preload="metadata" style="display:none;width:100%;height:100%;object-fit:cover;background:var(--black)"></video>
     <iframe id="detail-video" src="" allowfullscreen allow="autoplay; fullscreen" title="Projekt Video"></iframe>
   </div>
 
@@ -293,6 +331,12 @@
 
   </div><!-- /detail__content -->
 
+  <!-- Related — 2–3 weitere Projekte, führt die Journey weiter -->
+  <section class="detail__related" id="detail-related" style="display:none">
+    <span class="section__label">Mehr sehen</span>
+    <div class="detail__related-grid" id="detail-related-grid"></div>
+  </section>
+
   <!-- Back to projects -->
   <div class="page-next" onclick="showPage('projects')" role="button" tabindex="0"
        style="margin-left:clamp(1.5rem,4vw,5rem);margin-right:clamp(1.5rem,4vw,5rem)">
@@ -307,7 +351,6 @@
     <div class="footer__col">
       <span class="footer__copy">&copy; 2026 angelslove — all rights reserved</span>
       <a href="#impressum" data-page="impressum" class="footer__legal">Impressum</a>
-      <a href="#datenschutz" data-page="datenschutz" class="footer__legal">Datenschutz</a>
     </div>
     <div class="footer__col">
       <a href="https://instagram.com/angelslove.studio" target="_blank" rel="noopener" class="footer__legal">@angelslove.studio</a>
@@ -362,7 +405,7 @@
        Die Kamerabranche kennt er besser als seine linke Tasche. Was früher Hobby war, ist heute sein Handwerk, als DOP, Director und Editor zuverlässig, erfahren und immer einen Schritt voraus.
 <br>
 <br>
-„Den guten Seemann erkennt man im Sturm.”
+<span class="quote">„Den guten Seemann erkennt man im Sturm.”</span>
       </p>
       <a href="https://instagram.com/lenny.leisi" target="_blank" rel="noopener" class="about__person-insta">@lenny.leisi</a>
     </div>
@@ -374,7 +417,7 @@
       Fließend in Deutsch, Französisch und Englisch, und schon immer fasziniert von Kunst. Was früher das Zeichnen war, ist heute Designen, Fotografie, Editing und Cinematography. Er sieht die Details, die andere übersehen, und macht daraus etwas Eigenes.
       <br>
       <br>
-      « Le détail fait la perfection, et la perfection n’est pas un détail. »
+      <span class="quote">« Le détail fait la perfection, et la perfection n’est pas un détail. »</span>
       </p>
       <a href="https://instagram.com/maxeno.art" target="_blank" rel="noopener" class="about__person-insta">@maxeno.art</a>
     </div>
@@ -399,7 +442,6 @@
     <div class="footer__col">
       <span class="footer__copy">&copy; 2026 angelslove — all rights reserved</span>
       <a href="#impressum" data-page="impressum" class="footer__legal">Impressum</a>
-      <a href="#datenschutz" data-page="datenschutz" class="footer__legal">Datenschutz</a>
     </div>
     <div class="footer__col">
       <a href="https://instagram.com/angelslove.studio" target="_blank" rel="noopener" class="footer__legal">@angelslove.studio</a>
@@ -495,7 +537,6 @@
     <div class="footer__col">
       <span class="footer__copy">&copy; 2026 angelslove — all rights reserved</span>
       <a href="#impressum" data-page="impressum" class="footer__legal">Impressum</a>
-      <a href="#datenschutz" data-page="datenschutz" class="footer__legal">Datenschutz</a>
     </div>
     <div class="footer__col">
       <a href="https://instagram.com/angelslove.studio" target="_blank" rel="noopener" class="footer__legal">@angelslove.studio</a>
@@ -566,147 +607,6 @@
     <div class="footer__col">
       <span class="footer__copy">&copy; 2026 angelslove — all rights reserved</span>
       <a href="#impressum" data-page="impressum" class="footer__legal">Impressum</a>
-      <a href="#datenschutz" data-page="datenschutz" class="footer__legal">Datenschutz</a>
-    </div>
-    <div class="footer__col">
-      <a href="https://instagram.com/angelslove.studio" target="_blank" rel="noopener" class="footer__legal">@angelslove.studio</a>
-      <a href="mailto:info@angelslove.ch" class="footer__legal">info@angelslove.ch</a>
-    </div>
-    <img src="Website/HOME/assets/angelslove_imagemark_black.svg" alt="angelslove" class="footer__logo" />
-  </footer>
-
-</section>
-
-
-<!-- ============================================================
-     DATENSCHUTZ
-     ============================================================ -->
-<section id="datenschutz" class="page" role="main" style="display:none">
-  <div class="impressum__inner">
-
-    <div class="impressum__header reveal">
-      <span class="section__label">Datenschutz</span>
-      <h1>Datenschutz-<br>erklärung.</h1>
-    </div>
-
-    <div class="impressum__body reveal" style="transition-delay:0.1s">
-      <h3>Verantwortliche Stelle</h3>
-      <p>
-        Max Eno Hoeres<br>
-        Quart-dessus 11<br>
-        2606 Corgémont<br>
-        Schweiz
-      </p>
-
-      <div class="impressum__divider"></div>
-
-      <h3>Kontakt</h3>
-      <p>
-        Telefon: +41 77 501 52 19<br>
-        E-Mail: max.hoeres@gmail.com
-      </p>
-
-      <div class="impressum__divider"></div>
-
-      <h3>Allgemeines</h3>
-      <p>
-        Wir nehmen den Schutz deiner Daten ernst und behandeln sie
-        vertraulich, im Rahmen der gesetzlichen Datenschutzvorschriften
-        (insbesondere des schweizerischen Datenschutzgesetzes, DSG) sowie,
-        soweit anwendbar, der europäischen Datenschutz-Grundverordnung
-        (DSGVO). Diese Erklärung informiert darüber, welche Daten beim
-        Besuch dieser Website bearbeitet werden und wofür.
-      </p>
-
-      <div class="impressum__divider"></div>
-
-      <h3>Hosting &amp; Server-Logfiles</h3>
-      <p>
-        Diese Website wird über GitHub Pages gehostet. Beim Aufruf der
-        Seite werden automatisch technische Informationen (z. B.
-        IP-Adresse, Datum und Uhrzeit, aufgerufene Seite, Browsertyp) in
-        Server-Logfiles erfasst. Diese Daten dienen ausschliesslich dem
-        sicheren und stabilen Betrieb der Website.
-      </p>
-
-      <div class="impressum__divider"></div>
-
-      <h3>Kontaktformular</h3>
-      <p>
-        Sendest du uns über das Kontaktformular eine Anfrage, werden die
-        von dir angegebenen Daten (z. B. Name, E-Mail-Adresse, Nachricht)
-        zur Bearbeitung deiner Anfrage verwendet. Die Übermittlung erfolgt
-        über den Dienstleister Formspree. Ein verstecktes Feld (Honeypot)
-        dient ausschliesslich der automatisierten Spam-Erkennung und wird
-        nicht ausgewertet, wenn es von einem Menschen ausgefüllt wird.
-      </p>
-
-      <div class="impressum__divider"></div>
-
-      <h3>YouTube-Videos</h3>
-      <p>
-        Auf einzelnen Projektseiten binden wir Videos der Plattform
-        YouTube (Google Ireland Limited) ein. Beim Abspielen eines Videos
-        kann YouTube Daten über dein Nutzungsverhalten erheben. Wir haben
-        darauf keinen Einfluss; massgebend ist die Datenschutzerklärung
-        von Google.
-      </p>
-
-      <div class="impressum__divider"></div>
-
-      <h3>Google Fonts</h3>
-      <p>
-        Für die Darstellung bestimmter Schriftarten laden wir Schriften
-        direkt von den Servern von Google ein. Dabei kann deine
-        IP-Adresse an Google übermittelt werden. Massgebend ist die
-        Datenschutzerklärung von Google.
-      </p>
-
-      <div class="impressum__divider"></div>
-
-      <h3>Externe Links</h3>
-      <p>
-        Diese Website verlinkt auf unser Instagram-Profil. Es handelt
-        sich dabei um einen einfachen Link, keine Einbindung von Inhalten
-        — beim blossen Anklicken des Links gelten die Datenschutzbestimmungen
-        der jeweiligen Plattform.
-      </p>
-
-      <div class="impressum__divider"></div>
-
-      <h3>Deine Rechte</h3>
-      <p>
-        Du hast das Recht, Auskunft über die von uns bearbeiteten
-        Personendaten zu verlangen sowie deren Berichtigung, Löschung oder
-        Einschränkung der Bearbeitung zu beantragen. Anfragen dazu richtest
-        du bitte an die oben genannte Kontaktadresse.
-      </p>
-
-      <div class="impressum__divider"></div>
-
-      <h3>Datensicherheit</h3>
-      <p>
-        Diese Website wird über eine verschlüsselte SSL/TLS-Verbindung
-        übertragen.
-      </p>
-
-      <div class="impressum__divider"></div>
-
-      <h3>Änderungen</h3>
-      <p>
-        Wir können diese Datenschutzerklärung anpassen, sobald sich
-        Inhalte oder rechtliche Vorgaben ändern. Es gilt jeweils die zum
-        Zeitpunkt deines Besuchs aktuelle Version.
-      </p>
-    </div>
-
-  </div><!-- /impressum__inner -->
-
-  <footer class="footer">
-    <div class="footer__col">
-      <span class="footer__copy">&copy; 2026 angelslove — all rights reserved</span>
-      <a href="#impressum" data-page="impressum" class="footer__legal">Impressum</a>
-      <a href="#datenschutz" data-page="datenschutz" class="footer__legal">Datenschutz</a>
     </div>
     <div class="footer__col">
       <a href="https://instagram.com/angelslove.studio" target="_blank" rel="noopener" class="footer__legal">@angelslove.studio</a>
@@ -733,8 +633,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="js/supabase-client.js"></script>
 <script src="js/title-fonts.js"></script>
-<script src="js/main.js"></script>
-<script src="js/supabase-projects.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+<script src="js/main.js?v=20260709s"></script>
+<script src="js/supabase-projects.js?v=2"></script>
 <script src="js/analytics-tracker.js"></script>
 </body>
 </html>

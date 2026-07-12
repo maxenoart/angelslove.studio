@@ -73,6 +73,16 @@ document.querySelectorAll('.sidebar__nav button').forEach(btn => {
   });
 });
 
+// ---- Handy: Burger-Menü (Nav + Abmelden einklappen) -----------
+const sidebarEl     = document.getElementById('sidebar');
+const sidebarToggle = document.getElementById('sidebar-toggle');
+if (sidebarEl && sidebarToggle) {
+  sidebarToggle.addEventListener('click', () => sidebarEl.classList.toggle('menu-open'));
+  // Nach einer Auswahl (Nav-Tab oder Abmelden) das Menü wieder schliessen.
+  sidebarEl.querySelectorAll('.sidebar__nav button, #logout-btn').forEach(btn =>
+    btn.addEventListener('click', () => sidebarEl.classList.remove('menu-open')));
+}
+
 // ---- Projekte: Liste -------------------------------------------
 const projectList = document.getElementById('project-list');
 
@@ -274,6 +284,7 @@ function openModal(project) {
   document.getElementById('p-gear').value      = project ? project.gear || '' : '';
   document.getElementById('p-desc').value      = project ? project.long_desc || '' : '';
   document.getElementById('p-video').value     = project ? project.video || '' : '';
+  document.getElementById('p-video-file-url').value = project ? project.video_file || '' : '';
   document.getElementById('p-cover-url').value = project ? project.cover || '' : '';
   document.getElementById('p-bts-urls').value  = project && project.bts ? JSON.stringify(project.bts) : '[]';
   document.getElementById('p-gallery-urls').value = project && project.gallery ? JSON.stringify(project.gallery) : '[]';
@@ -281,10 +292,12 @@ function openModal(project) {
   document.getElementById('p-cover-file').value = '';
   document.getElementById('p-bts-files').value  = '';
   document.getElementById('p-gallery-files').value = '';
+  document.getElementById('p-video-file').value = '';
 
   renderCoverPreview();
   renderBtsPreview();
   renderGalleryPreview();
+  renderVideoFilePreview();
   updateFieldsForType(document.getElementById('p-type').value);
 
   creditsRows.innerHTML = '';
@@ -377,6 +390,26 @@ function renderCoverPreview() {
   const url = document.getElementById('p-cover-url').value;
   const box = document.getElementById('p-cover-preview');
   box.innerHTML = url ? `<img src="${url}">` : '';
+}
+
+// Vorschau der hochgeladenen Video-Datei (kleiner Clip + Entfernen-Button).
+function renderVideoFilePreview() {
+  const url = document.getElementById('p-video-file-url').value;
+  const box = document.getElementById('p-video-file-preview');
+  if (!box) return;
+  box.innerHTML = url
+    ? `<div class="video-file-chip">
+         <video src="${url}#t=0.1" muted playsinline preload="metadata"></video>
+         <span>Video hochgeladen</span>
+         <button type="button" id="p-video-file-remove" title="Entfernen">×</button>
+       </div>`
+    : '';
+  const rm = document.getElementById('p-video-file-remove');
+  if (rm) rm.addEventListener('click', () => {
+    document.getElementById('p-video-file-url').value = '';
+    document.getElementById('p-video-file').value = '';
+    renderVideoFilePreview();
+  });
 }
 // Generisches, mehrfach verwendbares Bildfeld mit Drag & Drop:
 // hält eine JSON-Liste von URLs in einem hidden input, zeigt sie als
@@ -507,6 +540,29 @@ document.getElementById('p-cover-file').addEventListener('change', async e => {
   else box.innerHTML = '';
 });
 
+// Video-Datei hochladen (roh, ohne Kompression) — landet im selben Storage-
+// Bucket unter videos/. Der Rückgabe-URL wird gespeichert und auf der Website
+// gegenüber YouTube bevorzugt.
+async function uploadVideo(file) {
+  const safe = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+  const path = `videos/${Date.now()}-${safe}`;
+  const { error } = await sb.storage.from('project-images')
+    .upload(path, file, { contentType: file.type || 'video/mp4', upsert: false });
+  if (error) { alert('Video-Upload fehlgeschlagen: ' + error.message); return null; }
+  const { data } = sb.storage.from('project-images').getPublicUrl(path);
+  return data.publicUrl;
+}
+
+document.getElementById('p-video-file').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const box = document.getElementById('p-video-file-preview');
+  box.innerHTML = '<p class="loading-note">Lade Video hoch …</p>';
+  const url = await uploadVideo(file);
+  if (url) document.getElementById('p-video-file-url').value = url;
+  renderVideoFilePreview();
+});
+
 document.getElementById('p-bts-files').addEventListener('change', async e => {
   const files = Array.from(e.target.files).slice(0, 4);
   const urls = btsField.getUrls();
@@ -552,7 +608,8 @@ projectForm.addEventListener('submit', async e => {
     date:      document.getElementById('p-date').value || null,
     gear:      document.getElementById('p-gear').value.trim(),
     long_desc: document.getElementById('p-desc').value.trim(),
-    video:     extractYouTubeId(document.getElementById('p-video').value.trim()),
+    video:      extractYouTubeId(document.getElementById('p-video').value.trim()),
+    video_file: document.getElementById('p-video-file-url').value.trim() || null,
     cover:     document.getElementById('p-cover-url').value.trim(),
     bts:       btsField.getUrls(),
     gallery:   galleryField.getUrls(),
