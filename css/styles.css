@@ -208,14 +208,17 @@ p  { line-height: 1.7; font-weight: 450; }
    keinen Alpha-Kanal → auf Mobile sonst ein weisses Rechteck. Standard =
    Desktop (Video sichtbar, PNG versteckt); die Media Query dreht es fürs
    Handy um. Gilt für Nav-Logo UND grosses Hero-Logo. */
-.nav__logo--static,
-.home__hero-logo--static { display: none; }
+/* Doppelte Klasse (Spezifität 0,2,0), damit diese Regeln die Basis-Regeln
+   .nav__logo / .home__hero-logo { display:block } sicher schlagen — egal in
+   welcher Reihenfolge sie in der Datei stehen. */
+.nav__logo.nav__logo--static,
+.home__hero-logo.home__hero-logo--static { display: none; }
 
 @media (max-width: 600px) {
-  .nav__logo--motion,
-  .home__hero-logo--motion { display: none; }
-  .nav__logo--static { display: block; }
-  .home__hero-logo--static { display: block; }
+  .nav__logo.nav__logo--motion,
+  .home__hero-logo.home__hero-logo--motion { display: none; }
+  .nav__logo.nav__logo--static { display: block; }
+  .home__hero-logo.home__hero-logo--static { display: block; }
 }
 
 /* Links — center column */
