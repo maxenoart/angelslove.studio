@@ -46,6 +46,11 @@
 
 /* --- Variables --------------------------------------------- */
 :root {
+  /* Seite ist bewusst nur im hellen Schema gestaltet. "only light" verhindert,
+     dass Browser im OS-Dark-Mode automatisch abdunkeln (Hintergrund, Formular-
+     felder, Scrollbars, Autofill). Hintergrund bleibt so immer weiss. */
+  color-scheme: only light;
+
   /* Marken-Rot — Akzentfarbe der Seite: Hover, aktiver Zustand, Labels. */
   --red:      #e2073b;
   --black:    #0e0e0e;
